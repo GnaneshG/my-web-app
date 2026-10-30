@@ -1776,6 +1776,451 @@
             #pomodoro-analysis-container .grid.grid-cols-3 > div { padding: 0.6rem 0.35rem; }
             .analysis-compact-rings { grid-template-columns: 1fr; }
         }
+
+        /* Account access and per-user cloud sync */
+        #account-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.58);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+        #account-gate[hidden] { display: none; }
+        .account-card {
+            width: min(100%, 420px);
+            padding: clamp(1.25rem, 5vw, 2rem);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            background: var(--card-bg-color);
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+        }
+        #account-error { min-height: 1.4rem; color: var(--error-color-600); }
+        #account-controls { display: flex; align-items: center; gap: 0.65rem; }
+        #account-controls[hidden] { display: none; }
+        #account-email { max-width: 14rem; overflow: hidden; color: var(--text-color-600); font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
+        #account-signout { border: 1px solid var(--border-color); border-radius: 0.65rem; padding: 0.4rem 0.65rem; color: var(--text-color-700); font-size: 0.78rem; }
+        @media (max-width: 767px) {
+            #account-controls { gap: 0.35rem; }
+            #account-email { display: none; }
+            #account-signout { padding: 0.4rem 0.5rem; font-size: 0.72rem; }
+        }
+
+        /* Keep the title, account controls, and portal button inside the header. */
+        header.bg-card nav { box-sizing: border-box; width: 100%; min-width: 0; }
+        header.bg-card nav > a.nav-link { flex: 0 1 auto; min-width: 0; }
+        #main-nav { min-width: 0; }
+        #account-controls { min-width: 0; flex: 0 1 auto; }
+        #admin-portal-btn { flex: 0 0 auto; max-width: 100%; }
+        @media (min-width: 768px) and (max-width: 1050px) {
+            header.bg-card nav { flex-wrap: wrap; }
+            #main-nav { order: 3; flex: 1 0 100%; justify-content: center; gap: 0.25rem; }
+            #main-nav .nav-link { padding-inline: 0.5rem; font-size: 0.8rem; }
+        }
+        @media (max-width: 767px) {
+            header.bg-card nav { flex-wrap: nowrap; gap: 0.4rem; }
+            header.bg-card nav > a.nav-link { flex-shrink: 1; gap: 0.35rem; }
+            #admin-portal-btn { padding-inline: 0.55rem; font-size: 0.72rem; }
+        }
+        @media (max-width: 380px) {
+            #admin-portal-btn { width: 38px; min-width: 38px; padding-inline: 0; justify-content: center; font-size: 0; }
+            #admin-portal-btn i { margin: 0; font-size: 0.9rem; }
+        }
+        @media (min-width: 1051px) {
+            header.bg-card nav { gap: clamp(0.45rem, 1vw, 1rem); }
+            #main-nav { flex: 1 1 auto; justify-content: center; gap: clamp(0.2rem, 0.65vw, 0.75rem); }
+            #main-nav > :not([hidden]) ~ :not([hidden]) { margin-left: 0; }
+            #main-nav .nav-link { padding-inline: 0.4rem; font-size: 0.8rem; }
+            #account-controls { flex-shrink: 0; }
+            #account-email { max-width: 8rem; }
+        }
+        #google-signin-btn { display: flex; align-items: center; justify-content: center; gap: 0.65rem; min-height: 2.75rem; border: 1px solid var(--border-color); border-radius: 0.7rem; background: var(--card-bg-color); color: var(--text-color-800); font-weight: 600; }
+        #google-signin-btn:hover { background: var(--bg-color-100); }
+        #google-signin-btn img { width: 1.15rem; height: 1.15rem; }
+
+        /* Polished sign-in and sign-up experience */
+        #account-gate {
+            padding: clamp(1rem, 4vw, 2rem);
+            background:
+                radial-gradient(ellipse at 18% 18%, rgba(var(--primary-color-500-rgb), 0.2), transparent 38%),
+                radial-gradient(ellipse at 88% 82%, rgba(139, 92, 246, 0.16), transparent 36%),
+                rgba(15, 23, 42, 0.62);
+        }
+        .account-card {
+            position: relative;
+            overflow: hidden;
+            width: min(100%, 460px);
+            padding: clamp(1.5rem, 5vw, 2.25rem);
+            border: 1px solid color-mix(in srgb, var(--border-color) 72%, white);
+            border-radius: 1.5rem;
+            background: linear-gradient(155deg, var(--card-bg-color), color-mix(in srgb, var(--card-bg-color) 94%, var(--primary-color-100)));
+            box-shadow: 0 32px 90px rgba(15, 23, 42, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 3px;
+            border-radius: 0 0 999px 999px;
+            background: linear-gradient(90deg, transparent, var(--primary-color-500), #8b5cf6, transparent);
+        }
+        .account-card > .mb-5 { margin-bottom: 1.5rem; }
+        .account-card > .mb-5 > div:first-child {
+            width: 3.75rem;
+            height: 3.75rem;
+            border: 1px solid color-mix(in srgb, var(--primary-color-500) 20%, transparent);
+            border-radius: 1.2rem;
+            box-shadow: 0 8px 20px rgba(var(--primary-color-500-rgb), 0.16);
+        }
+        #account-heading { margin-top: 0.2rem; font-size: clamp(1.55rem, 5vw, 1.9rem); letter-spacing: -0.05em; }
+        #account-description { max-width: 22rem; margin-inline: auto; line-height: 1.65; }
+        #account-form { display: grid; gap: 0.9rem; }
+        #account-form label { margin-bottom: 0.35rem; font-size: 0.82rem; font-weight: 650; }
+        #account-form .input-themed { min-height: 3rem; padding-inline: 0.9rem; border-radius: 0.8rem; }
+        #account-submit {
+            min-height: 3rem;
+            margin-top: 0.15rem;
+            border-radius: 0.8rem;
+            background: linear-gradient(115deg, var(--primary-color-600), var(--primary-color-700)) !important;
+            box-shadow: 0 8px 18px rgba(var(--primary-color-500-rgb), 0.24);
+        }
+        #account-submit:hover { filter: brightness(1.06); transform: translateY(-1px); }
+        #forgot-password-btn { justify-self: center; }
+        #google-signin-btn { min-height: 3rem; border-radius: 0.8rem; box-shadow: 0 2px 5px rgba(15, 23, 42, 0.035); }
+        #account-mode-toggle { text-underline-offset: 3px; }
+        #download-local-backup { border-radius: 0.75rem; background: color-mix(in srgb, var(--card-bg-color) 88%, var(--bg-color-100)); }
+        #account-error:not(:empty) {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid color-mix(in srgb, var(--error-color-500) 25%, transparent);
+            border-radius: 0.7rem;
+            background: var(--error-color-100);
+        }
+        @media (max-width: 480px) {
+            .account-card { border-radius: 1.2rem; }
+        }
+
+        /* Keep account access framed to the viewport with a desktop split layout. */
+        #account-gate {
+            box-sizing: border-box;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+        .account-card {
+            display: grid;
+            grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+            align-items: stretch;
+            width: min(100%, 900px);
+            min-height: min(620px, calc(100svh - 2rem));
+            padding: 0;
+        }
+        .account-card::before { z-index: 2; }
+        .account-welcome-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(2rem, 5vw, 3.5rem);
+            background:
+                radial-gradient(ellipse at 15% 10%, rgba(96, 165, 250, 0.2), transparent 48%),
+                linear-gradient(150deg, color-mix(in srgb, var(--primary-color-100) 75%, white), var(--card-bg-color));
+        }
+        .account-brand-mark {
+            display: grid;
+            width: 3.5rem;
+            height: 3.5rem;
+            margin-bottom: 2.25rem;
+            place-items: center;
+            border: 1px solid color-mix(in srgb, var(--primary-color-500) 24%, transparent);
+            border-radius: 1.1rem;
+            background: var(--card-bg-color);
+            color: var(--primary-color-600);
+            font-size: 1.4rem;
+            box-shadow: 0 10px 24px rgba(var(--primary-color-500-rgb), 0.12);
+        }
+        .account-eyebrow {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color-700);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+        }
+        #account-heading {
+            margin-top: 0;
+            font-size: clamp(1.8rem, 3.2vw, 2.35rem);
+            line-height: 1.12;
+        }
+        #account-description { margin-top: 0.75rem; }
+        .account-welcome-note {
+            max-width: 20rem;
+            margin-top: 2rem;
+            color: var(--text-color-600);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .account-form-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            background: var(--card-bg-color);
+        }
+        @media (max-width: 640px) {
+            #account-gate { align-items: flex-start; padding: 0.75rem; }
+            .account-card {
+                grid-template-columns: minmax(0, 1fr);
+                min-height: 0;
+                margin: auto 0;
+            }
+            .account-welcome-panel { padding: 1.5rem 1.4rem 1.15rem; }
+            .account-brand-mark { width: 2.8rem; height: 2.8rem; margin-bottom: 1rem; }
+            .account-eyebrow { margin-bottom: 0.4rem; }
+            #account-heading { font-size: 1.65rem; }
+            .account-welcome-note { margin-top: 0.65rem; font-size: 0.82rem; }
+            .account-form-panel { padding: 1.25rem 1.4rem 1.5rem; }
+        }
+        /* Keep password recovery consistent with the sign-in experience. */
+        #otpResetModal {
+            z-index: 1200 !important;
+            background: rgba(15, 23, 42, 0.62) !important;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+        .reset-card {
+            position: relative;
+            overflow: hidden;
+            width: min(100%, 440px) !important;
+            padding: 1.75rem !important;
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem !important;
+            background: var(--card-bg-color) !important;
+            color: var(--text-color-700);
+            box-shadow: 0 28px 80px rgba(15, 23, 42, 0.3) !important;
+        }
+        .reset-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 12% auto;
+            height: 3px;
+            border-radius: 0 0 999px 999px;
+            background: linear-gradient(90deg, transparent, var(--primary-color-500), #8b5cf6, transparent);
+        }
+        .reset-card h3 { color: var(--text-color-900) !important; font-size: 1.35rem !important; font-weight: 700; letter-spacing: -0.04em; }
+        .reset-card input {
+            min-height: 2.8rem;
+            border-color: var(--border-color) !important;
+            border-radius: 0.7rem !important;
+            background: var(--input-bg) !important;
+            color: var(--text-color-800) !important;
+            outline-color: var(--primary-color-500);
+        }
+        .reset-card .reset-primary-button {
+            min-height: 2.8rem;
+            border-radius: 0.7rem !important;
+            background: linear-gradient(115deg, var(--primary-color-600), var(--primary-color-700)) !important;
+        }
+        #reset-account-summary { color: var(--text-color-600); }
+        @media (max-width: 480px) { .reset-card { padding: 1.25rem !important; } }
+
+        /* Apple-inspired account experience: soft glass, generous spacing, quiet detail. */
+        #account-gate {
+            background:
+                radial-gradient(ellipse at 12% 12%, rgba(97, 159, 255, 0.28), transparent 34%),
+                radial-gradient(ellipse at 88% 84%, rgba(178, 151, 255, 0.22), transparent 36%),
+                linear-gradient(145deg, #eaf1fb 0%, #f4f5fa 48%, #e9edf6 100%);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+        .account-card {
+            width: min(100%, 940px);
+            min-height: min(600px, calc(100svh - 3rem));
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.75rem;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 32px 100px rgba(38, 55, 88, 0.18), 0 4px 16px rgba(38, 55, 88, 0.06);
+            -webkit-backdrop-filter: blur(28px) saturate(150%);
+            backdrop-filter: blur(28px) saturate(150%);
+        }
+        .account-card::before { display: none; }
+        .account-welcome-panel {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(2.25rem, 5vw, 4rem);
+            background:
+                radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.8) 0 2px, transparent 3px),
+                radial-gradient(ellipse at 100% 0%, rgba(255, 255, 255, 0.72), transparent 42%),
+                linear-gradient(150deg, #e8f1ff 0%, #eef3ff 55%, #f4f1ff 100%);
+        }
+        .account-welcome-panel::after {
+            content: '';
+            position: absolute;
+            right: -5rem;
+            bottom: -6rem;
+            width: 18rem;
+            height: 18rem;
+            border: 1px solid rgba(77, 123, 207, 0.13);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2rem rgba(77, 123, 207, 0.045), 0 0 0 4rem rgba(77, 123, 207, 0.035);
+            pointer-events: none;
+        }
+        .account-brand-mark {
+            position: relative;
+            z-index: 1;
+            width: 3.25rem;
+            height: 3.25rem;
+            margin-bottom: clamp(2.5rem, 8vh, 5rem);
+            border: 0;
+            border-radius: 1rem;
+            background: linear-gradient(145deg, #fff, #f3f7ff);
+            color: #147ce5;
+            box-shadow: 0 8px 24px rgba(49, 105, 190, 0.12), inset 0 1px 0 #fff;
+        }
+        .account-eyebrow {
+            position: relative;
+            z-index: 1;
+            color: #61758f;
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+        }
+        #account-heading {
+            position: relative;
+            z-index: 1;
+            max-width: 19rem;
+            color: #182238;
+            font-size: clamp(2rem, 4vw, 2.65rem);
+            font-weight: 650;
+            letter-spacing: -0.065em;
+            line-height: 1.08;
+        }
+        #account-description { position: relative; z-index: 1; color: #63718a; font-size: 0.96rem; }
+        .account-welcome-note { position: relative; z-index: 1; color: #758198; font-size: 0.86rem; }
+        .account-form-panel { padding: clamp(1.75rem, 5vw, 4rem); }
+        #account-form { gap: 1.05rem; }
+        #account-form label { color: #3e4b60; font-size: 0.8rem; font-weight: 600; }
+        #account-form .input-themed {
+            min-height: 3.15rem;
+            border: 1px solid #dfe5ee;
+            border-radius: 0.85rem;
+            background: rgba(248, 250, 253, 0.92);
+            color: #17243a;
+            font-size: 0.92rem;
+            box-shadow: inset 0 1px 2px rgba(24, 38, 61, 0.025);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        #account-form .input-themed:focus {
+            border-color: #5a9df5;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.12);
+        }
+        #forgot-password-btn, #account-mode-toggle { color: #087cf0 !important; font-weight: 600; }
+        #account-submit {
+            min-height: 3.15rem;
+            margin-top: 0.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 0.85rem;
+            background: linear-gradient(180deg, #1687f8, #0874e8) !important;
+            box-shadow: 0 7px 16px rgba(10, 116, 232, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+            font-size: 0.92rem;
+            letter-spacing: -0.01em;
+        }
+        #account-submit:hover { background: linear-gradient(180deg, #2a94ff, #0b7af2) !important; }
+        #account-submit:disabled, #google-signin-btn:disabled { opacity: 0.65; cursor: wait; }
+        #google-signin-btn {
+            min-height: 3.15rem;
+            border: 1px solid #dfe5ee;
+            border-radius: 0.85rem;
+            background: rgba(255, 255, 255, 0.84);
+            color: #27364c;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(27, 43, 68, 0.035);
+        }
+        #google-signin-btn:hover { background: #f7f9fc; border-color: #cbd5e1; }
+        .account-form-panel > .my-4 span.h-px { background: #e5e9f0; }
+        #download-local-backup {
+            min-height: 2.65rem;
+            border-color: #e3e8f0;
+            background: #f7f9fc;
+            color: #68768c;
+        }
+        #download-local-backup:hover { background: #eef3f9; color: #394960; }
+        #account-error:not(:empty) { color: #b42332; background: #fff1f2; }
+        @media (max-width: 640px) {
+            #account-gate { align-items: center; padding: 0.85rem; }
+            .account-card { width: min(100%, 440px); border-radius: 1.35rem; }
+            .account-welcome-panel { padding: 1.35rem 1.4rem 1.15rem; }
+            .account-brand-mark { width: 2.65rem; height: 2.65rem; margin-bottom: 1.1rem; border-radius: 0.85rem; }
+            #account-heading { max-width: none; font-size: 1.75rem; }
+            #account-description { margin-top: 0.45rem; font-size: 0.88rem; }
+            .account-welcome-note { margin-top: 0.55rem; font-size: 0.78rem; }
+            .account-form-panel { padding: 1.2rem 1.4rem 1.4rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .account-card, .account-form-panel *, .account-welcome-panel * { transition-duration: 0.01ms !important; }
+        }
+
+        /* Target tracking: clearer hierarchy and gentle entrance feedback. */
+        #target-set-view > .card-block {
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+        }
+        #target-set-view > .card-block:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--primary-color-500) 28%, var(--border-color));
+            box-shadow: 0 12px 30px rgba(30, 64, 110, 0.08);
+        }
+        #target-consistency-dashboard {
+            background: radial-gradient(ellipse at 95% 0%, rgba(var(--primary-color-500-rgb), 0.1), transparent 38%), var(--card-bg-color);
+        }
+        #target-consistency-dashboard > div:first-child h2 { margin-bottom: 0.35rem; }
+        #target-consistency-dashboard > div:nth-child(2) > div:last-child {
+            min-width: 145px;
+            border-color: color-mix(in srgb, var(--primary-color-500) 18%, var(--border-color));
+            background: color-mix(in srgb, var(--primary-color-100) 45%, var(--card-bg-color));
+        }
+        #target-consistency-dashboard > div:nth-child(2) > div:last-child p:first-child {
+            color: var(--primary-color-700);
+            font-variant-numeric: tabular-nums;
+        }
+        #target-consistency-dashboard > div:last-child > div:last-child {
+            scroll-snap-type: x proximity;
+        }
+        #target-consistency-dashboard > div:last-child > div:last-child > div {
+            scroll-snap-align: start;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #target-consistency-dashboard > div:last-child > div:last-child > div:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 14px rgba(30, 64, 110, 0.1);
+        }
+        #weekly-target-list table tbody tr {
+            animation: target-row-enter 0.35s ease both;
+        }
+        #weekly-target-list table tbody tr:nth-child(2) { animation-delay: 40ms; }
+        #weekly-target-list table tbody tr:nth-child(3) { animation-delay: 80ms; }
+        #weekly-target-list table tbody tr:nth-child(4) { animation-delay: 120ms; }
+        #weekly-target-list table tbody tr:hover td { background: color-mix(in srgb, var(--primary-color-100) 38%, transparent); }
+        #weekly-target-list .complete-btn {
+            min-height: 2.35rem;
+            padding-inline: 0.9rem;
+            box-shadow: 0 3px 9px rgba(var(--success-color-500-rgb), 0.18);
+        }
+        @keyframes target-row-enter {
+            from { opacity: 0; transform: translateY(7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 767px) {
+            #target-consistency-dashboard > div:nth-child(2) > div:last-child { width: 100%; }
+            #target-set-view .section-title { line-height: 1.25; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #target-set-view > .card-block,
+            #target-consistency-dashboard > div:last-child > div > div > div > div,
+            #weekly-target-list table tbody tr { animation: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body data-theme="royal">
@@ -1785,14 +2230,40 @@
         <div id="toast-content-wrapper" class="content"></div>
     </div>
 
+    <div id="account-gate" role="dialog" aria-modal="true" aria-labelledby="account-heading">
+        <section class="account-card">
+            <div class="account-welcome-panel">
+                <div class="account-brand-mark" aria-hidden="true"><i class="fas fa-book-open"></i></div>
+                <p class="account-eyebrow">YOUR PERSONAL STUDY SPACE</p>
+                <h1 id="account-heading" class="text-2xl font-bold text-header">Sign in to TrackerCo</h1>
+                <p id="account-description" class="mt-2 text-sm text-muted">Your study data will sync across your devices.</p>
+                <p class="account-welcome-note">Keep your preparation, notes, and progress together wherever you study.</p>
+            </div>
+            <div class="account-form-panel">
+                <form id="account-form" class="space-y-4">
+                    <div><label for="account-email-input" class="mb-1 block text-sm font-medium text-body">Email</label><input id="account-email-input" type="email" class="input-themed w-full px-3 py-2" autocomplete="email" required></div>
+                    <div><label for="account-password-input" class="mb-1 block text-sm font-medium text-body">Password</label><input id="account-password-input" type="password" class="input-themed w-full px-3 py-2" autocomplete="current-password" minlength="6" required></div>
+                    <button id="forgot-password-btn" type="button" class="justify-self-end py-1 text-sm font-semibold" style="color: var(--primary-color-600);">Forgot password?</button>
+                    <p id="account-error" class="text-sm" role="alert" aria-live="polite"></p>
+                    <button id="account-submit" type="submit" class="w-full rounded-lg px-4 py-3 font-semibold text-white" style="background: var(--primary-color-600);">Sign In</button>
+                </form>
+                <div class="my-4 flex items-center gap-3 text-xs text-muted"><span class="h-px flex-1 bg-gray-200"></span><span>or</span><span class="h-px flex-1 bg-gray-200"></span></div>
+                <button id="google-signin-btn" type="button" class="w-full px-4 py-2.5"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">Continue with Google</button>
+                <p class="mt-5 text-center text-sm text-muted"><span id="account-mode-prompt">New here?</span> <button id="account-mode-toggle" type="button" class="font-semibold" style="color: var(--primary-color-600);">Create an account</button></p>
+                <p class="mt-4 text-center text-xs text-muted">Your data is private to your account. Use the same sign-in on each device.</p>
+                <button id="download-local-backup" type="button" class="mt-4 w-full rounded-lg border border-themed px-3 py-2 text-xs text-body">Download this device’s current data first</button>
+            </div>
+        </section>
+    </div>
+
     <!-- Header Section -->
     <header class="bg-card shadow-sm sticky top-0 z-40 border-b border-themed">
         <nav class="container mx-auto px-6 py-2 flex justify-between items-center">
             <a href="#" class="nav-link text-xl font-bold text-header flex items-center gap-2" data-view="home-view">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary-color-500);">
-                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary-color-500);" aria-hidden="true">
+                    <path d="M4 5.5C6.8 4.7 9.5 5.1 12 7v12c-2.5-1.9-5.2-2.3-8-1.5v-12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 5.5c-2.8-.8-5.5-.4-8 1.5v12c2.5-1.9 5.2-2.3 8-1.5v-12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 TrackerCo
             </a>
@@ -1803,6 +2274,10 @@
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="notes-view"><i class="fas fa-sticky-note"></i>Notes</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="links-view"><i class="fas fa-link"></i>Links</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="pomodoro-view"><i class="fas fa-clock"></i>Pomodoro</a>
+            </div>
+            <div id="account-controls" hidden>
+                <span id="account-email"></span>
+                <button id="account-signout" type="button"><i class="fas fa-right-from-bracket mr-1"></i>Sign out</button>
             </div>
             <button id="admin-portal-btn" class="text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-px transition-all flex items-center btn-hover" style="background: linear-gradient(to right, var(--primary-color-600), var(--primary-color-700)); box-shadow: 0 4px 15px -3px rgba(var(--primary-color-500-rgb), 0.3);">
                 <i class="fas fa-user-shield mr-2"></i>Admin Portal
@@ -1924,6 +2399,10 @@
                         <div><label for="note-microtopic" class="block text-sm font-medium text-body">Microtopic</label><input type="text" id="note-microtopic" class="mt-1 block w-full p-3 rounded-lg input-themed" placeholder="e.g., Fundamental Rights" required></div>
                         <div><label for="note-title" class="block text-sm font-medium text-body">Note Title</label><input type="text" id="note-title" class="mt-1 block w-full p-3 rounded-lg input-themed" placeholder="Give this note a clear title" required></div>
                     </div>
+                    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] items-end gap-4">
+                        <div><label for="note-tags" class="block text-sm font-medium text-body">Tags (comma-separated)</label><input type="text" id="note-tags" class="mt-1 w-full p-3 input-themed" placeholder="e.g., polity, revision, important"></div>
+                        <label class="flex items-center gap-2 pb-2 text-sm text-body"><input id="note-pinned" type="checkbox" class="h-4 w-4"> Pin this note</label>
+                    </div>
                     <div>
                         <p class="block text-sm font-medium text-body mb-2">Start with a template</p>
                         <div class="flex flex-wrap gap-2">
@@ -1957,9 +2436,14 @@
             <div class="card-block p-6 md:p-8">
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
                     <div><h2 class="section-title mb-2">Your Notes</h2><p class="text-sm text-muted">Browse your notes by subject and expand a title to review its content.</p></div>
-                    <span class="text-sm text-muted"><i class="fas fa-layer-group mr-1"></i>Saved in this browser</span>
+                    <span class="text-sm text-muted"><i class="fas fa-cloud mr-1"></i>Synced with your signed-in account</span>
                 </div>
-                <div id="notes-display-container" class="space-y-6"></div>
+                <div class="mb-5 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+                    <label class="sr-only" for="notes-search">Search notes</label>
+                    <input id="notes-search" type="search" class="w-full p-2 input-themed" placeholder="Search titles, content, subjects, or tags...">
+                    <label class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-sm text-body"><input id="show-archived-notes" type="checkbox" class="h-4 w-4"> Include archived</label>
+                </div>
+                <div id="notes-display-container" class="space-y-6" aria-live="polite"></div>
             </div>
         </section>
 
@@ -2100,8 +2584,8 @@
 
             <div id="admin-topics-tab" class="admin-tab-content card-block p-8">
                 <h2 class="section-title mb-6">Add Topics & Microtopics</h2>
-                <p class="text-sm text-muted mb-4">Choose a syllabus subject, enter a topic, then add its microtopics or subtopics one per line. Each microtopic has its own completion progress.</p>
-                <form id="admin-topics-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-8"><input type="hidden" id="topic-id"><div><label for="admin-topic-subject" class="text-sm font-medium text-body">Syllabus Subject</label><select id="admin-topic-subject" class="mt-1 w-full p-2 rounded-lg input-themed" required></select></div><div><label for="admin-topic-parent" class="text-sm font-medium text-body">Parent Topic</label><select id="admin-topic-parent" class="mt-1 w-full p-2 rounded-lg input-themed" required><option value="" disabled selected>Select a subject first...</option></select></div><div id="admin-topic-new-parent-wrap" class="hidden md:col-span-2"><label for="admin-topic-new-parent" class="text-sm font-medium text-body">New Parent Topic</label><input type="text" id="admin-topic-new-parent" class="mt-1 w-full p-2 rounded-lg input-themed" placeholder="e.g., Fundamental Rights"></div><div class="md:col-span-2"><label for="admin-topic-name" class="text-sm font-medium text-body">Microtopics / Subtopics (one per line)</label><textarea id="admin-topic-name" rows="4" class="mt-1 w-full p-2 rounded-lg input-themed" placeholder="Right to Equality&#10;Right to Freedom&#10;Right against Exploitation" required></textarea></div><div class="md:col-span-2 flex justify-end"><button type="submit" class="text-white font-bold py-2 px-5 rounded-lg min-h-10 shadow-md btn-hover" style="background-color: var(--primary-color-600);">Save Microtopics</button></div></form>
+                <p class="text-sm text-muted mb-4">Choose a syllabus subject and add a parent topic by itself, or include microtopics / subtopics now (one per line). You can return to an existing parent topic and add microtopics later. Each microtopic has its own completion progress.</p>
+                <form id="admin-topics-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-8"><input type="hidden" id="topic-id"><div><label for="admin-topic-subject" class="text-sm font-medium text-body">Syllabus Subject</label><select id="admin-topic-subject" class="mt-1 w-full p-2 rounded-lg input-themed" required></select></div><div><label for="admin-topic-parent" class="text-sm font-medium text-body">Parent Topic</label><select id="admin-topic-parent" class="mt-1 w-full p-2 rounded-lg input-themed" required><option value="" disabled selected>Select a subject first...</option></select></div><div id="admin-topic-new-parent-wrap" class="hidden md:col-span-2"><label for="admin-topic-new-parent" class="text-sm font-medium text-body">New Parent Topic</label><input type="text" id="admin-topic-new-parent" class="mt-1 w-full p-2 rounded-lg input-themed" placeholder="e.g., Fundamental Rights"></div>                <div class="md:col-span-2"><div class="mb-1 flex flex-wrap items-center justify-between gap-2"><label for="admin-topic-name" class="text-sm font-medium text-body">Microtopics / Subtopics (one per line)</label><button id="auto-classify-topic-btn" type="button" class="text-sm font-semibold" style="color: var(--primary-color-600);"><i class="fas fa-wand-magic-sparkles mr-1"></i>Auto-sort &amp; save</button></div><textarea id="admin-topic-name" rows="4" class="w-full p-2 rounded-lg input-themed" placeholder="Optional: add microtopics now, one per line&#10;Right to Equality&#10;Right to Freedom&#10;Right against Exploitation"></textarea><p class="mt-1 text-xs text-muted">Uses an offline UPSC keyword guide; review the suggested subject before saving.</p></div><div class="md:col-span-2 flex justify-end"><button type="submit" class="text-white font-bold py-2 px-5 rounded-lg min-h-10 shadow-md btn-hover" style="background-color: var(--primary-color-600);">Save Microtopics</button></div></form>
                 <h3 class="text-xl font-semibold text-header mb-4">Existing Topics & Microtopics (Drag to Reorder)</h3>
                 <input type="text" id="admin-topics-filter" class="w-full p-2 rounded-lg mb-4 input-themed" placeholder="Filter topics...">
                 <div id="admin-topics-table-container" class="overflow-x-auto"></div>
@@ -2206,7 +2690,7 @@
                     <div><label for="admin-pin-code" class="block text-sm font-medium text-body">6-digit access code</label><input type="password" id="admin-pin-code" class="w-full p-3 rounded-lg input-themed text-center tracking-widest" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" minlength="6" required autocomplete="off"></div>
                     <div id="admin-pin-confirm-container" class="hidden"><label for="admin-pin-confirm" class="block text-sm font-medium text-body">Confirm access code</label><input type="password" id="admin-pin-confirm" class="w-full p-3 rounded-lg input-themed text-center tracking-widest" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" minlength="6" autocomplete="off"></div>
                     <button id="admin-pin-submit" type="submit" class="w-full text-white font-bold py-3 rounded-lg btn-hover" style="background-color: var(--primary-color-600);">Enter</button>
-                    <p class="text-xs text-center text-muted">This code is stored only in this browser and is not a secure account password.</p>
+                    <p class="text-xs text-center text-muted">This code belongs to your signed-in account and syncs across devices. It is an extra access gate, not a substitute for your account password.</p>
                 </form>
             </div>
         </div>
@@ -2228,6 +2712,239 @@
             </div>
         </div>
     </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+        import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: 'AIzaSyCPYwno0Q89KR2MNGqTmELtp_4gqqStmPE',
+            authDomain: 'trackerco-bcbfe.firebaseapp.com',
+            projectId: 'trackerco-bcbfe',
+            storageBucket: 'trackerco-bcbfe.firebasestorage.app',
+            messagingSenderId: '303855105574',
+            appId: '1:303855105574:web:fe61d1f1acdcbb259c18e7',
+            measurementId: 'G-Z2TNW5JTMJ'
+        };
+        const cloudKeys = [
+            'upsc_tracker_subjects', 'upsc_tracker_mark_subjects', 'upsc_tracker_topics',
+            'upsc_tracker_marks', 'upsc_tracker_targets', 'upsc_tracker_target_consistency',
+            'upsc_tracker_recurring_config', 'upsc_tracker_ncert', 'upsc_tracker_notes',
+            'upsc_tracker_links', 'upsc_tracker_theme', 'upsc_tracker_analysis_settings',
+            'upsc_tracker_pomodoro_settings', 'upsc_tracker_pomodoro_logs',
+            'upsc_tracker_custom_theme_color', 'upsc_tracker_pomodoro_sound', 'upsc_tracker_ui_sound',
+            'upsc_tracker_admin_pin'
+        ];
+        const nativeSetItem = Storage.prototype.setItem;
+        const nativeRemoveItem = Storage.prototype.removeItem;
+        let auth, firestore, activeUser = null, unsubscribeCloud = null;
+        let cloudReady = false, appStarted = false, appInitialized = false, applyingCloudData = false, saveTimeout = null;
+        let signupMode = false;
+
+        function setAccountError(message = '') {
+            document.getElementById('account-error').textContent = message;
+        }
+        function clearLocalAccountData() {
+            cloudKeys.forEach(key => nativeRemoveItem.call(localStorage, key));
+        }
+        function getLocalState() {
+            return Object.fromEntries(cloudKeys
+                .map(key => [key, localStorage.getItem(key)])
+                .filter(([, value]) => value !== null)
+                .map(([key, value]) => {
+                    try { return [key, JSON.parse(value)]; }
+                    catch (_) { return [key, value]; }
+                }));
+        }
+        function stableStringify(value) {
+            if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
+            if (value && typeof value === 'object') {
+                return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${stableStringify(value[key])}`).join(',')}}`;
+            }
+            return JSON.stringify(value);
+        }
+        function queueCloudSave() {
+            if (!activeUser || !cloudReady || applyingCloudData) return;
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(async () => {
+                if (!activeUser || !cloudReady) return;
+                try {
+                    const stateRef = doc(firestore, 'users', activeUser.uid, 'data', 'app');
+                    await setDoc(stateRef, { state: getLocalState(), updatedAt: serverTimestamp() });
+                } catch (error) {
+                    setAccountError(`Cloud save failed: ${error.message || 'Check your Firestore rules and connection.'}`);
+                }
+            }, 500);
+        }
+        Storage.prototype.setItem = function(key, value) {
+            nativeSetItem.call(this, key, value);
+            if (this === localStorage && cloudKeys.includes(String(key))) queueCloudSave();
+        };
+        Storage.prototype.removeItem = function(key) {
+            nativeRemoveItem.call(this, key);
+            if (this === localStorage && cloudKeys.includes(String(key))) queueCloudSave();
+        };
+
+        function launchAppWhenReady() {
+            if (!activeUser || !cloudReady || appStarted || typeof window.initializeTrackerApp !== 'function') return;
+            appStarted = true;
+            document.getElementById('account-gate').hidden = true;
+            if (appInitialized) {
+                if (typeof window.refreshTrackerData === 'function') window.refreshTrackerData();
+            } else {
+                appInitialized = true;
+                window.initializeTrackerApp();
+            }
+        }
+        window.addEventListener('tracker-app-ready', launchAppWhenReady);
+
+        document.getElementById('account-mode-toggle').addEventListener('click', () => {
+            signupMode = !signupMode;
+            document.getElementById('account-heading').textContent = signupMode ? 'Create your account' : 'Sign in to TrackerCo';
+            document.getElementById('account-description').textContent = signupMode
+                ? 'Create a new account with its own private study data.'
+                : 'Your study data will sync across your devices.';
+            document.getElementById('account-password-input').autocomplete = signupMode ? 'new-password' : 'current-password';
+            document.getElementById('account-submit').textContent = signupMode ? 'Create Account' : 'Sign In';
+            document.getElementById('account-mode-prompt').textContent = signupMode ? 'Already have an account?' : 'New here?';
+            document.getElementById('account-mode-toggle').textContent = signupMode ? 'Sign in' : 'Create an account';
+            setAccountError();
+        });
+
+        document.getElementById('forgot-password-btn').addEventListener('click', () => {
+            const email = document.getElementById('account-email-input').value.trim();
+            document.getElementById('resetUserEmail').value = email;
+            openResetModal();
+        });
+
+        document.getElementById('google-signin-btn').addEventListener('click', async () => {
+            setAccountError();
+            const button = document.getElementById('google-signin-btn');
+            button.disabled = true;
+            button.textContent = 'Connecting to Google…';
+            try {
+                await signInWithPopup(auth, new GoogleAuthProvider());
+            } catch (error) {
+                const messages = {
+                    'auth/popup-closed-by-user': 'Google sign-in was closed before it finished.',
+                    'auth/popup-blocked': 'Allow pop-ups for this site, then try Google sign-in again.',
+                    'auth/unauthorized-domain': 'This website domain is not authorized in Firebase Authentication.'
+                };
+                setAccountError(messages[error.code] || error.message || 'Google sign-in failed.');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">Continue with Google';
+            }
+        });
+
+        document.getElementById('account-form').addEventListener('submit', async event => {
+            event.preventDefault();
+            setAccountError();
+            const email = document.getElementById('account-email-input').value.trim();
+            const password = document.getElementById('account-password-input').value;
+            const submitButton = document.getElementById('account-submit');
+            submitButton.disabled = true;
+            submitButton.textContent = signupMode ? 'Creating account…' : 'Signing in…';
+            try {
+                if (signupMode) await createUserWithEmailAndPassword(auth, email, password);
+                else await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                const messages = {
+                    'auth/email-already-in-use': 'An account already uses this email. Try signing in.',
+                    'auth/invalid-email': 'Enter a valid email address.',
+                    'auth/weak-password': 'Choose a password with at least 6 characters.',
+                    'auth/invalid-credential': 'Email or password is incorrect.',
+                    'auth/user-not-found': 'No account was found for this email.',
+                    'auth/wrong-password': 'Email or password is incorrect.',
+                    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+                    'auth/operation-not-allowed': 'Enable Email/Password in Firebase Authentication settings.'
+                };
+                setAccountError(messages[error.code] || error.message || 'Unable to authenticate. Check your Firebase settings.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = signupMode ? 'Create Account' : 'Sign In';
+            }
+        });
+
+        document.getElementById('download-local-backup').addEventListener('click', () => {
+            const blob = new Blob([JSON.stringify(getLocalState(), null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `trackerco-local-backup-${new Date().toISOString().slice(0, 10)}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('account-signout').addEventListener('click', async () => {
+            try { await signOut(auth); }
+            catch (error) { setAccountError(error.message || 'Unable to sign out.'); }
+        });
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            firestore = getFirestore(app);
+            onAuthStateChanged(auth, user => {
+                const previousUser = activeUser;
+                clearTimeout(saveTimeout);
+                if (unsubscribeCloud) unsubscribeCloud();
+                unsubscribeCloud = null;
+                cloudReady = false;
+                appStarted = false;
+                activeUser = user;
+                if (!user) {
+                    if (previousUser) clearLocalAccountData();
+                    document.getElementById('account-gate').hidden = false;
+                    document.getElementById('account-controls').hidden = true;
+                    return;
+                }
+
+                document.getElementById('account-controls').hidden = false;
+                document.getElementById('account-email').textContent = user.email || 'Signed in';
+                setAccountError();
+                const stateRef = doc(firestore, 'users', user.uid, 'data', 'app');
+                let firstSnapshot = true;
+                unsubscribeCloud = onSnapshot(stateRef, snapshot => {
+                    const state = snapshot.exists() && snapshot.data().state && typeof snapshot.data().state === 'object'
+                        ? snapshot.data().state : {};
+                    const changed = cloudKeys.some(key => {
+                        const storedValue = localStorage.getItem(key);
+                        let localValue = null;
+                        if (storedValue !== null) {
+                            try { localValue = JSON.parse(storedValue); }
+                            catch (_) { localValue = storedValue; }
+                        }
+                        const remoteValue = Object.prototype.hasOwnProperty.call(state, key) ? state[key] : null;
+                        return stableStringify(localValue) !== stableStringify(remoteValue);
+                    });
+                    applyingCloudData = true;
+                    cloudKeys.forEach(key => {
+                        if (Object.prototype.hasOwnProperty.call(state, key)) {
+                            nativeSetItem.call(localStorage, key, JSON.stringify(state[key]));
+                        } else {
+                            nativeRemoveItem.call(localStorage, key);
+                        }
+                    });
+                    applyingCloudData = false;
+                    cloudReady = true;
+                    if (firstSnapshot) {
+                        firstSnapshot = false;
+                        launchAppWhenReady();
+                    } else if (changed && appStarted && typeof window.refreshTrackerData === 'function') {
+                        window.refreshTrackerData();
+                    }
+                }, error => {
+                    cloudReady = false;
+                    setAccountError(`Could not load cloud data: ${error.message || 'Check your Firestore rules.'}`);
+                });
+            });
+        } catch (error) {
+            document.getElementById('account-gate').hidden = false;
+            setAccountError(`Firebase setup failed: ${error.message || 'Check the Firebase configuration.'}`);
+        }
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -3086,8 +3803,11 @@
                     subject: form.querySelector('#note-subject').value,
                     microtopic: form.querySelector('#note-microtopic').value.trim(),
                     title: form.querySelector('#note-title').value.trim(),
+                    tags: form.querySelector('#note-tags').value.split(',').map(tag => tag.trim()).filter(Boolean),
+                    pinned: form.querySelector('#note-pinned').checked,
                     content: noteEditor.root.innerHTML,
-                    createdDate: localDateKey()
+                    createdDate: id ? ((db.get(DB_KEYS.NOTES) || []).find(note => note.id === id)?.createdDate || localDateKey()) : localDateKey(),
+                    updatedDate: localDateKey()
                 };
                 if (!noteData.subject || !noteData.title) {
                     showToast('Please select a subject and enter a title.', true);
@@ -3120,6 +3840,8 @@
                 form.querySelector('#note-subject').value = note.subject;
                 form.querySelector('#note-microtopic').value = note.microtopic || '';
                 form.querySelector('#note-title').value = note.title;
+                form.querySelector('#note-tags').value = Array.isArray(note.tags) ? note.tags.join(', ') : '';
+                form.querySelector('#note-pinned').checked = Boolean(note.pinned);
                 noteEditor.root.innerHTML = sanitizeNoteHtml(note.content);
                 document.getElementById('note-submit-btn').textContent = 'Update Note';
                 document.getElementById('cancel-note-edit-btn').style.display = 'inline-block';
@@ -3289,46 +4011,150 @@
                 const newParent = form.querySelector('#admin-topic-new-parent').value.trim();
                 const parentTopic = selectedParent === '__new__' ? newParent : selectedParent;
                 const microtopics = [...new Set(form.querySelector('#admin-topic-name').value.split('\n').map(name => name.trim()).filter(Boolean))];
-                if (!subject || !parentTopic || microtopics.length === 0) {
-                    showToast('Select a syllabus subject and parent topic, then add at least one microtopic.', true);
+                if (!subject || !parentTopic) {
+                    showToast('Select a syllabus subject and parent topic.', true);
                     return;
                 }
 
                 const topics = db.get(DB_KEYS.TOPICS) || [];
                 const normalized = value => String(value || '').trim().toLocaleLowerCase();
-                const existingNames = new Set(topics
-                    .filter(topic => topic.subject === subject && normalized(topic.parentTopic || topic.topicName) === normalized(parentTopic))
+                const sameParent = topics.filter(topic => topic.subject === subject
+                    && normalized(topic.parentTopic || topic.topicName || topic.name) === normalized(parentTopic));
+                const parentExists = sameParent.some(topic =>
+                    normalized(topic.topicName || topic.name) === normalized(parentTopic)
+                );
+                const existingNames = new Set(sameParent
                     .map(topic => normalized(topic.parentTopic ? topic.topicName : topic.name || '')));
                 const uniqueMicrotopics = [...new Map(microtopics.map(name => [normalized(name), name])).values()]
                     .filter(name => !existingNames.has(normalized(name)));
                 const nextOrder = topics.filter(topic => topic.subject === subject)
                     .reduce((highest, topic) => Math.max(highest, Number(topic.order) || 0), -1) + 1;
-                uniqueMicrotopics.forEach((topicName, index) => {
+                let added = 0;
+                if (!parentExists) {
+                    topics.push({
+                        id: crypto.randomUUID(),
+                        subject,
+                        parentTopic,
+                        topicName: parentTopic,
+                        progress: Array(7).fill(false),
+                        order: nextOrder + added++
+                    });
+                }
+                uniqueMicrotopics.forEach(topicName => {
                     topics.push({
                         id: crypto.randomUUID(),
                         subject,
                         parentTopic,
                         topicName,
-                        progress: Array(3).fill(false),
-                        order: nextOrder + index
+                        progress: Array(7).fill(false),
+                        order: nextOrder + added++
                     });
                 });
+                if (!added) {
+                    showToast('That parent topic and its microtopics already exist.', true);
+                    return;
+                }
                 db.set(DB_KEYS.TOPICS, topics);
                 showToast(uniqueMicrotopics.length
-                    ? `${uniqueMicrotopics.length} microtopic(s) added under ${parentTopic}.`
-                    : `Those microtopics already exist under ${parentTopic}.`, !uniqueMicrotopics.length);
+                    ? `${!parentExists ? 'Parent topic and ' : ''}${uniqueMicrotopics.length} microtopic(s) saved under ${parentTopic}.`
+                    : `Parent topic ${parentTopic} saved. You can add microtopics later.`);
                 form.reset();
                 refreshData();
                 document.getElementById('admin-topics-tab').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function autoSortTopicsFromSyllabus() {
+                const lines = [...new Set(document.getElementById('admin-topic-name').value.split('\n').map(line => line.trim()).filter(Boolean))];
+                if (!lines.length) {
+                    showToast('Add one or more topics first.', true);
+                    return;
+                }
+                const syllabus = [
+                    { parent: 'History & Culture', keywords: /history|heritage|culture|civilization|dynasty|freedom struggle|national movement|reform movement|art and architecture/i, subject: /history|heritage|culture/i },
+                    { parent: 'Geography', keywords: /geography|monsoon|river|climate|soil|mineral|agriculture|earthquake|resource|population/i, subject: /geography/i },
+                    { parent: 'Polity & Constitution', keywords: /constitution|polity|fundamental right|directive principle|parliament|judiciar|federal|election|governance|constitutional|panchayat/i, subject: /polity|constitution|governance/i },
+                    { parent: 'Social Justice', keywords: /social justice|health|education|poverty|inequality|women|child|tribal|vulnerable|welfare|human development/i, subject: /social justice|society/i },
+                    { parent: 'International Relations', keywords: /international|foreign policy|bilateral|multilateral|united nations|treaty|diplomacy|neighbour/i, subject: /international relations|\bir\b/i },
+                    { parent: 'Economy', keywords: /economy|economic|budget|banking|inflation|gdp|fiscal|monetary|poverty|unemployment|trade|tax|agriculture/i, subject: /economy/i },
+                    { parent: 'Environment & Ecology', keywords: /environment|ecology|biodiversity|pollution|climate change|conservation|forest|wildlife|sustainability/i, subject: /environment|ecology/i },
+                    { parent: 'Science & Technology', keywords: /science|technology|artificial intelligence|space|biotechnology|nanotechnology|cyber|quantum|digital/i, subject: /science|technology/i },
+                    { parent: 'Security & Disaster Management', keywords: /security|terrorism|insurgency|border|cybercrime|disaster|risk reduction|internal security/i, subject: /security|disaster/i },
+                    { parent: 'Ethics & Aptitude', keywords: /ethic|integrity|aptitude|probity|attitude|empathy|case study|emotional intelligence/i, subject: /ethic|aptitude/i },
+                    { parent: 'Essay & Answer Writing', keywords: /essay|answer writing|introduction|conclusion|argument|directive word/i, subject: /essay/i },
+                    { parent: 'CSAT & Reasoning', keywords: /csat|comprehension|reasoning|numeracy|aptitude test|data interpretation/i, subject: /csat/i }
+                ];
+                const subjects = db.get(DB_KEYS.SUBJECTS) || [];
+                const fallbackSubject = document.getElementById('admin-topic-subject').value;
+                const groups = new Map();
+                lines.forEach(line => {
+                    const rule = syllabus.find(item => item.keywords.test(line));
+                    const subject = (rule && subjects.find(item => item.name.toLowerCase().match(rule.subject)))
+                        || subjects.find(item => item.name === fallbackSubject);
+                    if (!subject) return;
+                    const parent = rule?.parent || 'Other Syllabus Topics';
+                    const key = `${subject.name}::${parent}`;
+                    if (!groups.has(key)) groups.set(key, { subject: subject.name, parent, lines: [] });
+                    groups.get(key).lines.push(line);
+                });
+                if (!groups.size) {
+                    showToast('Choose a syllabus subject as a fallback, or add syllabus subjects first.', true);
+                    return;
+                }
+
+                const topics = db.get(DB_KEYS.TOPICS) || [];
+                let added = 0;
+                groups.forEach(group => {
+                    const normalize = text => String(text || '').trim().toLocaleLowerCase();
+                    const existing = topics.filter(topic => topic.subject === group.subject
+                        && normalize(topic.parentTopic || topic.topicName || topic.name) === normalize(group.parent));
+                    const existingLines = new Set(existing.map(topic => normalize(topic.topicName || topic.name)));
+                    group.lines.forEach(line => {
+                        if (existingLines.has(normalize(line))) return;
+                        topics.push({ id: crypto.randomUUID(), subject: group.subject, parentTopic: group.parent, topicName: line, progress: Array(7).fill(false), order: topics.length });
+                        existingLines.add(normalize(line));
+                        added++;
+                    });
+                });
+                db.set(DB_KEYS.TOPICS, topics);
+                document.getElementById('admin-topics-form').reset();
+                refreshData();
+                showToast(`${added} topic(s) sorted into UPSC syllabus groups. Review the suggested subjects and adjust any misclassified topics.`);
             }
 
             function handleAdminNcertFormSubmit(e) {
                 e.preventDefault();
                 const form = e.target, id = form.querySelector('#ncert-book-id').value, subject = form.querySelector('#admin-ncert-subject').value, bookName = form.querySelector('#admin-ncert-book-name').value.trim(), chaptersText = form.querySelector('#admin-ncert-chapters').value.trim();
                 if (!subject || !bookName) return;
-                const chapters = chaptersText ? chaptersText.split('\n').filter(Boolean).map(name => ({ id: crypto.randomUUID(), name: name.trim(), progress: Array(7).fill(false) })) : [];
+                const chapterNames = chaptersText ? chaptersText.split('\n').map(name => name.trim()).filter(Boolean) : [];
                 let books = db.get(DB_KEYS.NCERT) || [];
-                if (id) { const book = books.find(b => b.id === id); if (book) { book.subject = subject; book.bookName = bookName; book.chapters = chapters; } } else { books.push({ id: crypto.randomUUID(), subject, bookName, chapters, progress: Array(5).fill(false), order: books.length }); }
+                if (id) {
+                    const book = books.find(b => b.id === id);
+                    if (book) {
+                        const previousChapters = book.chapters || [];
+                        const usedIds = new Set();
+                        const chapters = chapterNames.map((name, index) => {
+                            const existing = previousChapters.find(chapter => !usedIds.has(chapter.id) && chapter.name.trim().toLocaleLowerCase() === name.toLocaleLowerCase())
+                                || (previousChapters.length === chapterNames.length ? previousChapters[index] : null);
+                            if (existing) usedIds.add(existing.id);
+                            return { id: existing?.id || crypto.randomUUID(), name, progress: existing?.progress || Array(7).fill(false) };
+                        });
+                        book.subject = subject;
+                        book.bookName = bookName;
+                        book.chapters = chapters;
+                        const chapterById = new Map(chapters.map(chapter => [chapter.id, chapter]));
+                        const targets = db.get(DB_KEYS.TARGETS) || [];
+                        targets.forEach(target => {
+                            if (target.bookId !== id || !Array.isArray(target.chapters)) return;
+                            target.chapters = target.chapters
+                                .filter(chapter => chapterById.has(chapter.id))
+                                .map(chapter => ({ ...chapter, text: chapterById.get(chapter.id).name }));
+                            target.bookName = bookName;
+                        });
+                        db.set(DB_KEYS.TARGETS, targets.filter(target => target.type !== 'ncert' || target.bookId !== id || target.chapters.length > 0));
+                    }
+                } else {
+                    books.push({ id: crypto.randomUUID(), subject, bookName, chapters: chapterNames.map(name => ({ id: crypto.randomUUID(), name, progress: Array(7).fill(false) })), progress: Array(5).fill(false), order: books.length });
+                }
                 db.set(DB_KEYS.NCERT, books);
                 showToast(`NCERT Book ${id ? 'updated' : 'saved'}.`);
                 form.reset();
@@ -3605,7 +4431,7 @@
                     if (target.id === 'export-data-btn') { exportData(); return; }
                     if (target.id === 'import-data-btn') { document.getElementById('import-file-input').click(); return; }
                     if (target.id === 'play-sound-test-btn') { playPomodoroSound(true); return; }
-                    const actionButton = closest('.edit-mark-subject-btn, .delete-mark-subject-btn, .edit-subject-btn, .delete-subject-btn, .edit-topic-btn, .delete-topic-btn, .edit-recurring-task-btn, .delete-recurring-task-btn, .edit-mark-btn, .delete-mark-btn, .edit-ncert-btn, .delete-ncert-btn, .edit-target-btn, .delete-target-btn, .complete-btn, .admin-reset-btn, .reset-subject-progress-btn, .reset-ncert-progress-btn, #reset-targets-btn, .edit-note-btn, .delete-note-btn, .print-note-btn, .edit-link-btn, .delete-link-btn');
+                                                const actionButton = closest('.edit-mark-subject-btn, .delete-mark-subject-btn, .edit-subject-btn, .delete-subject-btn, .edit-topic-btn, .delete-topic-btn, .edit-recurring-task-btn, .delete-recurring-task-btn, .edit-mark-btn, .delete-mark-btn, .edit-ncert-btn, .delete-ncert-btn, .edit-target-btn, .delete-target-btn, .complete-btn, .admin-reset-btn, .reset-subject-progress-btn, .reset-ncert-progress-btn, #reset-targets-btn, .edit-note-btn, .delete-note-btn, .print-note-btn, .toggle-note-pin-btn, .toggle-note-archive-btn, .edit-link-btn, .delete-link-btn');
                     if (actionButton) {
                         const id = actionButton.dataset.id;
                         if (actionButton.classList.contains('edit-mark-subject-btn')) {
@@ -3626,31 +4452,48 @@
                             });
                         }
                         else if (actionButton.classList.contains('edit-subject-btn')) { const form = document.getElementById('admin-subjects-form'); const item = (db.get(DB_KEYS.SUBJECTS) || []).find(s => s.id === id); if(item) { form.querySelector('#subject-id').value = item.id; form.querySelector('#admin-subject-name').value = item.name; form.querySelector('#admin-subject-category').value = getSubjectCategory(item); form.scrollIntoView({ behavior: 'smooth' }); } }
-                        else if (actionButton.classList.contains('delete-subject-btn')) { showConfirmationModal('WARNING: Deleting a subject will also delete all associated data (topics, notes, marks, etc). This cannot be undone. Are you sure?', () => { const subjectToDelete = (db.get(DB_KEYS.SUBJECTS) || []).find(s => s.id === id); if (!subjectToDelete) return; const subjectName = subjectToDelete.name; db.set(DB_KEYS.SUBJECTS, (db.get(DB_KEYS.SUBJECTS) || []).filter(s => s.id !== id)); db.set(DB_KEYS.TOPICS, (db.get(DB_KEYS.TOPICS) || []).filter(t => t.subject !== subjectName)); db.set(DB_KEYS.NOTES, (db.get(DB_KEYS.NOTES) || []).filter(n => n.subject !== subjectName)); db.set(DB_KEYS.TARGETS, (db.get(DB_KEYS.TARGETS) || []).filter(t => !t.subTopics.some(st => (allTopics.find(topic => topic.id === st.id) || {}).subject === subjectName))); db.set(DB_KEYS.NCERT, (db.get(DB_KEYS.NCERT) || []).filter(b => b.subject !== subjectName)); refreshData(); showToast(`Subject '${subjectName}' and all related data deleted.`, true); }); }
+                        else if (actionButton.classList.contains('delete-subject-btn')) { showConfirmationModal('WARNING: Deleting a subject will also delete all associated data (topics, notes, marks, etc). This cannot be undone. Are you sure?', () => { const subjectToDelete = (db.get(DB_KEYS.SUBJECTS) || []).find(s => s.id === id); if (!subjectToDelete) return; const subjectName = subjectToDelete.name; db.set(DB_KEYS.SUBJECTS, (db.get(DB_KEYS.SUBJECTS) || []).filter(s => s.id !== id)); db.set(DB_KEYS.TOPICS, (db.get(DB_KEYS.TOPICS) || []).filter(t => t.subject !== subjectName)); db.set(DB_KEYS.NOTES, (db.get(DB_KEYS.NOTES) || []).filter(n => n.subject !== subjectName)); const removedTopicIds = new Set(allTopics.filter(topic => topic.subject === subjectName).map(topic => topic.id)); const removedBookIds = new Set((db.get(DB_KEYS.NCERT) || []).filter(book => book.subject === subjectName).map(book => book.id)); db.set(DB_KEYS.TARGETS, (db.get(DB_KEYS.TARGETS) || []).filter(target => target.type === 'ncert' ? !removedBookIds.has(target.bookId) : !(target.subTopics || []).some(subTopic => removedTopicIds.has(subTopic.id)))); db.set(DB_KEYS.NCERT, (db.get(DB_KEYS.NCERT) || []).filter(b => b.subject !== subjectName)); refreshData(); showToast(`Subject '${subjectName}' and all related data deleted.`, true); }); }
                         else if (actionButton.classList.contains('edit-topic-btn')) {
                             const topic = (db.get(DB_KEYS.TOPICS) || []).find(item => item.id === id);
                             if (topic) {
                                 const updatedName = window.prompt('Edit microtopic / subtopic:', topic.topicName);
                                 if (updatedName !== null && updatedName.trim()) {
                                     topic.topicName = updatedName.trim();
-                                    db.set(DB_KEYS.TOPICS, (db.get(DB_KEYS.TOPICS) || []).map(item => item.id === id ? topic : item));
+                                    const topics = (db.get(DB_KEYS.TOPICS) || []).map(item => item.id === id ? topic : item);
+                                    db.set(DB_KEYS.TOPICS, topics);
+                                    const targets = db.get(DB_KEYS.TARGETS) || [];
+                                    targets.forEach(target => (target.subTopics || []).forEach(subTopic => {
+                                        if (subTopic.id === id) subTopic.text = topic.topicName;
+                                    }));
+                                    db.set(DB_KEYS.TARGETS, targets);
                                     refreshData();
-                                    showToast('Microtopic updated.');
+                                    showToast('Microtopic and linked targets updated.');
                                 }
                             }
                         }
-                        else if (actionButton.classList.contains('delete-topic-btn')) { showConfirmationModal('Are you sure you want to delete this topic?', () => { db.set(DB_KEYS.TOPICS, (db.get(DB_KEYS.TOPICS) || []).filter(t => t.id !== id)); refreshData(); showToast('Topic deleted.'); }); }
+                        else if (actionButton.classList.contains('delete-topic-btn')) { showConfirmationModal('Delete this microtopic and remove it from any linked targets?', () => { db.set(DB_KEYS.TOPICS, (db.get(DB_KEYS.TOPICS) || []).filter(topic => topic.id !== id)); const targets = (db.get(DB_KEYS.TARGETS) || []).map(target => target.type === 'topic' ? { ...target, subTopics: (target.subTopics || []).filter(subTopic => subTopic.id !== id) } : target).filter(target => target.type !== 'topic' || target.subTopics.length > 0); db.set(DB_KEYS.TARGETS, targets); refreshData(); showToast('Microtopic and linked target references updated.'); }); }
                         else if (actionButton.classList.contains('edit-mark-btn')) { const markToEdit = (db.get(DB_KEYS.MARKS) || []).find(m => m.id === id); if (markToEdit) populateMarkFormForEdit(markToEdit); }
                         else if (actionButton.classList.contains('delete-mark-btn')) { showConfirmationModal('Are you sure you want to delete this mark entry?', () => { db.set(DB_KEYS.MARKS, (db.get(DB_KEYS.MARKS) || []).filter(m => m.id !== id)); refreshData(); showToast('Mark entry deleted.'); }); }
                         else if (actionButton.classList.contains('edit-note-btn')) { const noteToEdit = (db.get(DB_KEYS.NOTES) || []).find(n => n.id === id); if (noteToEdit) populateNoteFormForEdit(noteToEdit); }
                         else if (actionButton.classList.contains('delete-note-btn')) { showConfirmationModal('Are you sure you want to delete this note?', () => { db.set(DB_KEYS.NOTES, (db.get(DB_KEYS.NOTES) || []).filter(n => n.id !== id)); refreshData(); showToast('Note deleted.'); }); }
+                        else if (actionButton.classList.contains('toggle-note-pin-btn') || actionButton.classList.contains('toggle-note-archive-btn')) {
+                            const notes = db.get(DB_KEYS.NOTES) || [];
+                            const note = notes.find(item => item.id === id);
+                            if (note) {
+                                if (actionButton.classList.contains('toggle-note-pin-btn')) note.pinned = !note.pinned;
+                                else note.archived = !note.archived;
+                                db.set(DB_KEYS.NOTES, notes);
+                                refreshData();
+                                showToast(actionButton.classList.contains('toggle-note-pin-btn') ? (note.pinned ? 'Note pinned.' : 'Note unpinned.') : (note.archived ? 'Note archived.' : 'Note restored.'));
+                            }
+                        }
                         else if (actionButton.classList.contains('print-note-btn')) { const noteToPrint = (db.get(DB_KEYS.NOTES) || []).find(n => n.id === id); if (noteToPrint) printNote(noteToPrint); }
                         else if (actionButton.classList.contains('edit-link-btn')) { const form = document.getElementById('admin-links-form'); const item = (db.get(DB_KEYS.LINKS) || []).find(l => l.id === id); if(item) { form.querySelector('#link-id').value = item.id; form.querySelector('#admin-link-title').value = item.title; form.querySelector('#admin-link-url').value = item.url; form.querySelector('#admin-link-category').value = item.category; form.scrollIntoView({ behavior: 'smooth' }); } }
                         else if (actionButton.classList.contains('delete-link-btn')) { showConfirmationModal('Are you sure you want to delete this link?', () => { db.set(DB_KEYS.LINKS, (db.get(DB_KEYS.LINKS) || []).filter(l => l.id !== id)); refreshData(); showToast('Link deleted.'); }); }
                         else if (actionButton.classList.contains('edit-target-btn')) { const targetToEdit = (db.get(DB_KEYS.TARGETS) || []).find(t => t.id === id); if (targetToEdit) populateTargetFormForEdit(targetToEdit); }
                         else if (actionButton.classList.contains('delete-target-btn')) { showConfirmationModal('Are you sure you want to delete this target?', () => { db.set(DB_KEYS.TARGETS, (db.get(DB_KEYS.TARGETS) || []).filter(t => t.id !== id)); refreshData(); showToast('Target deleted.'); }); }
                         else if (actionButton.classList.contains('edit-ncert-btn')) { const form = document.getElementById('admin-ncert-form'); const book = (db.get(DB_KEYS.NCERT) || []).find(b => b.id === id); if (book) { form.querySelector('#ncert-book-id').value = book.id; form.querySelector('#admin-ncert-subject').value = book.subject; form.querySelector('#admin-ncert-book-name').value = book.bookName; form.querySelector('#admin-ncert-chapters').value = book.chapters ? book.chapters.map(c => c.name).join('\n') : ''; form.scrollIntoView({ behavior: 'smooth' }); } }
-                        else if (actionButton.classList.contains('delete-ncert-btn')) { showConfirmationModal('Are you sure you want to delete this NCERT book?', () => { db.set(DB_KEYS.NCERT, (db.get(DB_KEYS.NCERT) || []).filter(b => b.id !== id)); refreshData(); showToast('NCERT book deleted.'); }); }
+                        else if (actionButton.classList.contains('delete-ncert-btn')) { showConfirmationModal('Delete this NCERT book and remove it from any linked targets?', () => { db.set(DB_KEYS.NCERT, (db.get(DB_KEYS.NCERT) || []).filter(book => book.id !== id)); db.set(DB_KEYS.TARGETS, (db.get(DB_KEYS.TARGETS) || []).filter(target => target.type !== 'ncert' || target.bookId !== id)); refreshData(); showToast('NCERT book and linked target references updated.'); }); }
                         else if (actionButton.classList.contains('edit-recurring-task-btn')) { const form = document.getElementById('admin-recurring-task-form'); const item = (db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || []).find(t => t.id === id); if(item) { form.querySelector('#recurring-task-id').value = item.id; form.querySelector('#recurring-task-name').value = item.name; form.querySelector('#recurring-task-frequency').value = item.frequency; form.scrollIntoView({ behavior: 'smooth' }); } }
                         else if (actionButton.classList.contains('delete-recurring-task-btn')) { showConfirmationModal('Are you sure you want to delete this recurring task?', () => { db.set(DB_KEYS.RECURRING_TASKS_CONFIG, (db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || []).filter(t => t.id !== id)); refreshData(); showToast('Recurring task deleted.'); }); }
                         else if (actionButton.classList.contains('complete-btn')) {
@@ -3763,11 +4606,11 @@
                     }
                     else if (target.id === 'custom-theme-color') { const color = target.value; db.set(DB_KEYS.CUSTOM_THEME_COLOR, color); applyCustomTheme(color); refreshData(); }
                     else if (target.id === 'pomodoro-sound-selector') { const sound = target.value; db.set(DB_KEYS.POMODORO_SOUND_SETTINGS, { sound }); showToast('Sound setting saved.'); }
-                    else if (target.id === 'target-main-subject') { const selectedSubject = target.value; const subtopics = allTopics.filter(t => t.subject === selectedSubject).sort((a,b) => a.order - b.order); const subtopicOptions = subtopics.map(t => `<option value="${t.id}">${t.topicName}</option>`).join(''); $('#target-subtopics').html(subtopicOptions).trigger('change'); }
+                    else if (target.id === 'target-main-subject') { const selectedSubject = target.value; const subtopics = allTopics.filter(t => t.subject === selectedSubject).sort((a,b) => a.order - b.order); const subtopicOptions = subtopics.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.topicName)}</option>`).join(''); $('#target-subtopics').html(subtopicOptions).trigger('change'); }
                     else if (target.id === 'target-ncert-subject') {
                         const selectedSubject = target.value;
                         const books = allNcertBooks.filter(b => b.subject === selectedSubject);
-                        const bookOptions = `<option value="" disabled selected>Select a book...</option>` + books.map(b => `<option value="${b.id}">${b.bookName}</option>`).join('');
+                        const bookOptions = `<option value="" disabled selected>Select a book...</option>` + books.map(b => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.bookName)}</option>`).join('');
                         $('#target-ncert-book').html(bookOptions).val(null).trigger('change');
                         $('#target-ncert-chapters').html('').val(null).trigger('change');
                     } else if (target.id === 'target-ncert-book') {
@@ -3793,6 +4636,9 @@
                 document.getElementById('admin-links-form').addEventListener('submit', handleAdminLinkFormSubmit);
                 document.getElementById('admin-pomodoro-form').addEventListener('submit', handleAdminPomodoroFormSubmit);
                 document.getElementById('admin-topics-filter').addEventListener('input', (e) => { const filterText = e.target.value.toLowerCase(); document.querySelectorAll('#admin-topics-table-container tbody tr').forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filterText) ? '' : 'none'; }); });
+                document.getElementById('auto-classify-topic-btn').addEventListener('click', autoSortTopicsFromSyllabus);
+                document.getElementById('notes-search').addEventListener('input', () => renderPublicNotes(db.get(DB_KEYS.NOTES) || []));
+                document.getElementById('show-archived-notes').addEventListener('change', () => renderPublicNotes(db.get(DB_KEYS.NOTES) || []));
                 document.getElementById('admin-marks-filter').addEventListener('input', (e) => { const filterText = e.target.value.toLowerCase(); document.querySelectorAll('#admin-marks-table-container tbody tr').forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filterText) ? '' : 'none'; }); });
                 document.getElementById('admin-targets-filter').addEventListener('input', (e) => { const filterText = e.target.value.toLowerCase(); document.querySelectorAll('#admin-targets-table-container tbody tr').forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filterText) ? '' : 'none'; }); });
                 document.getElementById('admin-notes-filter').addEventListener('input', (e) => { const filterText = e.target.value.toLowerCase(); document.querySelectorAll('#admin-notes-table-container tbody tr').forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filterText) ? '' : 'none'; }); });
@@ -3894,6 +4740,7 @@
             }
             
             function applyCustomTheme(hex) {
+                if (typeof hex !== 'string' || !/^#[0-9a-f]{6}$/i.test(hex)) hex = '#2563eb';
                 const styleId = 'custom-theme-style';
                 let styleTag = document.getElementById(styleId);
                 if (!styleTag) {
@@ -3987,10 +4834,7 @@
                     pinInput.focus();
                 };
 
-                portalButton.addEventListener('click', () => {
-                    if (isAdminLoggedIn) showView('admin-dashboard');
-                    else showAccessModal();
-                });
+                portalButton.addEventListener('click', showAccessModal);
                 logoutButton.addEventListener('click', () => {
                     isAdminLoggedIn = false;
                     pinForm.reset();
@@ -4089,14 +4933,14 @@
             function populatePomodoroSubjectDropdown() {
                 const subjects = (db.get(DB_KEYS.SUBJECTS) || []).sort((a, b) => a.order - b.order); 
                 let subjectOptions = `<option value="General/Uncategorized">General/Uncategorized</option>`;
-                subjectOptions += subjects.map(s=>`<option value="${s.name}">${s.name}</option>`).join(''); 
+                subjectOptions += subjects.map(s => { const name = escapeHtml(s.name); return `<option value="${name}">${name}</option>`; }).join(''); 
                 const el = document.getElementById('pomodoro-subject-selector');
                 if (el) el.innerHTML = subjectOptions;
             }
             function populateNcertSubjectDropdowns() {
                 const ncertSubjects = [...new Set(allNcertBooks.map(b => b.subject))].sort();
                 let subjectOptions = `<option value="" disabled selected>Select a subject...</option>`;
-                subjectOptions += ncertSubjects.map(s => `<option value="${s}">${s}</option>`).join('');
+                subjectOptions += ncertSubjects.map(s => { const subject = escapeHtml(s); return `<option value="${subject}">${subject}</option>`; }).join('');
                 const el = document.getElementById('target-ncert-subject');
                 if (el) el.innerHTML = subjectOptions;
             }
@@ -4123,7 +4967,8 @@
                 container.innerHTML = categories.map(category => {
                     const grouped = items.filter(subject => getSubjectCategory(subject) === category);
                     if (!grouped.length) return '';
-                    return `<h4 class="font-bold text-lg mt-5 mb-2 text-header">${category}</h4><table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="w-10 p-2"></th><th class="p-2">Subject Name</th><th class="p-2">Actions</th></tr></thead><tbody class="sortable-subjects" data-category="${category}">${grouped.map(subject => `<tr class="hover:bg-bg-color-200" data-id="${subject.id}"><td class="p-2 border-b border-themed drag-handle"><i class="fas fa-grip-vertical text-muted"></i></td><td class="p-2 border-b border-themed text-body">${subject.name}</td><td class="p-2 border-b border-themed"><button data-id="${subject.id}" class="edit-subject-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id="${subject.id}" class="delete-subject-btn" style="color:#ef4444;">Delete</button></td></tr>`).join('')}</tbody></table>`;
+                    const safeCategory = escapeHtml(category);
+                    return `<h4 class="font-bold text-lg mt-5 mb-2 text-header">${safeCategory}</h4><table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="w-10 p-2"></th><th class="p-2">Subject Name</th><th class="p-2">Actions</th></tr></thead><tbody class="sortable-subjects" data-category="${safeCategory}">${grouped.map(subject => { const id = escapeHtml(subject.id); return `<tr class="hover:bg-bg-color-200" data-id="${id}"><td class="p-2 border-b border-themed drag-handle"><i class="fas fa-grip-vertical text-muted"></i></td><td class="p-2 border-b border-themed text-body">${escapeHtml(subject.name)}</td><td class="p-2 border-b border-themed"><button data-id="${id}" class="edit-subject-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id="${id}" class="delete-subject-btn" style="color:#ef4444;">Delete</button></td></tr>`; }).join('')}</tbody></table>`;
                 }).join('');
                 container.querySelectorAll('.sortable-subjects').forEach(list => new Sortable(list, {
                     handle: '.drag-handle', animation: 150,
@@ -4153,7 +4998,8 @@
                     });
                     const rows = [...parentGroups.entries()].map(([parentKey, group]) => {
                         const microtopics = group.topics
-                            .filter(topic => topic.parentTopic && topic.topicName)
+                            .filter(topic => topic.parentTopic && topic.topicName
+                                && topic.topicName.trim().toLocaleLowerCase() !== group.name.toLocaleLowerCase())
                             .map(topic => `<li class="flex items-center justify-between gap-3 py-1"><span class="min-w-0">${escapeHtml(topic.topicName)}</span><span class="flex-shrink-0 whitespace-nowrap"><button data-id="${escapeHtml(topic.id)}" class="edit-topic-btn mr-3" style="color:var(--primary-color-500);">Edit</button><button data-id="${escapeHtml(topic.id)}" class="delete-topic-btn" style="color:#ef4444;">Delete</button></span></li>`).join('');
                         return `<tr class="hover:bg-bg-color-200" data-parent="${escapeHtml(parentKey)}">
                             <td class="p-2 border-b border-themed drag-handle"><i class="fas fa-grip-vertical text-muted"></i></td>
@@ -4258,19 +5104,19 @@
                     container.appendChild(subjectCard);
                 });
             }
-            function renderAdminRecurringTasksTable(tasks) { const c=document.getElementById('admin-recurring-tasks-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Task Name</th><th class="p-2">Frequency</th><th class="p-2">Actions</th></tr></thead><tbody>`;t+=(tasks||[]).map(i=>`<tr class="hover:bg-bg-color-200"><td class="p-2 border-b border-themed text-body">${i.name}</td><td class="p-2 border-b border-themed text-body capitalize">${i.frequency}</td><td class="p-2 border-b border-themed"><button data-id='${i.id}' class="edit-recurring-task-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id='${i.id}' class="delete-recurring-task-btn" style="color:#ef4444;">Delete</button></td></tr>`).join('');c.innerHTML=(tasks||[]).length?t+'</tbody></table>':'<p class="text-body italic p-4 text-center">No recurring tasks added.</p>';}
+            function renderAdminRecurringTasksTable(tasks) { const c=document.getElementById('admin-recurring-tasks-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Task Name</th><th class="p-2">Frequency</th><th class="p-2">Actions</th></tr></thead><tbody>`;t+=(tasks||[]).map(i=>`<tr class="hover:bg-bg-color-200"><td class="p-2 border-b border-themed text-body">${escapeHtml(i.name)}</td><td class="p-2 border-b border-themed text-body capitalize">${escapeHtml(i.frequency)}</td><td class="p-2 border-b border-themed"><button data-id="${escapeHtml(i.id)}" class="edit-recurring-task-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id="${escapeHtml(i.id)}" class="delete-recurring-task-btn" style="color:#ef4444;">Delete</button></td></tr>`).join('');c.innerHTML=(tasks||[]).length?t+'</tbody></table>':'<p class="text-body italic p-4 text-center">No recurring tasks added.</p>';}
             function renderAdminMarkSubjectsTable(subjects) {
                 const container = document.getElementById('admin-mark-subjects-container');
                 if (!container) return;
                 const categories = ['Prelims', 'Mains'];
                 container.innerHTML = categories.map(category => {
                     const items = subjects.filter(subject => subject.category === category);
-                    return `<section class="mb-4"><h3 class="font-semibold text-header mb-2">${category} marks subjects</h3>${items.length ? `<ul class="flex flex-wrap gap-2">${items.map(subject => `<li class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-body">${subject.name}<button type="button" class="edit-mark-subject-btn text-blue-600" data-id="${subject.id}" aria-label="Edit ${subject.name}" title="Edit marks subject"><i class="fas fa-pen"></i></button><button type="button" class="delete-mark-subject-btn text-red-500" data-id="${subject.id}" aria-label="Delete ${subject.name}" title="Remove marks subject"><i class="fas fa-trash"></i></button></li>`).join('')}</ul>` : '<p class="text-sm text-muted">No marks subjects yet.</p>'}</section>`;
+                    return `<section class="mb-4"><h3 class="font-semibold text-header mb-2">${escapeHtml(category)} marks subjects</h3>${items.length ? `<ul class="flex flex-wrap gap-2">${items.map(subject => { const name = escapeHtml(subject.name); const id = escapeHtml(subject.id); return `<li class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-body">${name}<button type="button" class="edit-mark-subject-btn text-blue-600" data-id="${id}" aria-label="Edit ${name}" title="Edit marks subject"><i class="fas fa-pen"></i></button><button type="button" class="delete-mark-subject-btn text-red-500" data-id="${id}" aria-label="Delete ${name}" title="Remove marks subject"><i class="fas fa-trash"></i></button></li>`; }).join('')}</ul>` : '<p class="text-sm text-muted">No marks subjects yet.</p>'}</section>`;
                 }).join('');
             }
 
-            function renderAdminMarksTable(marks) { const c=document.getElementById('admin-marks-table-container');if(!c)return;const h=['Date','Exam Type','Test Type','Subjects','Total Score','Actions'];let t=`<table class="w-full text-left text-sm"><thead><tr class="border-b border-themed">${h.map(h=>`<th class="p-3 text-header">${h}</th>`).join('')}</tr></thead><tbody>`;if(!marks||marks.length===0){c.innerHTML='<p class="text-body italic p-4 text-center">No marks found.</p>';return}t+=marks.map(m=>{const s=(m.breakdown||[]).map(b=>b.subject.split(': ')[1]||b.subject).join(', ');const o=`${m.totalObtainedMark} / ${m.totalMaximumMark}`;return`<tr class="border-b border-themed hover:bg-bg-color-200"><td class="p-3 text-body">${formatCustomDate(parseLocalDate(m.dateOfExam))}</td><td class="p-3 text-body">${m.examType || 'Mains'}</td><td class="p-3 text-body">${m.testType}</td><td class="p-3 text-body">${s}</td><td class="p-3 text-body">${o}</td><td class="p-3"><button data-id='${m.id}' class="edit-mark-btn mr-3" style="color:var(--primary-color-500);"><i class="fas fa-edit"></i></button><button data-id='${m.id}' class="delete-mark-btn" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td></tr>`}).join('');c.innerHTML=t+'</tbody></table>'}
-            function renderAdminNcertTable(books) { const c=document.getElementById('admin-ncert-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Subject</th><th class="p-2">Book Name</th><th class="p-2">Chapters</th><th class="p-2">Actions</th></tr></thead><tbody>`;t+=(books||[]).map(b=>{const l=b.chapters&&b.chapters.length>0?`<ul class="list-disc list-inside text-sm">${b.chapters.map(c=>`<li>${c.name}</li>`).join('')}</ul>`:'N/A';return`<tr class="hover:bg-bg-color-200" data-id="${b.id}"><td class="p-2 border-b border-themed text-body">${b.subject}</td><td class="p-2 border-b border-themed text-body">${b.bookName}</td><td class="p-2 border-b border-themed text-body">${l}</td><td class="p-2 border-b border-themed"><button data-id='${b.id}' class="edit-ncert-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id='${b.id}' class="delete-ncert-btn" style="color:#ef4444;">Delete</button></td></tr>`}).join('');c.innerHTML=(books||[]).length?t+'</tbody></table>':'<p class="text-body italic p-4 text-center">No NCERT books added.</p>';}
+            function renderAdminMarksTable(marks) { const c=document.getElementById('admin-marks-table-container');if(!c)return;const h=['Date','Exam Type','Test Type','Subjects','Total Score','Actions'];let t=`<table class="w-full text-left text-sm"><thead><tr class="border-b border-themed">${h.map(h=>`<th class="p-3 text-header">${h}</th>`).join('')}</tr></thead><tbody>`;if(!marks||marks.length===0){c.innerHTML='<p class="text-body italic p-4 text-center">No marks found.</p>';return}t+=marks.map(m=>{const s=(m.breakdown||[]).map(b=>escapeHtml(String(b.subject || '').split(': ').pop())).join(', ');const o=`${escapeHtml(m.totalObtainedMark)} / ${escapeHtml(m.totalMaximumMark)}`;const id=escapeHtml(m.id);return`<tr class="border-b border-themed hover:bg-bg-color-200"><td class="p-3 text-body">${formatCustomDate(parseLocalDate(m.dateOfExam))}</td><td class="p-3 text-body">${escapeHtml(m.examType || 'Mains')}</td><td class="p-3 text-body">${escapeHtml(m.testType)}</td><td class="p-3 text-body">${s}</td><td class="p-3 text-body">${o}</td><td class="p-3"><button data-id="${id}" class="edit-mark-btn mr-3" style="color:var(--primary-color-500);"><i class="fas fa-edit"></i></button><button data-id="${id}" class="delete-mark-btn" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td></tr>`}).join('');c.innerHTML=t+'</tbody></table>'}
+            function renderAdminNcertTable(books) { const c=document.getElementById('admin-ncert-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Subject</th><th class="p-2">Book Name</th><th class="p-2">Chapters</th><th class="p-2">Actions</th></tr></thead><tbody>`;t+=(books||[]).map(b=>{const l=b.chapters&&b.chapters.length>0?`<ul class="list-disc list-inside text-sm">${b.chapters.map(c=>`<li>${escapeHtml(c.name)}</li>`).join('')}</ul>`:'N/A';return`<tr class="hover:bg-bg-color-200" data-id="${escapeHtml(b.id)}"><td class="p-2 border-b border-themed text-body">${escapeHtml(b.subject)}</td><td class="p-2 border-b border-themed text-body">${escapeHtml(b.bookName)}</td><td class="p-2 border-b border-themed text-body">${l}</td><td class="p-2 border-b border-themed"><button data-id='${escapeHtml(b.id)}' class="edit-ncert-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id='${escapeHtml(b.id)}' class="delete-ncert-btn" style="color:#ef4444;">Delete</button></td></tr>`}).join('');c.innerHTML=(books||[]).length?t+'</tbody></table>':'<p class="text-body italic p-4 text-center">No NCERT books added.</p>';}
             function renderAdminTargetConsistencySettings() {
                 const input = document.getElementById('weekly-consistency-goal');
                 if (!input) return;
@@ -4293,10 +5139,12 @@
                 const completedThisWeek = completedTargets.filter(target => target.completedAt >= weekStartKey && target.completedAt <= todayKey).length;
                 const progress = Math.min(100, Math.round((completedThisWeek / weeklyGoal) * 100));
                 const recurringTasks = db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || [];
-                const completedDays = new Set(recurringTasks.flatMap(task =>
+                const recurringCompletionDates = recurringTasks.flatMap(task =>
                     (Array.isArray(task.completionDates) ? task.completionDates : [])
                         .filter(date => /^\d{4}-\d{2}-\d{2}$/.test(date) && date <= todayKey)
-                ));
+                );
+                const targetCompletionDates = completedTargets.map(target => target.completedAt);
+                const completedDays = new Set([...recurringCompletionDates, ...targetCompletionDates]);
                 let streak = 0;
                 const streakCursor = new Date(today);
                 if (!completedDays.has(todayKey)) streakCursor.setDate(streakCursor.getDate() - 1);
@@ -4308,7 +5156,9 @@
                     const date = new Date(today);
                     date.setDate(today.getDate() - (6 - index));
                     const key = localDateKey(date);
-                    const count = recurringTasks.filter(task => Array.isArray(task.completionDates) && task.completionDates.includes(key)).length;
+                    const recurringCount = recurringTasks.filter(task => Array.isArray(task.completionDates) && task.completionDates.includes(key)).length;
+                    const targetCount = completedTargets.filter(target => target.completedAt === key).length;
+                    const count = recurringCount + targetCount;
                     const dayStyle = count ? 'background: var(--primary-color-100); color: var(--primary-color-800);' : 'background: var(--bg-color-100); color: var(--text-color-500);';
                     const countStyle = count ? 'background: var(--primary-color-600); color: white;' : 'border: 1px solid var(--border-color);';
                     const numericDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -4410,33 +5260,41 @@
                     
                     let taskDescription;
                     if (t.type === 'ncert') {
-                        taskDescription = `<strong>${t.bookName}:</strong><ul class="list-disc list-inside ml-4">${t.chapters.map(ch => `<li>${ch.text}</li>`).join('')}</ul>`;
+                        taskDescription = `<strong>${t.bookName}:</strong><ul class="list-disc list-inside ml-4">${t.chapters.map(ch => `<li>${escapeHtml(ch.text)}</li>`).join('')}</ul>`;
                     } else {
-                        taskDescription = `<ul class="list-disc list-inside">${t.subTopics.map(st => `<li>${st.text}</li>`).join('')}</ul>`;
+                        taskDescription = `<ul class="list-disc list-inside">${t.subTopics.map(st => `<li>${escapeHtml(st.text)}</li>`).join('')}</ul>`;
                     }
                     
-                    return `<tr class="hover:bg-bg-color-200"><td class="p-2 border-b border-themed text-body">${taskDescription}</td><td class="p-2 border-b border-themed text-body">${s}</td><td class="p-2 border-b border-themed"><span class="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center" style="background-color:${b};color:${x};">${T}</span></td><td class="p-2 border-b border-themed"><button data-id="${t.id}" class="complete-btn text-white px-3 py-1 rounded-lg transition-colors btn-hover" style="background-color: var(--success-color-600);">Complete</button></td></tr>`
+                    return `<tr class="hover:bg-bg-color-200"><td class="p-2 border-b border-themed text-body">${taskDescription}</td><td class="p-2 border-b border-themed text-body">${s}</td><td class="p-2 border-b border-themed"><span class="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center" style="background-color:${b};color:${x};">${T}</span></td><td class="p-2 border-b border-themed"><button data-id="${escapeHtml(t.id)}" class="complete-btn text-white px-3 py-1 rounded-lg transition-colors btn-hover" style="background-color: var(--success-color-600);">Complete</button></td></tr>`
                 }).join('')}</tbody></table>`;
             }
             function renderAdminTargetsTable(targets) { const c=document.getElementById('admin-targets-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Task</th><th class="p-2">Start</th><th class="p-2">End</th><th class="p-2">Status</th><th class="p-2">Actions</th></tr></thead><tbody>${(targets||[]).map(i=>{
                 let taskDesc;
                 if (i.type === 'ncert') {
-                    taskDesc = `<strong>${i.bookName}:</strong><ul class="list-disc list-inside ml-4">${i.chapters.map(ch => `<li>${ch.text}</li>`).join('')}</ul>`;
+                    taskDesc = `<strong>${i.bookName}:</strong><ul class="list-disc list-inside ml-4">${i.chapters.map(ch => `<li>${escapeHtml(ch.text)}</li>`).join('')}</ul>`;
                 } else {
-                    taskDesc = `<ul class="list-disc list-inside">${(i.subTopics || []).map(st => `<li>${st.text}</li>`).join('')}</ul>`;
+                    taskDesc = `<ul class="list-disc list-inside">${(i.subTopics || []).map(st => `<li>${escapeHtml(st.text)}</li>`).join('')}</ul>`;
                 }
-                const d=formatCustomDate(parseLocalDate(i.assignedDate));const e=i.endDate?formatCustomDate(parseLocalDate(i.endDate)):'N/A';return`<tr><td class="p-2 border-b border-themed text-body">${taskDesc}</td><td class="p-2 border-b border-themed text-body">${d}</td><td class="p-2 border-b border-themed text-body">${e}</td><td class="p-2 border-b border-themed text-body">${i.completed?'Completed':'Pending'}</td><td class="p-2 border-b border-themed"><button data-id='${i.id}' class="edit-target-btn mr-3" style="color:var(--primary-color-500);"><i class="fas fa-edit"></i></button><button data-id='${i.id}' class="delete-target-btn" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td></tr>`}).join('')}</tbody></table>`;c.innerHTML=(targets||[]).length?t:'<p class="text-body italic p-4 text-center">No targets found.</p>'}
-            function renderRecurringTasks(tasks){const c=document.getElementById('recurring-tasks-container');if(!c||!tasks)return;c.innerHTML=(tasks||[]).map(t=>`<label class="flex items-center p-3 bg-card rounded-lg border border-themed"><input type="checkbox" class="recurring-task-check h-5 w-5" data-id="${t.id}" ${t.completed?'checked':''} style="accent-color:var(--primary-color-600);"><span class="ml-3 text-body">${t.name}</span></label>`).join('')||'<p class="text-body italic">No recurring tasks.</p>';}
-            function renderPublicNcertList(books) { const c=document.getElementById('ncert-display-container');if(!c)return;c.innerHTML='';const s=[...new Set(books.map(b=>b.subject))];s.forEach(sub=>{const b=books.filter(b=>b.subject===sub);const d=document.createElement('div');d.className="card-block";let h=b.map(b=>{const c=b.chapters&&b.chapters.length>0?b.chapters.every(c=>c.progress.every(p=>p)):(b.progress||[]).every(p=>p);const g=c?`<span class="ml-2 text-xs font-semibold px-2 py-1 rounded-full" style="color:#166534;background-color:#bbf7d0;">Completed</span>`:'';let o;if(b.chapters&&b.chapters.length>0){o=`<ul class="space-y-3 text-body">${b.chapters.map(c=>`<li class="flex items-center justify-between gap-4"><span class="flex-grow min-w-0 break-words">${c.name}</span><div class="flex-shrink-0 flex items-center space-x-2">${Array(7).fill(0).map((_,i)=>`<input type="checkbox" class="ncert-progress-checkbox h-5 w-5 rounded" data-book-id="${b.id}" data-chapter-id="${c.id}" data-index="${i}" ${(c.progress||[])[i]?'checked':''} style="accent-color:var(--primary-color-600);">`).join('')}</div></li>`).join('')}</ul>`}else{o=`<div class="flex items-center justify-between gap-4"><span class="flex-grow min-w-0 break-words">Overall Book Progress</span><div class="flex-shrink-0 flex items-center space-x-2">${Array(5).fill(0).map((_,i)=>`<input type="checkbox" class="ncert-progress-checkbox h-5 w-5 rounded" data-book-id="${b.id}" data-index="${i}" ${(b.progress||[])[i]?'checked':''} style="accent-color:var(--primary-color-600);">`).join('')}</div></div>`}return`<div class="border-t border-themed"><h4 class="accordion-trigger font-semibold text-md text-header p-3 cursor-pointer flex justify-between items-center hover:bg-bg-color-200">${b.bookName}${g}<i class="fas fa-chevron-down transition-transform ml-2 text-muted"></i></h4><div class="accordion-content"><div class="p-3 border-t border-themed">${o}</div></div></div>`}).join('');const a=isAdminLoggedIn?`<button class="reset-ncert-progress-btn text-xs font-semibold" data-subject="${sub}" title="Reset progress for ${sub}" style="color:#ef4444;"><i class="fas fa-sync-alt mr-1"></i>RESET</button>`:'';d.innerHTML=`<h3 class="accordion-trigger font-bold text-lg text-header p-4 flex justify-between items-center cursor-pointer hover:bg-bg-color-200"><span class="flex-1 min-w-0 pr-4">${sub}</span><div class="flex-shrink-0 flex items-center gap-2">${a}<i class="fas fa-chevron-down transition-transform text-muted"></i></div></h3><div class="accordion-content"><div class="border-t border-themed">${h}</div></div>`;c.appendChild(d)})}
+                const d=formatCustomDate(parseLocalDate(i.assignedDate));const e=i.endDate?formatCustomDate(parseLocalDate(i.endDate)):'N/A';return`<tr><td class="p-2 border-b border-themed text-body">${taskDesc}</td><td class="p-2 border-b border-themed text-body">${d}</td><td class="p-2 border-b border-themed text-body">${e}</td><td class="p-2 border-b border-themed text-body">${i.completed?'Completed':'Pending'}</td><td class="p-2 border-b border-themed"><button data-id='${escapeHtml(i.id)}' class="edit-target-btn mr-3" style="color:var(--primary-color-500);"><i class="fas fa-edit"></i></button><button data-id='${escapeHtml(i.id)}' class="delete-target-btn" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td></tr>`}).join('')}</tbody></table>`;c.innerHTML=(targets||[]).length?t:'<p class="text-body italic p-4 text-center">No targets found.</p>'}
+            function renderRecurringTasks(tasks){const c=document.getElementById('recurring-tasks-container');if(!c||!tasks)return;c.innerHTML=(tasks||[]).map(t=>`<label class="flex items-center p-3 bg-card rounded-lg border border-themed"><input type="checkbox" class="recurring-task-check h-5 w-5" data-id="${escapeHtml(t.id)}" ${t.completed?'checked':''} style="accent-color:var(--primary-color-600);"><span class="ml-3 text-body">${escapeHtml(t.name)}</span></label>`).join('')||'<p class="text-body italic">No recurring tasks.</p>';}
+            function renderPublicNcertList(books) { const c=document.getElementById('ncert-display-container');if(!c)return;c.innerHTML='';const s=[...new Set(books.map(b=>b.subject))];s.forEach(sub=>{const b=books.filter(b=>b.subject===sub);const d=document.createElement('div');d.className="card-block";let h=b.map(b=>{const c=b.chapters&&b.chapters.length>0?b.chapters.every(c=>c.progress.every(p=>p)):(b.progress||[]).every(p=>p);const g=c?`<span class="ml-2 text-xs font-semibold px-2 py-1 rounded-full" style="color:#166534;background-color:#bbf7d0;">Completed</span>`:'';let o;if(b.chapters&&b.chapters.length>0){o=`<ul class="space-y-3 text-body">${b.chapters.map(c=>`<li class="flex items-center justify-between gap-4"><span class="flex-grow min-w-0 break-words">${escapeHtml(c.name)}</span><div class="flex-shrink-0 flex items-center space-x-2">${Array(7).fill(0).map((_,i)=>`<input type="checkbox" class="ncert-progress-checkbox h-5 w-5 rounded" data-book-id="${escapeHtml(b.id)}" data-chapter-id="${c.id}" data-index="${i}" ${(c.progress||[])[i]?'checked':''} style="accent-color:var(--primary-color-600);">`).join('')}</div></li>`).join('')}</ul>`}else{o=`<div class="flex items-center justify-between gap-4"><span class="flex-grow min-w-0 break-words">Overall Book Progress</span><div class="flex-shrink-0 flex items-center space-x-2">${Array(5).fill(0).map((_,i)=>`<input type="checkbox" class="ncert-progress-checkbox h-5 w-5 rounded" data-book-id="${escapeHtml(b.id)}" data-index="${i}" ${(b.progress||[])[i]?'checked':''} style="accent-color:var(--primary-color-600);">`).join('')}</div></div>`}return`<div class="border-t border-themed"><h4 class="accordion-trigger font-semibold text-md text-header p-3 cursor-pointer flex justify-between items-center hover:bg-bg-color-200">${escapeHtml(b.bookName)}${g}<i class="fas fa-chevron-down transition-transform ml-2 text-muted"></i></h4><div class="accordion-content"><div class="p-3 border-t border-themed">${o}</div></div></div>`}).join('');const a=isAdminLoggedIn?`<button class="reset-ncert-progress-btn text-xs font-semibold" data-subject="${escapeHtml(sub)}" title="Reset progress for ${escapeHtml(sub)}" style="color:#ef4444;"><i class="fas fa-sync-alt mr-1"></i>RESET</button>`:'';d.innerHTML=`<h3 class="accordion-trigger font-bold text-lg text-header p-4 flex justify-between items-center cursor-pointer hover:bg-bg-color-200"><span class="flex-1 min-w-0 pr-4">${escapeHtml(sub)}</span><div class="flex-shrink-0 flex items-center gap-2">${a}<i class="fas fa-chevron-down transition-transform text-muted"></i></div></h3><div class="accordion-content"><div class="border-t border-themed">${h}</div></div>`;c.appendChild(d)})}
             function renderPublicNotes(notes) {
                 const container = document.getElementById('notes-display-container');
                 if (!container) return;
                 container.innerHTML = '';
-                if (!notes.length) {
-                    container.innerHTML = '<p class="text-body italic text-center">No notes yet. Add one to get started!</p>';
+                const query = (document.getElementById('notes-search')?.value || '').trim().toLocaleLowerCase();
+                const includeArchived = Boolean(document.getElementById('show-archived-notes')?.checked);
+                const visibleNotes = (notes || []).filter(note => {
+                    if (!includeArchived && note.archived) return false;
+                    if (!query) return true;
+                    const searchable = [note.title, note.subject, note.microtopic, (Array.isArray(note.tags) ? note.tags : []).join(' '), new DOMParser().parseFromString(note.content || '', 'text/html').body.textContent].join(' ').toLocaleLowerCase();
+                    return searchable.includes(query);
+                }).sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || String(b.createdDate || '').localeCompare(String(a.createdDate || '')));
+                if (!visibleNotes.length) {
+                    container.innerHTML = `<p class="text-body italic text-center">${query || includeArchived ? 'No notes match this view.' : 'No notes yet. Add one to get started!'}</p>`;
                     return;
                 }
-                const groupedNotes = notes.reduce((groups, note) => {
+                const groupedNotes = visibleNotes.reduce((groups, note) => {
                     const subject = note.subject || 'Uncategorized';
                     const microtopic = note.microtopic || 'Unsorted microtopics';
                     groups[subject] = groups[subject] || {};
@@ -4451,15 +5309,18 @@
                         const cards = groupedNotes[subject][microtopic].map(note => `
                             <article class="card-block overflow-hidden">
                                 <button type="button" class="accordion-trigger w-full p-3 cursor-pointer flex justify-between items-center text-left">
-                                    <span class="font-semibold text-body truncate pr-3">${escapeHtml(note.title)}</span>
+                                    <span class="min-w-0 truncate pr-3 font-semibold text-body">${note.pinned ? '<i class="fas fa-thumbtack mr-1" aria-label="Pinned"></i>' : ''}${escapeHtml(note.title)}${note.archived ? ' <span class="text-xs text-muted">(Archived)</span>' : ''}</span>
                                     <span class="flex items-center gap-2 flex-shrink-0"><span class="text-xs text-muted">${formatCustomDate(parseLocalDate(note.createdDate))}</span><i class="fas fa-chevron-down text-muted"></i></span>
                                 </button>
                                 <div class="accordion-content">
+                                    ${(Array.isArray(note.tags) ? note.tags : []).length ? `<div class="flex flex-wrap gap-1 px-3 pt-3">${note.tags.map(tag => `<span class="rounded-full px-2 py-0.5 text-xs" style="background: var(--primary-color-100); color: var(--primary-color-800);">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
                                     <div class="note-content-display">${sanitizeNoteHtml(note.content)}</div>
-                                    <div class="flex justify-end gap-3 px-3 py-2 border-t border-themed">
-                                        <button class="print-note-btn text-sm" data-id="${note.id}" style="color:var(--primary-color-500);"><i class="fas fa-print mr-1"></i>Print</button>
-                                        <button class="edit-note-btn text-sm" data-id="${note.id}" style="color:var(--primary-color-500);"><i class="fas fa-edit mr-1"></i>Edit</button>
-                                        <button class="delete-note-btn text-sm" data-id="${note.id}" style="color:var(--error-color-500);"><i class="fas fa-trash mr-1"></i>Delete</button>
+                                    <div class="flex flex-wrap justify-end gap-3 px-3 py-2 border-t border-themed">
+                                        <button class="toggle-note-pin-btn text-sm" data-id="${escapeHtml(note.id)}" style="color:var(--primary-color-500);"><i class="fas fa-thumbtack mr-1"></i>${note.pinned ? 'Unpin' : 'Pin'}</button>
+                                        <button class="toggle-note-archive-btn text-sm" data-id="${escapeHtml(note.id)}" style="color:var(--primary-color-500);"><i class="fas fa-box-archive mr-1"></i>${note.archived ? 'Restore' : 'Archive'}</button>
+                                        <button class="print-note-btn text-sm" data-id="${escapeHtml(note.id)}" style="color:var(--primary-color-500);"><i class="fas fa-print mr-1"></i>Print</button>
+                                        <button class="edit-note-btn text-sm" data-id="${escapeHtml(note.id)}" style="color:var(--primary-color-500);"><i class="fas fa-edit mr-1"></i>Edit</button>
+                                        <button class="delete-note-btn text-sm" data-id="${escapeHtml(note.id)}" style="color:var(--error-color-500);"><i class="fas fa-trash mr-1"></i>Delete</button>
                                     </div>
                                 </div>
                             </article>`).join('');
@@ -4739,8 +5600,178 @@
                 }, 250);
             }
 
-            initializeAppOnLoad();
+            window.initializeTrackerApp = initializeAppOnLoad;
+            window.refreshTrackerData = refreshData;
+            window.dispatchEvent(new Event('tracker-app-ready'));
         });
+    </script>
+
+    <!-- Password Reset Modal -->
+    <div id="otpResetModal" role="dialog" aria-modal="true" aria-labelledby="reset-modal-heading" style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; padding:16px;">
+      <section class="reset-card">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <span class="account-eyebrow">ACCOUNT RECOVERY</span>
+            <h3 id="reset-modal-heading" class="mt-1">Reset your password</h3>
+          </div>
+          <button type="button" onclick="closeResetModal()" class="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full text-muted hover:bg-bg-color-200" aria-label="Close password reset">&times;</button>
+        </div>
+        <!-- Stage 1: Request Code -->
+        <div id="resetStageEmail">
+          <p class="mb-4 text-sm text-body">Enter your account email. We’ll send you a 6-digit verification code.</p>
+          <label for="resetUserEmail" class="mb-1 block text-sm font-medium text-body">Email address</label>
+          <input type="email" id="resetUserEmail" autocomplete="email" placeholder="you@example.com" class="mb-4 w-full px-3 py-2" />
+          <button type="button" id="btnSendOtp" onclick="submitSendOtp()" class="reset-primary-button w-full px-4 py-3 font-semibold text-white">Send verification code</button>
+        </div>
+        <!-- Stage 2: Verify Code & Set Password -->
+        <div id="resetStageVerify" style="display:none;">
+          <p class="mb-1 text-sm text-body">Enter the code sent to this address and choose a new password.</p>
+          <p id="reset-account-summary" class="mb-4 text-sm font-semibold"></p>
+          <label for="resetInputOtp" class="mb-1 block text-sm font-medium text-body">6-digit verification code</label>
+          <input type="text" id="resetInputOtp" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" class="mb-4 w-full px-3 py-2 text-center font-semibold tracking-[0.35em]" />
+          <label for="resetInputPassword" class="mb-1 block text-sm font-medium text-body">New password</label>
+          <input type="password" id="resetInputPassword" autocomplete="new-password" placeholder="At least 6 characters" minlength="6" class="mb-4 w-full px-3 py-2" />
+          <button type="button" id="btnConfirmReset" onclick="submitVerifyReset()" class="reset-primary-button w-full px-4 py-3 font-semibold text-white">Update password</button>
+        </div>
+        <p id="resetMessage" class="mt-4 min-h-5 text-center text-sm" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+
+    <script>
+      const RESET_WORKER_URL = "https://tracker-reset.studiz.workers.dev";
+      let resetActiveEmail = "";
+      let currentResetToken = "";
+
+      function openResetModal() {
+        currentResetToken = "";
+        resetActiveEmail = document.getElementById("resetUserEmail").value.trim();
+        document.getElementById("otpResetModal").style.display = "flex";
+        document.getElementById("resetStageEmail").style.display = "block";
+        document.getElementById("resetStageVerify").style.display = "none";
+        document.getElementById("resetMessage").innerText = "";
+      }
+
+      function closeResetModal() {
+        document.getElementById("otpResetModal").style.display = "none";
+      }
+
+      async function submitSendOtp() {
+        const email = document.getElementById("resetUserEmail").value.trim();
+        const msg = document.getElementById("resetMessage");
+        const btn = document.getElementById("btnSendOtp");
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          msg.style.color = "#d93025";
+          msg.innerText = "Enter a valid email address to continue.";
+          return;
+        }
+        resetActiveEmail = email;
+        currentResetToken = "";
+
+        btn.disabled = true;
+        btn.innerText = "Sending code...";
+        msg.style.color = "#5f6368";
+        msg.innerText = "Connecting to server...";
+
+        try {
+          const res = await fetch(`${RESET_WORKER_URL}/api/send-otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.details?.message || data.error || "Could not send the verification code. Please try again.");
+
+          const tokenSources = [data, data.data, data.result, data.reset, data.payload]
+            .filter(value => value && typeof value === "object");
+          currentResetToken = tokenSources
+            .map(value => value.resetToken || value.reset_token || value.token || "")
+            .find(Boolean) || "";
+          if (!currentResetToken) {
+            throw new Error("The reset service did not provide a recovery token. Please try again or contact support.");
+          }
+          resetActiveEmail = email;
+          document.getElementById("reset-account-summary").textContent = email;
+          document.getElementById("resetInputOtp").value = "";
+          document.getElementById("resetInputPassword").value = "";
+          msg.innerText = "";
+          document.getElementById("resetStageEmail").style.display = "none";
+          document.getElementById("resetStageVerify").style.display = "block";
+          document.getElementById("resetInputOtp").focus();
+        } catch (err) {
+          msg.style.color = "#d93025";
+          msg.innerText = err.message;
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Send Verification Code";
+        }
+      }
+
+      async function submitVerifyReset() {
+        const otp = document.getElementById("resetInputOtp").value.trim();
+        const newPassword = document.getElementById("resetInputPassword").value;
+        const msg = document.getElementById("resetMessage");
+        const btn = document.getElementById("btnConfirmReset");
+
+        if (!/^\d{6}$/.test(otp)) {
+          msg.style.color = "#d93025";
+          msg.innerText = "Enter the 6-digit verification code from your email.";
+          return;
+        }
+
+        if (!newPassword || newPassword.length < 6) {
+          msg.style.color = "#d93025";
+          msg.innerText = "Choose a password with at least 6 characters.";
+          return;
+        }
+
+        if (!resetActiveEmail || !currentResetToken) {
+          msg.style.color = "#d93025";
+          msg.innerText = "Your recovery session has expired. Request a new verification code.";
+          currentResetToken = "";
+          document.getElementById("resetStageEmail").style.display = "block";
+          document.getElementById("resetStageVerify").style.display = "none";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Updating...";
+        msg.style.color = "#5f6368";
+        msg.innerText = "Verifying code...";
+
+        try {
+          const res = await fetch(`${RESET_WORKER_URL}/api/verify-reset`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: resetActiveEmail,
+              otp,
+              newPassword,
+              resetToken: currentResetToken,
+            }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.details?.message || data.error || "Could not update your password. Check the code and try again.");
+
+          msg.style.color = "#008767";
+          msg.innerText = "Password reset successful. You can now sign in with your new password.";
+          currentResetToken = "";
+          resetActiveEmail = "";
+          document.getElementById("resetStageVerify").style.display = "none";
+
+          setTimeout(() => {
+            closeResetModal();
+          }, 2500);
+        } catch (err) {
+          msg.style.color = "#d93025";
+          msg.innerText = err.message;
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Update Password";
+        }
+      }
     </script>
 </body>
 </html>
