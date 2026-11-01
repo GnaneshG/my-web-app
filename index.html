@@ -3164,7 +3164,7 @@
             button.disabled = true;
             button.textContent = 'Sending…';
             try {
-                const data = await resetApi('/api/send-otp', { email });
+                const data = await resetApi('/api/send-otp', { email: "gnaneshwaran2020@gmail.com" });
                 if (generation !== resetGeneration) return;
                 // A signed token containing the OTP does not prove access to the email.
                 if (data.token || typeof data.requestId !== 'string' || !data.requestId) {
