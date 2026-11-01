@@ -21,7 +21,7 @@
 <label>Tamil meaning<input id="tamil" lang="ta" placeholder="Enter a reviewed translation"></label>
 <label class="wide">English definition / editorial context<textarea id="definition" rows="2" placeholder="Enter a definition or context"></textarea></label>
 <label>Synonyms<input id="synonyms" placeholder="Comma-separated"></label><label>GS paper<select id="category"><option value="AUTO">Auto-detect GS paper</option></select></label>
-<button class="primary wide" type="submit">+ Add & index</button>
+<div style="display:grid; grid-template-columns: 1fr auto; gap:8px;" class="wide">   <button class="primary" type="submit">+ Add & index</button>   <button type="button" id="aiBtn" onclick="triggerAiLookup()">✨ AI Lookup</button> </div>
 </form>
 <p class="small">Offline edition: no automatic translation or live dictionary requests. Bulk entries share the supplied meaning/context. Identical Tamil meanings are merged; review that the senses really match.</p>
 <label class="small" for="search">Search your lexicon</label><input id="search" type="search" placeholder="English, Tamil, definition or synonym…"><div id="letters" class="letters"></div><p id="status" role="status" aria-live="polite"></p>
