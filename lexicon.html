@@ -307,6 +307,24 @@
       border-left: 3px solid var(--tamil);
     }
 
+    /* Focused search results stay immediately below the search controls. */
+    #searchResults { display: none; margin: 12px 0 18px; }
+    #searchResults.active { display: block; }
+    #searchResults .search-result-heading {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 12px; margin-bottom: 10px; border: 1px solid var(--border);
+      border-left: 3px solid var(--brand); border-radius: var(--radius);
+      background: var(--bg-panel); color: var(--ink-2); font-size: 11px;
+      font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+    }
+    #searchResults .lex-grid-container { grid-template-columns: minmax(0, 1fr); }
+    #searchResults .lex-item { border-color: var(--brand); box-shadow: var(--shadow-sm); }
+    #searchResults .lex-item.open .lex-drawer { display: block; }
+    #searchResults .c-tamil-box { padding: 12px 14px; }
+    #searchResults .c-tamil { font-size: 20px; line-height: 1.8; }
+    #searchResults .c-def { display: block; overflow: visible; -webkit-line-clamp: unset; }
+    #searchResults .ex-trio { display: grid; grid-template-columns: 1fr; gap: 9px; }
+
     .table-box {
       background: transparent;
       border: none;
@@ -594,12 +612,14 @@
       background: var(--bg-panel);
       color: var(--ink-1);
       box-shadow: 0 24px 80px rgba(15, 23, 42, .3);
-      position: absolute;
-      top: 5vh;
+      position: fixed;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      margin: 0 auto;
+      transform: translate(-50%, -50%);
+      margin: 0;
       display: none;
+      z-index: 1000;
+      overflow-y: auto;
     }
     .edit-modal[open] {
       display: block;
@@ -674,9 +694,9 @@
 
     <main class="main-stage" id="mainStageArea">
       <section class="console-card">
-        <div class="input-grid">
-          <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
-          <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
+        <div class="input-grid" style="grid-template-columns: minmax(0, 1.8fr) minmax(190px, 1fr) minmax(110px, auto);">
+          <input type="text" id="wordInput" placeholder="Search previously found words or enter new term(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" list="lookupHistoryList" />
+          <datalist id="lookupHistoryList"></datalist>
           <select id="gsOverride">
             <option value="AUTO">⚡ Auto-Detect GS Paper</option>
             <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
@@ -694,8 +714,12 @@
             <option value="GS-3: Internal Security">GS-3: Internal Security</option>
             <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
           </select>
-          <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
           <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
+        </div>
+
+        <div id="lookupHistoryContainer" style="margin-top: 10px; display: none; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-3);">Previously Found Words:</span>
+          <div id="lookupHistoryChips" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
         </div>
 
         <div class="az-ribbon" id="azBar"></div>
@@ -703,6 +727,7 @@
       </section>
 
       <section class="table-box">
+        <div id="searchResults" aria-live="polite"></div>
         <div id="tableBody"></div>
       </section>
     </main>
@@ -738,9 +763,9 @@
         </label>
         <label>Synonyms<input id="editSynonyms" /></label>
         <label class="wide">Definition<textarea id="editDefinition"></textarea></label>
-        <label class="wide">Newspaper / editorial example<textarea id="editExample1"></textarea></label>
-        <label class="wide">GS mains example<textarea id="editExample2"></textarea></label>
-        <label class="wide">Subject-specific way-forward example<textarea id="editExample3"></textarea></label>
+        <label class="wide">Newspaper context (paste a dated headline or article point)<textarea id="editExample1"></textarea></label>
+        <label class="wide">Mains relevance<textarea id="editExample2"></textarea></label>
+        <label class="wide">PYQ linkage / theme guidance (do not enter an invented question)<textarea id="editExample3"></textarea></label>
       </div>
       <div class="edit-modal-actions">
         <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
@@ -843,9 +868,8 @@
         stage.style.gridColumn = 'auto';
         stage.innerHTML = `
           <section class="console-card">
-            <div class="input-grid">
-              <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
-              <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
+            <div class="input-grid" style="grid-template-columns: minmax(0, 1.8fr) minmax(190px, 1fr) minmax(110px, auto);">
+              <input type="text" id="wordInput" placeholder="Search previously found words or enter new term(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
               <select id="gsOverride">
                 <option value="AUTO">⚡ Auto-Detect GS Paper</option>
                 <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
@@ -863,7 +887,6 @@
                 <option value="GS-3: Internal Security">GS-3: Internal Security</option>
                 <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
               </select>
-              <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
               <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
             </div>
 
@@ -872,13 +895,6 @@
           </section>
 
           <section class="table-box">
-            <div class="col-headers">
-              <div>★</div>
-              <div>English Term(s) [Tamil-Merged]</div>
-              <div>Exact Tamil &amp; Nuances</div>
-              <div>UPSC Mains Definition</div>
-              <div style="text-align:right;">GS Paper</div>
-            </div>
             <div id="tableBody"></div>
           </section>
         `;
@@ -902,6 +918,15 @@
         .trim();
     }
 
+    function isLegacyGeneratedStudyText(value) {
+      const text = String(value || '').toLowerCase();
+      return /^(the hindu|the indian express|pib|economic survey|editorial focus|gs-\d|essay & ethics way forward|gs-\d+\/mains integration)/i.test(text)
+        || text.includes('recent reporting examines')
+        || text.includes('coverage connects')
+        || text.includes('public policy discussion considers')
+        || text.includes('geopolitical commentaries suggest');
+    }
+
     function loadDatabase() {
       const raw = localStorage.getItem('cse_lexicon_v5')
         || localStorage.getItem('cse_lexicon_v4')
@@ -922,7 +947,12 @@
           else if (cat === 'Ethics') cat = 'GS-4: Ethics & Integrity';
           else if (!GS_CATEGORIES.includes(cat)) cat = 'Essay & Editorial Idioms';
 
-          const trio = buildUPSCExamples(item.words || 'Term', item.eng || '', cat, item.ex1 || item.ex || '');
+          const savedNewspaperContext = item.ex1 || item.ex || '';
+          const keepNewspaperContext = savedNewspaperContext && !isLegacyGeneratedStudyText(savedNewspaperContext)
+            ? savedNewspaperContext : '';
+          const trio = buildUPSCExamples(item.words || 'Term', item.eng || '', cat, keepNewspaperContext);
+          const savedMains = item.ex2 && !isLegacyGeneratedStudyText(item.ex2) ? item.ex2 : '';
+          const savedPYQ = item.ex3 && !isLegacyGeneratedStudyText(item.ex3) ? item.ex3 : '';
           return {
             id: item.id || (Date.now() + Math.floor(Math.random() * 10000)),
             words: item.words || 'Unnamed',
@@ -933,9 +963,9 @@
             syn: item.syn || '—',
             cat: cat,
             starred: Boolean(item.starred),
-            ex1: item.ex1 || trio.ex1,
-            ex2: item.ex2 || trio.ex2,
-            ex3: item.ex3 && !item.ex3.includes('Essay & Ethics Way Forward:') ? item.ex3 : trio.ex3
+            ex1: trio.ex1,
+            ex2: savedMains || trio.ex2,
+            ex3: savedPYQ || trio.ex3
           };
         });
       } catch (e) {
@@ -948,6 +978,11 @@
     try {
       brain = JSON.parse(localStorage.getItem('cse_brain_v5') || localStorage.getItem('cse_learned_brain') || '{}') || {};
     } catch (e) { brain = {}; }
+
+    let lookupHistory = [];
+    try {
+      lookupHistory = JSON.parse(localStorage.getItem('cse_lookup_history_v1') || '[]');
+    } catch(e) { lookupHistory = []; }
 
     let selectedGS = 'ALL';
     let selectedLetter = 'ALL';
@@ -966,15 +1001,6 @@
       localStorage.setItem('cse_theme', next);
     }
 
-    function saveAll() {
-      try {
-        localStorage.setItem('cse_lexicon_v5', JSON.stringify(db));
-        localStorage.setItem('cse_brain_v5', JSON.stringify(brain));
-      } catch (e) {
-        console.warn('Storage quota warning:', e);
-      }
-    }
-
     function showToast(msg) {
       const el = document.getElementById('toastBanner');
       if (!el) return;
@@ -984,21 +1010,18 @@
       window._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 4200);
     }
 
-    async function fetchWithTimeout(url, options = {}, timeoutMs = 5500) {
-      const ctrl = new AbortController();
-      const id = setTimeout(() => ctrl.abort(), timeoutMs);
+    function saveAll() {
       try {
-        const res = await fetch(url, { ...options, signal: ctrl.signal });
-        clearTimeout(id);
-        return res;
-      } catch (err) {
-        clearTimeout(id);
-        throw err;
+        localStorage.setItem('cse_lexicon_v5', JSON.stringify(db));
+        localStorage.setItem('cse_brain_v5', JSON.stringify(brain));
+        localStorage.setItem('cse_lookup_history_v1', JSON.stringify(lookupHistory.slice(0, 20)));
+      } catch (e) {
+        console.warn('Storage quota warning:', e);
       }
     }
 
     function learnFromContext(word, definition, synonyms, targetGS) {
-      const stop = new Set(['about','above','after','again','against','among','because','before','being','below','between','both','Could','during','other','ought','shall','should','since','state','their','there','these','thing','those','through','under','until','where','which','while','would','person','action','process','practice','system']);
+      const stop = new Set(['about','above','after','again','against','among','because','before','being','below','between','both','could','during','other','ought','shall','should','since','state','their','there','these','thing','those','through','under','until','where','which','while','would','person','action','process','practice','system']);
       const text = `${word} ${definition} ${synonyms}`.toLowerCase().replace(/[^a-z\s]/g, ' ');
       const tokens = text.split(/\s+/).filter(w => w.length >= 5 && !stop.has(w));
       tokens.slice(0, 7).forEach(tk => {
@@ -1007,367 +1030,279 @@
       saveAll();
     }
 
-    function buildUPSCExamples(word, def, gsPaper, existingEditorial) {
-      const leadWord = String(word).split(',')[0].trim();
-      const matrix = {
-        'GS-1: Society & Culture': {
-          ex1: `The Hindu / Indian Express Sociological Desk: Editorials examine how "${leadWord}" influences kinship structures, family obligations, and cultural continuity across diverse communities in India.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Critically evaluate the socio-cultural significance and implications of "${leadWord}" in modern Indian society, keeping constitutional morality in view.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Anchor the analysis using sociological frameworks, Ministry of Social Justice guidelines, and constitutional principles of gender justice and equality.`
-        },
+    function buildUPSCExamples(word, def, gsPaper, newspaperContext = '') {
+      const themes = {
         'GS-1: History & Heritage': {
-          ex1: `The Hindu Editorial & PIB Heritage Desk: Recent articles on "${leadWord}" highlight findings from Archaeological Survey of India (ASI) reports, emphasizing cultural evolution and heritage preservation.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Critically evaluate "${leadWord}" in the context of socio-cultural history, anthropological studies, and historical continuity in India.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Support arguments with archaeological reports, Ministry of Culture documentation, and standard historical texts.`
+          relevance: 'Use the term to explain historical processes, continuity and change, heritage, or the social consequences of historical developments.',
+          pyq: 'Link it with PYQs on modern Indian history, cultural heritage, historical interpretation and the causes or consequences of major developments.'
         },
         'GS-1: Geography & Society': {
-          ex1: `Indian Express & Census GIS Analysis: Regional demographic reports illustrate how "${leadWord}" affects population distribution, spatial mobility, and regional development.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Examine the socio-spatial dimensions of "${leadWord}" concerning urbanization, regional disparities, and demographic trends.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Integrate Census demographic data, NITI Aayog regional indices, and geographic distribution mapping into the discussion.`
+          relevance: 'Use it to analyse spatial patterns, human-environment interaction, population processes, regional disparities and their social effects.',
+          pyq: 'Link it with PYQs on population, urbanisation, migration, regional development, resources and human geography.'
         },
-        'GS-2: Social Justice': {
-          ex1: `The Hindu Social Sector Desk: Welfare policy commentaries frequently evaluate "${leadWord}" against National Family Health Survey (NFHS) data and social inclusion metrics.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Assess the efficacy of institutional mechanisms, statutory safeguards, and policy interventions in addressing "${leadWord}" for vulnerable groups.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Reference constitutional safeguards, National Human Rights Commission advisories, and targeted welfare ministry guidelines.`
-        },
-        'GS-3: Agriculture': {
-          ex1: `PIB & The Hindu Agriculture Desk: Agrarian editorials connect "${leadWord}" directly to PM-KISAN updates, crop diversification initiatives, and farmer income security.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Analyse the structural constraints of "${leadWord}" across irrigation, credit availability, institutional markets, and pricing policies.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Utilize Economic Survey recommendations, PM-KISAN framework evaluations, and climate-resilient agricultural blueprints.`
-        },
-        'GS-3: Disaster Management': {
-          ex1: `The Hindu & NDMA Bulletins: Post-disaster reviews highlight how proactive mitigation, early warning systems, and community preparedness minimize losses from "${leadWord}".`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Discuss vulnerability mapping and institutional response strategies for "${leadWord}" under NDMA guidelines.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Apply Sendai Framework principles, local early warning systems, and post-disaster audit reports.`
-        },
-        'GS-3: Internal Security': {
-          ex1: `Indian Express Security Bureau: Strategic analyses link "${leadWord}" with border security updates, Ministry of Home Affairs annual reports, and cyber infrastructure defenses.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Evaluate multidimensional security threats posed by "${leadWord}" alongside intelligence coordination and legal frameworks.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Incorporate Second ARC recommendations, Ministry of Home Affairs guidelines, and technology-driven surveillance safeguards.`
+        'GS-1: Society & Culture': {
+          relevance: 'Use it to explain social structure, diversity, inequality, social change, inclusion and the interaction between institutions and communities.',
+          pyq: 'Link it with PYQs on Indian society, diversity, women, population, poverty, urbanisation, communalism and social empowerment.'
         },
         'GS-2: Polity & Governance': {
-          ex1: `The Hindu & Indian Express Legal Desk: Constitutional commentators frequently scrutinize executive actions regarding "${leadWord}" for adherence to statutory balance and the rule of law.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Critically assess the role of statutory checks, federal principles, and judicial review in governing "${leadWord}" in India.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Cite landmark Supreme Court rulings, Law Commission reports, and administrative reform commission recommendations.`
+          relevance: 'Use it to assess constitutional principles, institutional roles, accountability, transparency, public service delivery and governance outcomes.',
+          pyq: 'Link it with PYQs on Parliament, the Executive, Judiciary, federalism, constitutional bodies, transparency and accountability.'
+        },
+        'GS-2: Social Justice': {
+          relevance: 'Use it to assess access, equity, inclusion, welfare delivery and the outcomes of policies for vulnerable sections.',
+          pyq: 'Link it with PYQs on health, education, poverty, hunger, vulnerable sections, welfare schemes and human resource development.'
         },
         'GS-2: International Relations': {
-          ex1: `The Hindu Global Affairs & MEA Briefings: Geopolitical columns discuss how "${leadWord}" influences bilateral trade pacts, multilateral summits, and regional security architectures.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Examine the strategic calculus of "${leadWord}" in shaping India's diplomatic posture, economic corridors, and foreign policy autonomy.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Incorporate MEA briefings, parliamentary standing committee reports on external affairs, and strategic realism principles.`
+          relevance: 'Use it to analyse India’s bilateral and multilateral relations, strategic autonomy, regional interests and global institutions.',
+          pyq: 'Link it with PYQs on neighbourhood relations, major powers, diaspora, international institutions and India’s foreign policy.'
         },
         'GS-3: Economy & Dev': {
-          ex1: `RBI Bulletin & The Hindu Economy Desk: Macroeconomic commentaries underscore that addressing structural impediments around "${leadWord}" is vital for capital formation and inflation targeting.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Evaluate the macroeconomic impact of "${leadWord}" on inflation, fiscal deficit, employment elasticity, and inclusive growth.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Utilize RBI monetary policy reports, NITI Aayog strategy documents, and Economic Survey fiscal data.`
+          relevance: 'Use it to explain macroeconomic effects, resource mobilisation, growth, employment, inclusion, public finance and structural reforms.',
+          pyq: 'Link it with PYQs on growth, inclusive development, budgeting, investment, employment, inflation, banking and external-sector issues.'
+        },
+        'GS-3: Agriculture': {
+          relevance: 'Use it to discuss farm productivity, sustainability, markets, supply chains, irrigation, technology and farmers’ incomes.',
+          pyq: 'Link it with PYQs on cropping patterns, irrigation, MSP, PDS, food processing, agricultural marketing and land reforms.'
         },
         'GS-3: Environment & Ecology': {
-          ex1: `The Hindu Environment Desk & IPCC Reports: Environmental reports warn that unmitigated acceleration of "${leadWord}" threatens fragile biodiversity hotspots and climate commitments.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Critically analyze environmental impact assessments and statutory frameworks governing "${leadWord}" under sustainable development goals.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Reference IPCC guidelines, Ministry of Environment, Forest and Climate Change notifications, and judicial pronouncements on environmental jurisprudence.`
+          relevance: 'Use it to assess ecological impacts, conservation, climate risks, environmental governance and sustainable development.',
+          pyq: 'Link it with PYQs on biodiversity, pollution, environmental impact assessment, climate change, conservation and protected areas.'
+        },
+        'GS-3: Disaster Management': {
+          relevance: 'Use it across disaster risk reduction, preparedness, early warning, response, recovery and resilient infrastructure.',
+          pyq: 'Link it with PYQs on vulnerability, disaster preparedness, mitigation, institutional coordination and community-based disaster management.'
         },
         'GS-3: Science & Tech': {
-          ex1: `Indian Express Technology Review & PIB Science Desk: Editorial evaluations focus on balancing indigenous R&D, ISRO/DRDO breakthroughs, and data regulation regarding "${leadWord}".`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Assess the techno-legal challenges of "${leadWord}" regarding national cybersecurity, intellectual property rights, and R&D funding.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Cite Parliamentary Standing Committee reports on science, DST policy frameworks, and national technology mission guidelines.`
+          relevance: 'Use it to explain the application, opportunities, risks, regulation and societal implications of science and technology.',
+          pyq: 'Link it with PYQs on emerging technologies, IT, biotechnology, space, robotics, intellectual property and technology in everyday life.'
+        },
+        'GS-3: Internal Security': {
+          relevance: 'Use it to examine security threats, institutional capacity, technology, border management and the balance between security and rights.',
+          pyq: 'Link it with PYQs on cyber security, terrorism, border management, organised crime, extremism and security agencies.'
         },
         'GS-4: Ethics & Integrity': {
-          ex1: `The Hindu Ethics & Governance Columns: Editorial debates frequently invoke "${leadWord}" to critique administrative apathy and emphasize public service probity and transparency.`,
-          ex2: `UPSC-CSE PYQ Mains Framework: Apply "${leadWord}" to resolve ethical dilemmas in public administration, balancing utilitarian outcomes with deontological duties.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Utilize Second ARC reports on ethics in governance, foundational civil service values, and case study applications.`
+          relevance: 'Use it to explain ethical principles, values in public service, impartiality, accountability and decision-making in administration.',
+          pyq: 'Link it with PYQs and case studies on integrity, objectivity, empathy, probity, conflict of interest and ethical governance.'
         },
         'Essay & Editorial Idioms': {
-          ex1: `The Hindu / Indian Express Lead Editorial: Lead opinion pieces invoke "${leadWord}" to contrast short-term political expediency with long-term structural statecraft.`,
-          ex2: `UPSC-CSE PYQ Mains & Essay Integration: Framing socio-economic challenges through "${leadWord}" elevates answer depth and aligns with UPSC evaluation rubrics.`,
-          ex3: `UPSC PYQ Trend & Government Sources: Synthesize constitutional morality, administrative sagacity, and multi-stakeholder collaborative governance as the way forward.`
+          relevance: 'Use it as a precise concept or expression to strengthen an essay argument, provided it fits the context and is explained clearly.',
+          pyq: 'Connect it to relevant essay themes and GS syllabus areas. Check the official UPSC question papers before treating any question as a PYQ.'
         }
       };
-
-      const chosen = matrix[gsPaper] || matrix['Essay & Editorial Idioms'];
+      const theme = themes[gsPaper] || themes['Essay & Editorial Idioms'];
+      const suppliedContext = String(newspaperContext || '').trim();
       return {
-        ex1: existingEditorial || chosen.ex1,
-        ex2: chosen.ex2,
-        ex3: chosen.ex3
+        ex1: suppliedContext || 'No newspaper-specific context has been added for this term. Use Edit to paste a dated headline, article point or editorial extract; this field will not invent a newspaper reference.',
+        ex2: `${word}: ${theme.relevance}`,
+        ex3: `PYQ syllabus linkage (theme guidance, not a verbatim UPSC question): ${theme.pyq}`
       };
     }
 
     function classifyUPSC(word, def, syns) {
       const text = `${word} ${def} ${syns}`.toLowerCase();
       const tokens = text.replace(/[^a-z\s]/g, ' ').split(/\s+/);
-      const scores = {
-        'GS-1: Society & Culture': 0,
-        'GS-1: History & Heritage': 0,
-        'GS-1: Geography & Society': 0,
-        'GS-2: Polity & Governance': 0,
-        'GS-2: Social Justice': 0,
-        'GS-2: International Relations': 0,
-        'GS-3: Economy & Dev': 0,
-        'GS-3: Agriculture': 0,
-        'GS-3: Environment & Ecology': 0,
-        'GS-3: Disaster Management': 0,
-        'GS-3: Science & Tech': 0,
-        'GS-3: Internal Security': 0,
-        'GS-4: Ethics & Integrity': 0
-      };
+      const scores = {};
 
       tokens.forEach(tk => {
         if (brain[tk]) {
-          scores[brain[tk]] = (scores[brain[tk]] || 0) + 6;
+          scores[brain[tk]] = (scores[brain[tk]] || 0) + 3;
         }
       });
 
-      // Strict UPSC CSE Official Syllabus Stems & Patterns
       const rules = {
-        'GS-1: Society & Culture': /religion|ritual|bond|belief|caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial|untouchability|honor killing|dowry|khap|matrilineal|patriarchal|interfaith|intercaste|cosmopolitan|social change|women movements|population dynamics|poverty and developmental issues|salient features of indian society|tradition|custom|dogma|sect|worship|ritualistic|faith/,
-        'GS-1: History & Heritage': /archaeology|heritage|civilization|dynasty|empire|inscription|monument|freedom struggle|national movement|colonial|renaissance|reform movement|medieval|ancient india|historical|temple|sculpture|vedic|mauryan|gupta|mughal|sufi|bhakti|chronicle|manuscript|dynastic|archival|silt|paleolithic|neolithic|chronicles|art and culture|architecture|mural|painting|handicraft|numismatics|epigraphy/,
-        'GS-1: Geography & Society': /geography|monsoon|river basin|plateau|climate zone|population|urbanization|migration|demographic|settlement|resource distribution|regional disparity|topography|cyclone|seismic|watershed|glaciated|alluvial|cartography|tectonic|estuary|aquifer|humid|arid|savanna|taiga|tundra|geomorphology|volcanism|tsunami|continental drift|isostasy|ocean currents/,
-        'GS-2: Polity & Governance': /constitution|parliament|judiciary|supreme court|fundamental rights|directive principles|federal|ordinance|legislation|statute|repeal|abrogate|quash|mandate|tribunal|amendment|autonomy|bureaucracy|devolution|panchayat|censure|prerogative|franchise|grievance|ombudsman|accountability|executive|coalition|sovereignty|secular|bicameral|promulgate|jurisdiction|litigation|impunity|despotism|oligarchy|plebiscite|referendum|filibuster|gerrymander|adjudicate|impeachment|collegium|dissolution|whip|quorum|habeas corpus|certiorari|mandamus|quo warranto|prohibition|governance|transparency|citizen charter|e-governance|pressure group|representation of people act|separation of powers|basic structure/,
-        'GS-2: Social Justice': /social justice|welfare|inclusion|inclusive|poverty|healthcare|education|nutrition|vulnerable|marginalized|gender|sanitation|human development|inequality|empowerment|differently abled|malnutrition|stunting|wasting|scholarship|tribal welfare|affirmative action|reservation|manual scavenging|elderly care|orphan|outreach|equity|parity|schemes for vulnerable sections|hunger|human resource development|pds|ngo|shg|self help group/,
-        'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state|consulate|ambassador|extraterritorial|maritime security|free trade agreement|unclos|interpol|fatf|brics|quad|neighbourhood first|act east|indian diaspora|international groupings|agencies and fora/,
-        'GS-3: Economy & Dev': /fiscal|monetary|inflation|stagflation|deflation|liquidity|tariff|subsidy|revenue|deficit|gdp|macroeconomic|austerity|recession|capital|credit|bond|equity|trade|supply chain|monopoly|cartel|amortization|insolvency|conglomerate|remittance|fdi|disinvestment|protectionism|arbitrage|collateral|devaluation|exchequer|agrarian|msme|yield|solvency|moratorium|duopoly|windfall|securitization|repo rate|reverse repo|fiscal drag|crowding out|stagflation|debenture|tariff wall|npa|bad bank|liquidity trap|universal basic income|inclusive growth|budgeting|land reforms|industrial policy|infrastructure|investment models/,
-        'GS-3: Agriculture': /agriculture|agrarian|farmer|cropping|irrigation|agricultural|food security|food processing|minimum support price|crop insurance|soil health|fertilizer|farm income|horticulture|millet|monoculture|e-nam|apmc|buffer stock|warehousing|pds|public distribution|zero budget natural farming|organic farming|contract farming|agroforestry|sericulture|floriculture|pesticide|fertigation|animal husbandry|e-technology in aiding farmers/,
-        'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere|biosphere|sanctuary|national park|ramsar|red data|coral reef|ocean acidification|bioaccumulation|biomagnification|carbon credit|net zero|paris agreement|cop|cites|unccd|unep|environmental impact assessment|eia/,
-        'GS-3: Disaster Management': /disaster|preparedness|early warning|earthquake|flood|cyclone|drought|landslide|resilience|mitigation|recovery|national disaster|ndma|sdma|ndrf|hazard|vulnerability|emergency response|cloudburst|tsunami|avalanche|forest fire|heatwave|cold wave|epidemic|pandemic|mock drill|mitigation fund/,
-        'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency|supercomputing|isro|drdo|5g|6g|iot|augmented reality|virtual reality|gene editing|mrna|stem cell|nanoparticle|photonics|gravitational wave|neutrino|space technology|it and computers|awareness in IT/,
-        'GS-3: Internal Security': /internal security|terrorism|insurgency|left wing extremism|cybercrime|border security|radicalization|money laundering|organized crime|coastal security|smuggling|surveillance|encryption|naxal|maoist|drug trafficking|hawala|human trafficking|counter terrorism|interpol|nia|raw|ib|cbi|proxy war|radicalisation|dark web|ransomware|phishing|deradicalisation|security challenges|linkages between organized crime and terrorism/,
-        'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic|emotional intelligence|code of conduct|code of ethics|whistleblower|conflict of interest|corporate governance|dedication to public service|public trust|persuasion|aptitude|moral turpitude|conscientiousness|ethics and human interface|attitude|aptitude and foundational values/
+        'GS-2: Polity & Governance': /constitution|parliament|judiciary|supreme court|fundamental rights|directive principles|federal|ordinance|legislation|statute|repeal|abrogate|quash|mandate|tribunal|amendment|autonomy|bureaucracy|devolution|panchayat|censure|prerogative|franchise|grievance|ombudsman|accountability|executive|coalition|sovereignty|secular|bicameral|promulgate|jurisdiction|litigation|impunity|despotism|oligarchy|plebiscite|referendum|filibuster|gerrymander|adjudicate/,
+        'GS-3: Economy & Dev': /fiscal|monetary|inflation|stagflation|deflation|liquidity|tariff|subsidy|revenue|deficit|gdp|macroeconomic|austerity|recession|capital|credit|bond|equity|trade|supply chain|monopoly|cartel|amortization|insolvency|conglomerate|remittance|fdi|disinvestment|protectionism|arbitrage|collateral|devaluation|exchequer|agrarian|msme|yield|solvency|moratorium|duopoly|windfall|securitization/,
+        'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state/,
+        'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere/,
+        'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency/,
+        'GS-1: History & Heritage': /archaeology|heritage|civilization|dynasty|empire|inscription|monument|freedom struggle|national movement|colonial|renaissance|reform movement|medieval|ancient india|historical/,
+        'GS-1: Geography & Society': /geography|monsoon|river basin|plateau|climate zone|population|urbanization|migration|demographic|settlement|resource distribution|regional disparity/,
+        'GS-2: Social Justice': /social justice|welfare|inclusion|inclusive|poverty|healthcare|education|nutrition|vulnerable|marginalized|gender|sanitation|human development|inequality|empowerment/,
+        'GS-3: Agriculture': /agriculture|agrarian|farmer|cropping|irrigation|agricultural|food security|food processing|minimum support price|crop insurance|soil health|fertilizer|farm income|horticulture|millet/,
+        'GS-3: Disaster Management': /disaster|preparedness|early warning|earthquake|flood|cyclone|drought|landslide|resilience|mitigation|recovery|national disaster/,
+        'GS-3: Internal Security': /internal security|terrorism|insurgency|left wing extremism|cybercrime|border security|radicalization|money laundering|organized crime|coastal security|smuggling|surveillance|encryption|naxal/,
+        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial|ritual|religion|society/,
+        'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic/
       };
 
       for (const [gs, regex] of Object.entries(rules)) {
         const m = text.match(new RegExp(regex.source, 'g'));
-        if (m) scores[gs] = (scores[gs] || 0) + (m.length * 4);
+        if (m) scores[gs] = (scores[gs] || 0) + m.length;
       }
 
       let best = 'Essay & Editorial Idioms';
-      let max = 1;
+      let max = 0;
       for (const [gs, sc] of Object.entries(scores)) {
         if (sc > max) { max = sc; best = gs; }
       }
       return best;
     }
 
-    async function processSingleTerm(rawTerm, customNote, overrideGS) {
-      const cleanWord = rawTerm.trim();
-      if (!cleanWord) return null;
+    function updateLookupHistoryUI() {
+      const container = document.getElementById('lookupHistoryContainer');
+      const chips = document.getElementById('lookupHistoryChips');
+      const datalist = document.getElementById('lookupHistoryList');
+      if (!container || !chips) return;
 
-      let exactTamil = '';
-      let nuances = [];
-      let engDef = customNote;
-      let pos = '';
-      let syns = [];
-      let realEx = '';
-
-      try {
-        const gtUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&dt=bd&dt=md&dt=ex&dt=ss&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(cleanWord)}`;
-        const gtRes = await fetchWithTimeout(gtUrl, {}, 5000);
-        if (gtRes.ok) {
-          const gt = await gtRes.json();
-          if (!exactTamil && gt[0]?.[0]?.[0]) {
-            exactTamil = normalizeTamil(gt[0][0][0]);
-          }
-          if (!nuances.length && gt[1]?.[0]?.[1]) {
-            nuances = gt[1][0][1].slice(0, 4).map(normalizeTamil);
-          }
-          if (!engDef && gt[12]?.[0]?.[1]?.[0]?.[0]) {
-            engDef = gt[12][0][1][0][0];
-          }
-          if (!pos && gt[12]?.[0]?.[0]) {
-            pos = gt[12][0][0];
-          }
-          if (!syns.length) {
-            if (gt[11]?.[0]?.[1]?.[0]?.[0]) syns = gt[11][0][1][0][0].slice(0, 6);
-            else if (gt[1]?.[0]?.[2]) syns = gt[1][0][2].flatMap(x => x[1] || []).slice(0, 6);
-          }
-          if (!realEx && gt[13]?.[0]?.[0]?.[0]) {
-            realEx = gt[13][0][0][0].replace(/<\/?b>/g, '');
-          }
-        }
-      } catch (e) {}
-
-      if (!engDef || syns.length < 2 || !realEx) {
-        try {
-          const dRes = await fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`, {}, 4500);
-          if (dRes.ok) {
-            const dJson = await dRes.json();
-            const m = dJson[0]?.meanings?.[0];
-            if (m) {
-              if (!pos) pos = m.partOfSpeech || '';
-              if (!engDef && m.definitions?.[0]?.definition) engDef = m.definitions[0].definition;
-              if (!realEx) {
-                const exItem = m.definitions?.find(d => d.example);
-                if (exItem) realEx = exItem.example;
-              }
-              const extraSyns = [...(m.synonyms || []), ...(m.definitions?.[0]?.synonyms || [])];
-              syns = [...new Set([...syns, ...extraSyns])].slice(0, 6);
-            }
-          }
-        } catch (e) {}
-      }
-
-      const formattedWord = cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1);
-
-      for (let item of db) {
-        const existingList = item.words.split(',').map(w => w.trim().toLowerCase());
-        if (existingList.includes(cleanWord.toLowerCase())) {
-          return { status: 'EXISTS', item };
-        }
-        if (exactTamil && exactTamil !== '—' && exactTamil !== '-' && normalizeTamil(item.tamil) === exactTamil) {
-          const mergedWords = [...new Set([...item.words.split(',').map(w => w.trim()), formattedWord])]
-            .sort((a, b) => a.localeCompare(b));
-          item.words = mergedWords.join(', ');
-          if (customNote && !item.eng.includes(customNote)) {
-            item.eng += ` | ${customNote}`;
-          }
-          if (syns.length) {
-            const mergedSyns = [...new Set([...item.syn.split(',').map(s => s.trim()).filter(s => s && s !== '—'), ...syns])].slice(0, 8);
-            item.syn = mergedSyns.join(', ') || '—';
-          }
-          saveAll();
-          return { status: 'MERGED', item };
-        }
-      }
-
-      const detectedGS = (overrideGS && overrideGS !== 'AUTO')
-        ? overrideGS
-        : classifyUPSC(cleanWord, engDef, syns.join(' '));
-
-      learnFromContext(cleanWord, engDef, syns.join(' '), detectedGS);
-
-      const finalDef = engDef || `An authoritative concept and critical editorial parameter in UPSC-CSE syllabus concerning ${detectedGS.toLowerCase().replace(/gs-\d+:\s*/, '')}, representing core administrative, socio-economic, or governance mechanisms.`;
-      const examples = buildUPSCExamples(formattedWord, finalDef, detectedGS, realEx);
-
-      const newItem = {
-        id: Date.now() + Math.floor(Math.random() * 10000),
-        words: formattedWord,
-        pos: pos || 'term',
-        tamil: exactTamil || '—',
-        nuance: nuances.filter(n => n !== exactTamil).join(', '),
-        eng: finalDef,
-        syn: syns.join(', ') || '—',
-        cat: detectedGS,
-        starred: false,
-        ex1: examples.ex1,
-        ex2: examples.ex2,
-        ex3: examples.ex3
-      };
-
-      db.push(newItem);
-      saveAll();
-      return { status: 'ADDED', item: newItem };
-    }
-
-    async function triggerAiLookup() {
-      const wInput = document.getElementById('wordInput');
-      const word = wInput.value.trim().split(',')[0].trim();
-      if (!word) {
-        showToast('Enter an English term before starting a lookup.');
-        wInput.focus();
+      if (!lookupHistory.length) {
+        container.style.display = 'none';
         return;
       }
 
-      const aiBtn = document.getElementById('aiBtn');
-      const noteInput = document.getElementById('noteInput');
-      const gsSelect = document.getElementById('gsOverride');
-      aiBtn.disabled = true;
-      aiBtn.textContent = 'AI Analyzing...';
-      showToast(`Querying Gemini AI & UPSC Syllabus Concordance for "${word}"...`);
+      container.style.display = 'flex';
+      chips.innerHTML = lookupHistory.map(w => `
+        <button type="button" class="brain-chip" onclick="document.getElementById('wordInput').value='${esc(w)}'; render();" title="Click to filter by previously found word" style="cursor:pointer; background:var(--bg-app);">${esc(w)}</button>
+      `).join('');
 
-      // Real Gemini API Integration for 100% accurate UPSC segregation and definition
-      try {
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-        const systemPrompt = "You are a top-tier UPSC Civil Services Examination expert and editorial linguist. Analyze the given term and return a JSON object with keys: category (exact match from: 'GS-1: Society & Culture', 'GS-1: History & Heritage', 'GS-1: Geography & Society', 'GS-2: Polity & Governance', 'GS-2: Social Justice', 'GS-2: International Relations', 'GS-3: Economy & Dev', 'GS-3: Agriculture', 'GS-3: Environment & Ecology', 'GS-3: Disaster Management', 'GS-3: Science & Tech', 'GS-3: Internal Security', 'GS-4: Ethics & Integrity', 'Essay & Editorial Idioms'), tamil (exact Tamil translation), definition (concise UPSC-level definition), synonyms (comma-separated synonyms), editorialExample (The Hindu/Indian Express style context), mainsExample (UPSC PYQ mains framework), wayForward (official source & PYQ trend way forward).";
-        
-        const payload = {
-          contents: [{ parts: [{ text: `Analyze this term for UPSC CSE: "${word}"` }] }],
-          systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: {
-            responseMimeType: "application/json"
-          }
-        };
-
-        const res = await fetchWithTimeout(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }, 8000);
-
-        if (res.ok) {
-          const result = await res.json();
-          const candidate = result.candidates?.[0];
-          if (candidate && candidate.content?.parts?.[0]?.text) {
-            const parsed = JSON.parse(candidate.content.parts[0].text);
-            if (parsed.definition) noteInput.value = parsed.definition;
-            if (parsed.tamil) wInput.dataset.autoTamil = parsed.tamil;
-            if (gsSelect.value === 'AUTO' && GS_CATEGORIES.includes(parsed.category)) {
-              gsSelect.value = parsed.category;
-            }
-            if (parsed.editorialExample && parsed.mainsExample) {
-              wInput.dataset.aiEx1 = parsed.editorialExample;
-              wInput.dataset.aiEx2 = parsed.mainsExample;
-              wInput.dataset.aiEx3 = parsed.wayForward || '';
-              wInput.dataset.aiSyn = parsed.synonyms || '';
-            }
-            showToast(`✨ Gemini AI successfully analyzed "${word}" with 100% UPSC syllabus accuracy!`);
-            return;
-          }
-        }
-      } catch (err) {
-        // Fallback to secure worker or direct translation if API rate limit or key requires fallback
+      if (datalist) {
+        datalist.innerHTML = lookupHistory.map(w => `<option value="${esc(w)}">`).join('');
       }
+    }
 
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       try {
-        const res2 = await fetchWithTimeout(SECURE_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ word, category: gsSelect.value === 'AUTO' ? null : gsSelect.value })
-        }, 5000);
-
-        if (res2.ok) {
-          const rawText = await res2.text();
-          let data = JSON.parse(rawText);
-          let payload = data.result;
-          if (typeof payload === 'string') {
-            payload = JSON.parse(payload.replace(/```json/g, '').replace(/```/g, '').trim());
-          }
-          if (payload.definition) noteInput.value = payload.definition;
-          if (payload.tamil) wInput.dataset.autoTamil = payload.tamil;
-          if (gsSelect.value === 'AUTO' && GS_CATEGORIES.includes(payload.category)) {
-            gsSelect.value = payload.category;
-          }
-          showToast(`✨ AI Lookup successful for "${word}"!`);
-          return;
-        }
-      } catch (e2) {}
-
-      // Final fallback to high-speed translation & dictionary
-      try {
-        const [transRes, dictRes] = await Promise.allSettled([
-          fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(word)}`, {}, 5000),
-          fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {}, 5000)
-        ]);
-
-        let tVal = '';
-        let dVal = '';
-        if (transRes.status === 'fulfilled' && transRes.value.ok) {
-          const trJson = await transRes.value.json();
-          tVal = normalizeTamil(trJson?.[0]?.[0]?.[0] || '');
-        }
-        if (dictRes.status === 'fulfilled' && dictRes.value.ok) {
-          const dJson = await dictRes.value.json();
-          dVal = dJson?.[0]?.meanings?.[0]?.definitions?.[0]?.definition || '';
-        }
-
-        if (dVal) noteInput.value = dVal;
-        if (tVal) wInput.dataset.autoTamil = tVal;
-        if (gsSelect.value === 'AUTO') gsSelect.value = classifyUPSC(word, dVal, '');
-
-        showToast(`✨ Successfully fetched definition and Tamil meaning for "${word}".`);
-      } catch (e3) {
-        showToast('Lookup completed. You can adjust the definition and click Analyze & Index.');
+        return await fetch(url, { ...options, signal: controller.signal });
       } finally {
-        aiBtn.disabled = false;
-        aiBtn.textContent = '✨ AI Lookup';
+        clearTimeout(timeoutId);
       }
+    }
+
+    async function processSingleTerm(rawTerm, customNote, overrideGS) {
+      const cleanWord = String(rawTerm || '').trim().replace(/\s+/g, ' ');
+      if (!cleanWord) return null;
+
+      let dictionaryEntries = [];
+      let dictionaryResponse = null;
+
+      // Use a real English dictionary entry. Never invent a definition.
+      try {
+        dictionaryResponse = await fetchWithTimeout(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`,
+          {}, 7000
+        );
+      } catch (error) {
+        showToast('Dictionary lookup failed. Please check your connection and try again.');
+        return { status: 'ERROR' };
+      }
+
+      if (!dictionaryResponse.ok) {
+        // Suggest likely spellings; do not silently replace the user's word.
+        let suggestions = [];
+        try {
+          const suggestionResponse = await fetchWithTimeout(
+            `https://api.datamuse.com/words?sp=${encodeURIComponent(cleanWord)}&max=5`,
+            {}, 5000
+          );
+          if (suggestionResponse.ok) {
+            const data = await suggestionResponse.json();
+            suggestions = Array.isArray(data)
+              ? data.map(item => item.word).filter(Boolean).slice(0, 5)
+              : [];
+          }
+        } catch (error) {}
+
+        showToast(suggestions.length
+          ? `“${cleanWord}” was not found. Did you mean: ${suggestions.join(', ')}?`
+          : `“${cleanWord}” was not found in the English dictionary. Check the spelling.`);
+        return { status: 'NOT_FOUND', suggestions };
+      }
+
+      try {
+        const data = await dictionaryResponse.json();
+        if (Array.isArray(data)) dictionaryEntries = data;
+      } catch (error) {
+        showToast('The dictionary returned an unreadable result. No entry was added.');
+        return { status: 'ERROR' };
+      }
+
+      if (!dictionaryEntries.length) {
+        showToast('No dictionary definition is available for this term. No entry was added.');
+        return { status: 'NOT_FOUND' };
+      }
+
+      const dictionaryWord = dictionaryEntries[0].word || cleanWord;
+      const definitions = [];
+      const partsOfSpeech = [];
+      const synonyms = [];
+      let realExample = '';
+
+      dictionaryEntries.forEach(entry => {
+        (entry.meanings || []).forEach(meaning => {
+          if (meaning.partOfSpeech && !partsOfSpeech.includes(meaning.partOfSpeech)) {
+            partsOfSpeech.push(meaning.partOfSpeech);
+          }
+          (meaning.definitions || []).forEach(definition => {
+            if (definition.definition && !definitions.includes(definition.definition)) {
+              definitions.push(definition.definition);
+            }
+            if (!realExample && definition.example) realExample = definition.example;
+            [...(meaning.synonyms || []), ...(definition.synonyms || [])].forEach(word => {
+              if (word && !synonyms.includes(word)) synonyms.push(word);
+            });
+          });
+        });
+      });
+
+      if (!definitions.length) {
+        showToast(`No definition is available for “${dictionaryWord}”. No entry was added.`);
+        return { status: 'NO_DEFINITION' };
+      }
+
+      // Translate the dictionary headword. This is machine translation, not a
+      // certified dictionary equivalent; if unavailable, do not fabricate one.
+      let tamilMeaning = '';
+      try {
+        const translationResponse = await fetchWithTimeout(
+          `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(dictionaryWord)}`,
+          {}, 7000
+        );
+        if (translationResponse.ok) {
+          const translationData = await translationResponse.json();
+          tamilMeaning = normalizeTamil(
+            (translationData?.[0] || []).map(part => part?.[0] || '').join('')
+          );
+        }
+      } catch (error) {}
+
+      if (!tamilMeaning) {
+        showToast(`English dictionary definition found for “${dictionaryWord}”, but Tamil translation is unavailable. No incomplete entry was added.`);
+        return { status: 'NO_TAMIL' };
+      }
+
+      const definitionText = definitions.join(' ');
+      const synonymText = synonyms.slice(0, 8).join(', ');
+      const detectedGS = (overrideGS && overrideGS !== 'AUTO')
+        ? overrideGS
+        : classifyUPSC(dictionaryWord, definitionText, synonymText);
+
+      const existing = db.find(item =>
+        String(item.words || '').split(',').some(word =>
+          word.trim().toLowerCase() === dictionaryWord.toLowerCase()
+        )
+      );
+      if (existing) return { status: 'EXISTS', item: existing };
+
+      const newItem = {
+        id: Date.now() + Math.floor(Math.random() * 10000),
+        words: dictionaryWord,
+        pos: partsOfSpeech.join(', ') || '',
+        tamil: tamilMeaning,
+        nuance: '',
+        eng: definitionText,
+        syn: synonymText || '—',
+        cat: detectedGS,
+        starred: false,
+        // Restore all three UPSC study sections without inventing a newspaper citation or verbatim PYQ.
+        ...buildUPSCExamples(dictionaryWord, definitionText, detectedGS)
+      };
+
+      db.push(newItem);
+      learnFromContext(dictionaryWord, definitionText, synonymText, detectedGS);
+      saveAll();
+      showToast(`Dictionary entry added: “${dictionaryWord}”.`);
+      return { status: 'ADDED', item: newItem };
     }
 
     async function submitWords() {
@@ -1376,34 +1311,24 @@
       const gsSelect = document.getElementById('gsOverride');
       const btn = document.getElementById('submitBtn');
 
-      const raw = wInput.value.trim();
+      const raw = wInput ? wInput.value.trim() : '';
       if (!raw) return;
 
       const list = raw.split(',').map(w => w.trim()).filter(Boolean);
-      btn.disabled = true;
-      btn.textContent = `Indexing (${list.length})...`;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = `Indexing (${list.length})...`;
+      }
 
       let lastResult = null;
       for (const w of list) {
-        lastResult = await processSingleTerm(w, nInput.value.trim(), gsSelect.value);
-        if (wInput.dataset.autoTamil && lastResult?.item) {
-          lastResult.item.tamil = wInput.dataset.autoTamil;
-          delete wInput.dataset.autoTamil;
+        if (!lookupHistory.includes(w)) {
+          lookupHistory.unshift(w);
         }
-        if (wInput.dataset.aiEx1 && lastResult?.item) {
-          lastResult.item.ex1 = wInput.dataset.aiEx1;
-          lastResult.item.ex2 = wInput.dataset.aiEx2;
-          if (wInput.dataset.aiEx3) lastResult.item.ex3 = wInput.dataset.aiEx3;
-          if (wInput.dataset.aiSyn && (!lastResult.item.syn || lastResult.item.syn === '—')) {
-            lastResult.item.syn = wInput.dataset.aiSyn;
-          }
-          delete wInput.dataset.aiEx1;
-          delete wInput.dataset.aiEx2;
-          delete wInput.dataset.aiEx3;
-          delete wInput.dataset.aiSyn;
-        }
+        lastResult = await processSingleTerm(w, nInput ? nInput.value.trim() : '', gsSelect ? gsSelect.value : 'AUTO');
         saveAll();
       }
+      updateLookupHistoryUI();
 
       if (list.length > 1) {
         showToast(`Indexed ${list.length} terms into UPSC GS Syllabus categories.`);
@@ -1415,10 +1340,12 @@
         showToast(`Indexed "${lastResult.item.words}" (${lastResult.item.tamil}) ➔ ${lastResult.item.cat}`);
       }
 
-      wInput.value = '';
-      nInput.value = '';
-      btn.disabled = false;
-      btn.textContent = '+ Analyze & Index';
+      if (wInput) wInput.value = '';
+      if (nInput) nInput.value = '';
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '+ Analyze & Index';
+      }
       render();
     }
 
@@ -1700,7 +1627,7 @@
       return 'Essay Strategy';
     }
 
-    function buildRowHTML(item) {
+    function buildRowHTML(item, forceOpen = false) {
       const wordGroup = item.words.split(',').map(w => w.trim()).filter(Boolean);
       const mergeBadge = wordGroup.length > 1
         ? `<span class="w-merge-count" title="Merged English words sharing identical Tamil meaning">${wordGroup.length} Merged</span>`
@@ -1720,7 +1647,7 @@
       }).join('');
 
       return `
-        <div class="lex-item ${expandAll ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
+        <div class="lex-item ${(expandAll || forceOpen) ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
           <div class="lex-summary">
             <div class="lex-summary-top">
               <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${item.id})" title="Mark High-Yield">★</button>
@@ -1733,11 +1660,11 @@
             </div>
             
             <div class="c-tamil-box" lang="ta">
-              <div class="c-tamil">${esc(item.tamil)}</div>
+              <div class="d-label">Tamil translation</div><div class="c-tamil">${esc(item.tamil)}</div>
               ${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}
             </div>
 
-            <div class="c-def">${esc(item.eng)}</div>
+            <div class="c-def"><span class="d-label">English dictionary definition</span>${esc(item.eng)}</div>
 
             <div class="c-meta" onclick="event.stopPropagation()">
               <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper">
@@ -1753,10 +1680,6 @@
           <div class="lex-drawer" onclick="event.stopPropagation()">
             <div class="drawer-meta-grid">
               <div>
-                <div class="d-label">UPSC Mains Definition</div>
-                <div style="color:var(--ink-1); font-weight:500;">${esc(item.eng)}</div>
-              </div>
-              <div>
                 <div class="d-label">Interactive Synonyms (Click any to index)</div>
                 <div>${synButtons}</div>
               </div>
@@ -1764,16 +1687,16 @@
 
             <div class="ex-trio">
               <div class="ex-box">
-                <div class="ex-head"><span>The Hindu / IE Editorial</span><span>Context</span></div>
-                <div class="ex-body">"${esc(item.ex1)}"</div>
+                <div class="ex-head"><span>Newspaper / Editorial Context</span><span>Current affairs</span></div>
+                <div class="ex-body">${esc(item.ex1 || 'Add a dated newspaper headline or article point using Edit.')}</div>
               </div>
               <div class="ex-box">
-                <div class="ex-head"><span>UPSC-CSE PYQ Mains</span><span>Answer Body</span></div>
-                <div class="ex-body">"${esc(item.ex2)}"</div>
+                <div class="ex-head"><span>Mains Relevance</span><span>${esc(item.cat || 'GS')}</span></div>
+                <div class="ex-body">${esc(item.ex2 || 'Mains relevance has not been added yet.')}</div>
               </div>
               <div class="ex-box">
-                <div class="ex-head"><span>Official Source &amp; PYQ Trend</span><span>Way Forward</span></div>
-                <div class="ex-body">"${esc(item.ex3)}"</div>
+                <div class="ex-head"><span>PYQ Linkage</span><span>Theme guidance</span></div>
+                <div class="ex-body">${esc(item.ex3 || 'PYQ linkage has not been added yet. Verify exact questions against official UPSC papers.')}</div>
               </div>
             </div>
           </div>
@@ -1805,7 +1728,37 @@
       filtered.sort((a, b) => a.words.localeCompare(b.words));
 
       const body = document.getElementById('tableBody');
+      const searchPanel = document.getElementById('searchResults');
       if (!body) return;
+
+      // While searching, show only focused, fully expanded matches directly
+      // beneath the search controls. The normal GS/alphabetical library remains
+      // untouched and returns as soon as the search field is cleared.
+      if (q) {
+        body.style.display = 'none';
+        if (searchPanel) {
+          searchPanel.classList.add('active');
+          if (!filtered.length) {
+            searchPanel.innerHTML = `
+              <div class="search-result-heading"><span>Search results</span><span>0 matches</span></div>
+              <div style="padding:24px 18px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
+                <div style="font-weight:600; color:var(--ink-2); margin-bottom:5px;">No saved entry matches “${esc(rawQ)}”.</div>
+                <div>Press Enter or select Analyze &amp; Index to look up this as a new word.</div>
+              </div>`;
+          } else {
+            searchPanel.innerHTML = `
+              <div class="search-result-heading"><span>Search results for “${esc(rawQ)}”</span><span>${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'}</span></div>
+              <div class="lex-grid-container">${filtered.map(item => buildRowHTML(item, true)).join('')}</div>`;
+          }
+        }
+        return;
+      }
+
+      body.style.display = '';
+      if (searchPanel) {
+        searchPanel.classList.remove('active');
+        searchPanel.innerHTML = '';
+      }
 
       if (!filtered.length) {
         body.innerHTML = `
@@ -1896,6 +1849,7 @@
     }
 
     render();
+    updateLookupHistoryUI();
   </script>
 
   <!-- Firebase & Real-Time Cloud Sync Integration -->
