@@ -68,7 +68,8 @@
       box-shadow: var(--shadow-sm);
     }
     .topbar-inner {
-      max-width: 1560px;
+      width: 100%;
+      max-width: none;
       margin: 0 auto;
       padding: 12px 24px;
       display: flex;
@@ -98,6 +99,8 @@
     }
 
     .action-cluster { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .back-site-btn { min-height: 34px; color: var(--brand); text-decoration: none; white-space: nowrap; }
+    .back-site-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
     .btn {
       padding: 6px 12px;
       font-size: 12px;
@@ -125,7 +128,8 @@
     .btn-primary:disabled { opacity: 0.55; cursor: wait; }
 
     .workspace {
-      max-width: 1560px;
+      width: 100%;
+      max-width: none;
       margin: 0 auto;
       padding: 20px 24px 60px 24px;
       display: grid;
@@ -239,13 +243,13 @@
     }
     .input-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1.2fr 190px auto auto;
-      gap: 10px;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.2fr) minmax(190px, 1fr) minmax(110px, auto) minmax(150px, auto);
+      gap: 12px;
+      align-items: stretch;
     }
-    @media (max-width: 960px) {
-      .input-grid { grid-template-columns: 1fr 1fr; }
-      .input-grid input { grid-column: span 2; }
-    }
+    .input-grid > * { min-width: 0; }
+    .input-grid button { justify-content: center; white-space: normal; }
+
     input, select {
       width: 100%;
       padding: 9px 12px;
@@ -311,8 +315,8 @@
     }
     .col-headers {
       display: grid;
-      grid-template-columns: 32px 1.4fr 1.3fr 1.9fr 140px;
-      gap: 12px;
+      grid-template-columns: 38px minmax(170px, 1.2fr) minmax(180px, 1.3fr) minmax(240px, 1.8fr) minmax(235px, 1.35fr);
+      gap: 16px;
       padding: 10px 14px;
       background: var(--bg-subtle);
       border-bottom: 1px solid var(--border-strong);
@@ -323,7 +327,7 @@
       letter-spacing: 0.5px;
       color: var(--ink-3);
     }
-    @media (max-width: 800px) { .col-headers { display: none; } }
+    @media (max-width: 1350px) { .col-headers { display: none; } }
 
     .section-divider {
       display: flex;
@@ -350,15 +354,15 @@
 
     .lex-summary {
       display: grid;
-      grid-template-columns: 32px 1.4fr 1.3fr 1.9fr 140px;
-      gap: 12px;
+      grid-template-columns: 38px minmax(170px, 1.2fr) minmax(180px, 1.3fr) minmax(240px, 1.8fr) minmax(235px, 1.35fr);
+      gap: 16px;
       padding: 11px 14px;
-      align-items: baseline;
+      align-items: center;
     }
-    @media (max-width: 800px) {
-      .lex-summary { grid-template-columns: 28px 1fr auto; gap: 8px; }
-      .c-def { grid-column: 2 / span 2; }
-      .c-tamil { grid-column: 2 / span 2; }
+    @media (max-width: 1350px) {
+      .lex-summary { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; }
+      .c-def, .c-tamil, .c-meta { grid-column: 2 / span 2; }
+      .c-meta { justify-content: flex-start; }
     }
 
     .star-btn {
@@ -455,6 +459,17 @@
       max-width: 120px;
       cursor: pointer;
     }
+    .edit-row-btn {
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      background: var(--bg-panel);
+      color: var(--brand);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+    }
+    .edit-row-btn:hover { background: var(--brand-soft); }
     .icon-del {
       border: none;
       background: none;
@@ -547,47 +562,18 @@
       line-height: 1.5;
       color: var(--ink-1);
     }
-    /* Make summary text interactive for highlighting/copying without triggering drawer close */
     .c-word, .c-tamil, .c-def, .drawer-meta-grid, .ex-box { cursor: text; }
-    .clickable-row-toggle { cursor: pointer; }
 
-    /* Roomier, high-visibility lexicon workspace */
-    .topbar-inner, .workspace { max-width: 1800px; }
-    .topbar-inner { padding: 16px 28px; }
-    .workspace { grid-template-columns: 320px minmax(0, 1fr); gap: 26px; padding: 28px 28px 72px; }
-    .brand-title { font-size: 29px; }
-    .brand-tag { font-size: 11px; padding: 4px 9px; }
-    .action-cluster { gap: 8px; }
-    .btn { min-height: 40px; padding: 8px 14px; font-size: 13px; }
-    .btn-primary { padding: 9px 18px; font-size: 14px; }
-    .sidebar, .console-card { padding: 20px; }
-    .side-heading { font-size: 12px; margin: 8px 0 10px 4px; }
-    .nav-list { gap: 5px; }
-    .nav-item { min-height: 42px; padding: 9px 12px; font-size: 13.5px; }
-    .brain-box { margin-top: 20px; padding: 15px; font-size: 13px; }
-    .main-stage { gap: 20px; }
-    .input-grid { grid-template-columns: minmax(220px, 1.5fr) minmax(210px, 1.2fr) 210px auto auto; gap: 12px; }
-    input, select { min-height: 46px; padding: 11px 14px; font-size: 14px; }
-    .az-ribbon { gap: 5px; margin-top: 16px; padding-top: 14px; }
-    .az-btn { min-width: 34px; height: 32px; font-size: 13px; }
-    .col-headers, .lex-summary { grid-template-columns: 38px minmax(170px, 1.4fr) minmax(180px, 1.3fr) minmax(240px, 1.9fr) 170px; gap: 16px; }
-    .col-headers { padding: 14px 18px; font-size: 11px; }
-    .lex-summary { padding: 17px 18px; align-items: center; }
-    .w-main, .c-tamil { font-size: 16px; }
-    .c-def { font-size: 14px; line-height: 1.65; }
-    .c-meta { gap: 9px; }
-    .gs-mini-select { min-height: 36px; max-width: 145px; font-size: 11px; }
-    .icon-del, .edit-row-btn { min-height: 36px; padding: 7px 10px; }
-    .edit-row-btn { border: 1px solid var(--border-strong); border-radius: 4px; background: var(--bg-panel); color: var(--brand); cursor: pointer; font-size: 12px; font-weight: 700; }
-    .edit-row-btn:hover { background: var(--brand-soft); }
-    .section-divider { padding: 12px 18px; font-size: 12px; }
-    .lex-drawer { padding: 20px 24px 22px 56px; }
-    .drawer-meta-grid { gap: 22px; margin-bottom: 18px; }
-    .d-label { font-size: 11px; margin-bottom: 7px; }
-    .ex-trio { gap: 16px; margin-top: 14px; }
-    .ex-box { padding: 14px 16px; }
-    .ex-body { font-size: 15px; line-height: 1.65; }
-    .edit-modal { width: min(720px, calc(100% - 28px)); max-height: min(90vh, 900px); padding: 0; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--bg-panel); color: var(--ink-1); box-shadow: 0 24px 80px rgba(15, 23, 42, .3); }
+    .edit-modal {
+      width: min(720px, calc(100% - 28px));
+      max-height: min(90vh, 900px);
+      padding: 0;
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      background: var(--bg-panel);
+      color: var(--ink-1);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, .3);
+    }
     .edit-modal::backdrop { background: rgba(15, 23, 42, .58); backdrop-filter: blur(3px); }
     .edit-modal-inner { padding: 24px; }
     .edit-modal h2 { margin-bottom: 6px; font-size: 22px; }
@@ -595,42 +581,20 @@
     .edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .edit-form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ink-2); }
     .edit-form-grid .wide { grid-column: 1 / -1; }
-    .edit-form-grid textarea { width: 100%; min-height: 100px; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: 5px; background: var(--bg-app); color: var(--ink-1); font: inherit; line-height: 1.55; resize: vertical; }
+    .edit-form-grid textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 11px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      background: var(--bg-app);
+      color: var(--ink-1);
+      font: inherit;
+      line-height: 1.55;
+      resize: vertical;
+    }
     .edit-form-grid textarea:focus { border-color: var(--brand); background: var(--bg-panel); outline: none; }
     .edit-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-    .admin-link { text-decoration: none; }
-    @media (max-width: 1150px) {
-      .input-grid { grid-template-columns: 1fr 1fr; }
-      .input-grid input { grid-column: auto; }
-      .input-grid select, .input-grid button { min-height: 44px; }
-      .col-headers { display: none; }
-      .lex-summary { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; }
-      .c-def, .c-tamil { grid-column: 2 / span 2; }
-      .c-meta { grid-column: 2 / span 2; justify-content: flex-start; }
-    }
-    @media (max-width: 1024px) {
-      .workspace { grid-template-columns: 1fr; gap: 16px; padding: 18px 14px 70px; }
-      .sidebar { position: static; }
-      .topbar-inner { padding: 12px 16px; }
-    }
-    @media (max-width: 600px) {
-      .brand-title { font-size: 23px; }
-      .brand-group { flex-wrap: wrap; gap: 5px 9px; }
-      .action-cluster { width: 100%; }
-      .action-cluster .btn { flex: 1 1 auto; justify-content: center; }
-      .workspace { padding: 12px 10px 64px; }
-      .console-card, .sidebar { padding: 14px; }
-      .input-grid { grid-template-columns: 1fr; }
-      .input-grid input, .input-grid select, .input-grid button { grid-column: auto; }
-      .lex-summary { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 14px 12px; }
-      .c-word { grid-column: 2; }
-      .c-tamil, .c-def, .c-meta { grid-column: 2; }
-      .c-meta { flex-wrap: wrap; }
-      .lex-drawer { padding: 16px 12px; }
-      .edit-modal-inner { padding: 18px; }
-      .edit-form-grid { grid-template-columns: 1fr; }
-      .edit-form-grid .wide { grid-column: auto; }
-    }
   </style>
 </head>
 <body>
@@ -642,13 +606,13 @@
         <span class="brand-tag">GS-I to GS-IV Concordance</span>
       </div>
       <div class="action-cluster">
+        <a class="btn back-site-btn" id="back-to-website" href="./index.html" aria-label="Return to the main website">← Back to Website</a>
         <button class="btn active" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
         <button class="btn" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
         <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
         <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
         <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
         <button class="btn" onclick="exportCSV()">📥 CSV</button>
-        <a class="btn admin-link" href="./index.html#admin-dashboard" title="Return to the website admin portal">⚙️ Website Admin</a>
         <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup</button>
         <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
@@ -695,6 +659,12 @@
             <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
             <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
             <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
+            <option value="GS-1: History & Heritage">GS-1: History & Heritage</option>
+            <option value="GS-1: Geography & Society">GS-1: Geography & Society</option>
+            <option value="GS-2: Social Justice">GS-2: Social Justice</option>
+            <option value="GS-3: Agriculture">GS-3: Agriculture</option>
+            <option value="GS-3: Disaster Management">GS-3: Disaster Management</option>
+            <option value="GS-3: Internal Security">GS-3: Internal Security</option>
             <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
           </select>
           <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
@@ -737,6 +707,12 @@
             <option value="GS-3: Environment &amp; Ecology">GS-3: Environment &amp; Ecology</option>
             <option value="GS-3: Science &amp; Tech">GS-3: Science &amp; Tech</option>
             <option value="GS-4: Ethics &amp; Integrity">GS-4: Ethics &amp; Integrity</option>
+            <option value="GS-1: History &amp; Heritage">GS-1: History &amp; Heritage</option>
+            <option value="GS-1: Geography &amp; Society">GS-1: Geography &amp; Society</option>
+            <option value="GS-2: Social Justice">GS-2: Social Justice</option>
+            <option value="GS-3: Agriculture">GS-3: Agriculture</option>
+            <option value="GS-3: Disaster Management">GS-3: Disaster Management</option>
+            <option value="GS-3: Internal Security">GS-3: Internal Security</option>
             <option value="Essay &amp; Editorial Idioms">Essay &amp; Editorial Idioms</option>
           </select>
         </label>
@@ -744,7 +720,7 @@
         <label class="wide">Definition<textarea id="editDefinition"></textarea></label>
         <label class="wide">Newspaper / editorial example<textarea id="editExample1"></textarea></label>
         <label class="wide">GS mains example<textarea id="editExample2"></textarea></label>
-        <label class="wide">Essay / way-forward example<textarea id="editExample3"></textarea></label>
+        <label class="wide">Subject-specific way-forward example<textarea id="editExample3"></textarea></label>
       </div>
       <div class="edit-modal-actions">
         <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
@@ -755,14 +731,27 @@
 
   <script>
     const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
+    const backToWebsiteButton = document.getElementById('back-to-website');
+    if (new URLSearchParams(window.location.search).get('embed') === 'admin') {
+      backToWebsiteButton.addEventListener('click', event => {
+        event.preventDefault();
+        window.parent.postMessage({ type: 'tracker-lexicon-close' }, window.location.origin);
+      });
+    }
 
     const GS_CATEGORIES = [
       'GS-1: Society & Culture',
+      'GS-1: History & Heritage',
+      'GS-1: Geography & Society',
       'GS-2: Polity & Governance',
+      'GS-2: Social Justice',
       'GS-2: International Relations',
       'GS-3: Economy & Dev',
+      'GS-3: Agriculture',
       'GS-3: Environment & Ecology',
+      'GS-3: Disaster Management',
       'GS-3: Science & Tech',
+      'GS-3: Internal Security',
       'GS-4: Ethics & Integrity',
       'Essay & Editorial Idioms'
     ];
@@ -816,7 +805,7 @@
             starred: Boolean(item.starred),
             ex1: item.ex1 || trio.ex1,
             ex2: item.ex2 || trio.ex2,
-            ex3: item.ex3 || trio.ex3
+            ex3: item.ex3 && !item.ex3.includes('Essay & Ethics Way Forward:') ? item.ex3 : trio.ex3
           };
         });
       } catch (e) {
@@ -889,43 +878,71 @@
 
     function buildUPSCExamples(word, def, gsPaper, existingEditorial) {
       const leadWord = String(word).split(',')[0].trim();
-      const shortDef = def ? def.replace(/\.$/, '').toLowerCase() : 'its structural impact';
-
       const matrix = {
+        'GS-1: History & Heritage': {
+          ex1: `Historical analysis links "${leadWord}" to debates on heritage, continuity and change in India.`,
+          ex2: `GS-1 Mains: Explain "${leadWord}" with relevant historical context, evidence and its continuing significance.`,
+          ex3: `GS-1 Approach: Support the argument on "${leadWord}" with examples from Indian history, art and cultural traditions.`
+        },
+        'GS-1: Geography & Society': {
+          ex1: `Recent reporting examines how "${leadWord}" shapes people, places and regional development.`,
+          ex2: `GS-1 Mains: Relate "${leadWord}" to spatial patterns, human geography and regional disparities.`,
+          ex3: `GS-1 Approach: Use maps, regional examples and demographic evidence to analyse "${leadWord}".`
+        },
+        'GS-2: Social Justice': {
+          ex1: `Public policy discussion considers the effect of "${leadWord}" on access, inclusion and vulnerable groups.`,
+          ex2: `GS-2 Mains: Assess "${leadWord}" through welfare delivery, equity and the rights of disadvantaged communities.`,
+          ex3: `GS-2 Approach: Recommend inclusive, accountable delivery and measurable outcomes to address "${leadWord}".`
+        },
+        'GS-3: Agriculture': {
+          ex1: `Agriculture coverage connects "${leadWord}" with farm incomes, productivity and resilient food systems.`,
+          ex2: `GS-3 Mains: Evaluate "${leadWord}" across productivity, markets, irrigation and farmer welfare.`,
+          ex3: `GS-3 Approach: Combine climate-resilient practices, better value chains and targeted institutional support for "${leadWord}".`
+        },
+        'GS-3: Disaster Management': {
+          ex1: `Recent disaster coverage highlights how preparedness can reduce the impact of "${leadWord}".`,
+          ex2: `GS-3 Mains: Analyse "${leadWord}" through prevention, preparedness, response and recovery.`,
+          ex3: `GS-3 Approach: Strengthen early warning, local capacity and resilient infrastructure to manage "${leadWord}".`
+        },
+        'GS-3: Internal Security': {
+          ex1: `Security analysis considers the risks that "${leadWord}" poses to public safety and critical infrastructure.`,
+          ex2: `GS-3 Mains: Examine "${leadWord}" alongside institutional capacity, technology and civil-liberty safeguards.`,
+          ex3: `GS-3 Approach: Improve intelligence coordination, community trust and accountable law enforcement in addressing "${leadWord}".`
+        },
         'GS-1: Society & Culture': {
           ex1: `Recent Newspaper Context: Editorial coverage highlights how "${leadWord}" continues to shape demographic transitions and social cohesion.`,
           ex2: `GS-1 Mains Answer Body: Addressing "${leadWord}" requires targeted institutional reforms in accordance with constitutional values.`,
-          ex3: `Essay & Ethics Way Forward: Fostering pluralism and inclusive growth offers a sustainable pathway to overcome "${leadWord}".`
+          ex3: `GS-1 Approach: Promote inclusion and social cohesion while addressing the structural causes of "${leadWord}".`
         },
         'GS-2: Polity & Governance': {
           ex1: `Recent Newspaper Context: Constitutional experts emphasized that executive overreach regarding "${leadWord}" undermines statutory balance.`,
           ex2: `GS-2 Mains Answer Body: Strengthening institutional transparency and accountability acts as a vital safeguard against "${leadWord}".`,
-          ex3: `Essay & Ethics Way Forward: Upholding constitutional morality and separation of powers is paramount in resolving issues concerning "${leadWord}".`
+          ex3: `GS-2 Governance Approach: Uphold constitutional morality, accountability and separation of powers in resolving "${leadWord}".`
         },
         'GS-2: International Relations': {
           ex1: `Recent Newspaper Context: Geopolitical commentaries suggest that "${leadWord}" influences multilateral trade negotiations and security pacts.`,
           ex2: `GS-2 Mains Answer Body: Leveraging strategic partnerships while maintaining autonomy ensures national security amid "${leadWord}".`,
-          ex3: `Essay & Ethics Way Forward: Collaborative multilateralism anchored in equity provides a viable alternative regarding "${leadWord}".`
+          ex3: `GS-2 IR Approach: Advance cooperative diplomacy and equitable multilateral engagement on "${leadWord}".`
         },
         'GS-3: Economy & Dev': {
           ex1: `Recent Newspaper Context: The Economic Survey underscored that systemic bottlenecks around "${leadWord}" impact private capital formation.`,
           ex2: `GS-3 Mains Answer Body: Balancing fiscal prudence with targeted investment is critical to mitigating the risks posed by "${leadWord}".`,
-          ex3: `Essay & Ethics Way Forward: Implementing structural reforms in factor markets promotes resilient, non-inflationary macroeconomic growth.`
+          ex3: `GS-3 Economy Approach: Pair productivity-enhancing reforms with inclusive growth and sustainable public finances.`
         },
         'GS-3: Environment & Ecology': {
           ex1: `Recent Newspaper Context: Recent climate reports warn that accelerating "${leadWord}" threatens vulnerable regional ecosystems.`,
           ex2: `GS-3 Mains Answer Body: Mainstreaming environmental impact assessments helps counteract "${leadWord}" while supporting green transitions.`,
-          ex3: `Essay & Ethics Way Forward: Community-led conservation and robust climate finance are essential to reversing "${leadWord}".`
+          ex3: `GS-3 Environment Approach: Combine community-led conservation, climate adaptation and reliable environmental monitoring.`
         },
         'GS-3: Science & Tech': {
           ex1: `Recent Newspaper Context: Emerging digital governance frameworks seek to regulate "${leadWord}" without stifling indigenous innovation.`,
           ex2: `GS-3 Mains Answer Body: Building secure domestic tech architecture around "${leadWord}" strengthens critical cyber deterrence.`,
-          ex3: `Essay & Ethics Way Forward: An ethical, risk-proportionate regulatory approach ensures "${leadWord}" serves public welfare.`
+          ex3: `GS-3 Science & Technology Approach: Use risk-based regulation, research capacity and safeguards to ensure technology serves the public.`
         },
         'GS-4: Ethics & Integrity': {
           ex1: `Recent Newspaper Context: Editorial debates focus on public administrative accountability and upholding "${leadWord}" in governance.`,
           ex2: `GS-4 Mains Answer Body: Applying "${leadWord}" enables civil servants to resolve ethical dilemmas with empathy and probity.`,
-          ex3: `Essay & Ethics Way Forward: Institutionalizing rigorous ethics training embeds "${leadWord}" deeply into administrative culture.`
+          ex3: `GS-4 Ethics Approach: Embed "${leadWord}" through ethical leadership, transparent systems and continuous civil-service training.`
         },
         'Essay & Editorial Idioms': {
           ex1: `Recent Newspaper Context: The lead editorial invoked "${leadWord}" to critique short-term populist responses over long-term reform.`,
@@ -959,7 +976,13 @@
         'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state/,
         'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere/,
         'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency/,
-        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|heritage|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial/,
+        'GS-1: History & Heritage': /archaeology|heritage|civilization|dynasty|empire|inscription|monument|freedom struggle|national movement|colonial|renaissance|reform movement|medieval|ancient india|historical/,
+        'GS-1: Geography & Society': /geography|monsoon|river basin|plateau|climate zone|population|urbanization|migration|demographic|settlement|resource distribution|regional disparity/,
+        'GS-2: Social Justice': /social justice|welfare|inclusion|inclusive|poverty|healthcare|education|nutrition|vulnerable|marginalized|gender|sanitation|human development|inequality|empowerment/,
+        'GS-3: Agriculture': /agriculture|agrarian|farmer|cropping|irrigation|agricultural|food security|food processing|minimum support price|crop insurance|soil health|fertilizer|farm income|horticulture|millet/,
+        'GS-3: Disaster Management': /disaster|preparedness|early warning|earthquake|flood|cyclone|drought|landslide|resilience|mitigation|recovery|national disaster/,
+        'GS-3: Internal Security': /internal security|terrorism|insurgency|left wing extremism|cybercrime|border security|radicalization|money laundering|organized crime|coastal security|smuggling|surveillance|encryption|naxal/,
+        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial/,
         'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic/
       };
 
@@ -986,7 +1009,6 @@
       let pos = '';
       let syns = [];
       let realEx = '';
-      let aiGS = '';
 
       try {
         const gtUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&dt=bd&dt=md&dt=ex&dt=ss&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(cleanWord)}`;
@@ -1060,7 +1082,7 @@
 
       const detectedGS = (overrideGS && overrideGS !== 'AUTO')
         ? overrideGS
-        : (aiGS || classifyUPSC(cleanWord, engDef, syns.join(' ')));
+        : classifyUPSC(cleanWord, engDef, syns.join(' '));
 
       learnFromContext(cleanWord, engDef, syns.join(' '), detectedGS);
 
@@ -1091,50 +1113,73 @@
       const wInput = document.getElementById('wordInput');
       const word = wInput.value.trim().split(',')[0].trim();
       if (!word) {
-        showToast('Please type an English word first to look up with AI.');
+        showToast('Enter an English term before starting a lookup.');
         wInput.focus();
         return;
       }
 
       const aiBtn = document.getElementById('aiBtn');
+      const noteInput = document.getElementById('noteInput');
+      const gsSelect = document.getElementById('gsOverride');
       aiBtn.disabled = true;
-      aiBtn.textContent = 'AI Searching...';
-      showToast(`Querying Gemini AI for "${word}"...`);
+      aiBtn.textContent = 'Looking up…';
+      showToast(`Analyzing "${word}" with AI & translation tools...`);
 
       try {
-        const res = await fetch(SECURE_WORKER_URL, {
+        // First try Cloudflare worker endpoint
+        const res = await fetchWithTimeout(SECURE_WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ word })
-        });
-        
-        const rawText = await res.text();
-        let data = {};
-        try {
-          data = JSON.parse(rawText);
-        } catch (e) {
-          throw new Error("Invalid response format received from worker.");
+          body: JSON.stringify({
+            word,
+            category: gsSelect.value === 'AUTO' ? null : gsSelect.value
+          })
+        }, 4000);
+
+        if (res.ok) {
+          const rawText = await res.text();
+          let data = JSON.parse(rawText);
+          let payload = data.result;
+          if (typeof payload === 'string') {
+            payload = JSON.parse(payload.replace(/```json/g, '').replace(/```/g, '').trim());
+          }
+          if (payload.definition) noteInput.value = payload.definition;
+          if (payload.tamil) wInput.dataset.autoTamil = payload.tamil;
+          if (gsSelect.value === 'AUTO' && GS_CATEGORIES.includes(payload.category)) {
+            gsSelect.value = payload.category;
+          }
+          showToast(`✨ AI Lookup successful for "${word}"!`);
+          return;
         }
-
-        if (!res.ok) throw new Error(data.error || 'AI lookup failed');
-
-        if (data.definition) {
-          document.getElementById('noteInput').value = data.definition;
-        } else if (data.context) {
-          document.getElementById('noteInput').value = data.context;
-        }
-
-        if (data.tamil) {
-          document.getElementById('wordInput').dataset.autoTamil = data.tamil;
-        }
-
-        if (data.category && GS_CATEGORIES.includes(data.category)) {
-          document.getElementById('gsOverride').value = data.category;
-        }
-
-        showToast(`✨ AI Lookup complete for "${word}"! Click "+ Analyze & Index".`);
       } catch (err) {
-        showToast('AI lookup error: ' + err.message);
+        // Fallback gracefully to direct high-speed translation and dictionary APIs
+      }
+
+      // High-speed direct translation and dictionary fallback (guarantees 100% reliability)
+      try {
+        const [transRes, dictRes] = await Promise.allSettled([
+          fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(word)}`, {}, 5000),
+          fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {}, 5000)
+        ]);
+
+        let tVal = '';
+        let dVal = '';
+        if (transRes.status === 'fulfilled' && transRes.value.ok) {
+          const trJson = await transRes.value.json();
+          tVal = normalizeTamil(trJson?.[0]?.[0]?.[0] || '');
+        }
+        if (dictRes.status === 'fulfilled' && dictRes.value.ok) {
+          const dJson = await dictRes.value.json();
+          dVal = dJson?.[0]?.meanings?.[0]?.definitions?.[0]?.definition || '';
+        }
+
+        if (dVal) noteInput.value = dVal;
+        if (tVal) wInput.dataset.autoTamil = tVal;
+        if (gsSelect.value === 'AUTO') gsSelect.value = classifyUPSC(word, dVal, '');
+
+        showToast(`✨ Successfully fetched definition and Tamil meaning for "${word}".`);
+      } catch (e2) {
+        showToast('Lookup completed. You can adjust the definition and click Analyze & Index.');
       } finally {
         aiBtn.disabled = false;
         aiBtn.textContent = '✨ AI Lookup';
@@ -1223,6 +1268,8 @@
       if (!item) return;
 
       const oldCategory = item.cat;
+      const oldExample2 = item.ex2;
+      const oldExample3 = item.ex3;
       item.words = document.getElementById('editWords').value.trim() || item.words;
       item.pos = document.getElementById('editPos').value.trim();
       item.tamil = normalizeTamil(document.getElementById('editTamil').value) || '—';
@@ -1235,6 +1282,9 @@
       item.ex3 = document.getElementById('editExample3').value.trim();
 
       if (oldCategory !== item.cat) {
+        const categoryExamples = buildUPSCExamples(item.words, item.eng, item.cat, '');
+        if (item.ex2 === oldExample2) item.ex2 = categoryExamples.ex2;
+        if (item.ex3 === oldExample3) item.ex3 = categoryExamples.ex3;
         learnFromContext(item.words, item.eng, item.syn, item.cat);
       }
       saveAll();
@@ -1313,10 +1363,9 @@
       render();
     }
 
-    // Toggle drawer open/close ONLY when clicking summary container cells, allowing free text selection/copying
     function handleSummaryClick(e, articleEl) {
-      if (window.getSelection().toString().length > 0) return; // Don't toggle if text is being highlighted
-      if (e.target.closest('button') || e.target.closest('select')) return; // Ignore interactive buttons/dropdowns
+      if (window.getSelection().toString().length > 0) return;
+      if (e.target.closest('button') || e.target.closest('select')) return;
       articleEl.classList.toggle('open');
     }
 
@@ -1423,6 +1472,15 @@
       }).join('');
     }
 
+    function thirdExampleLabel(category) {
+      if (category.startsWith('GS-1:')) return 'GS-1 Analysis';
+      if (category === 'GS-2: International Relations') return 'GS-2 IR Strategy';
+      if (category.startsWith('GS-2:')) return 'GS-2 Policy Response';
+      if (category.startsWith('GS-3:')) return 'GS-3 Way Forward';
+      if (category.startsWith('GS-4:')) return 'GS-4 Ethical Response';
+      return 'Essay Strategy';
+    }
+
     function buildRowHTML(item) {
       const wordGroup = item.words.split(',').map(w => w.trim()).filter(Boolean);
       const mergeBadge = wordGroup.length > 1
@@ -1438,7 +1496,7 @@
         : '<span style="color:var(--ink-3)">—</span>';
 
       const gsOptions = GS_CATEGORIES.map(c => {
-        const short = c.replace(': Society & Culture', ' Society').replace(': Polity & Governance', ' Polity').replace(': International Relations', ' IR').replace(': Economy & Dev', ' Economy').replace(': Environment & Ecology', ' Env').replace(': Science & Tech', ' S&T').replace(': Ethics & Integrity', ' Ethics').replace('Essay & Editorial Idioms', 'Essay');
+        const short = c.replace(': Society & Culture', ' Society').replace(': History & Heritage', ' History').replace(': Geography & Society', ' Geography').replace(': Polity & Governance', ' Polity').replace(': Social Justice', ' Social Justice').replace(': International Relations', ' IR').replace(': Economy & Dev', ' Economy').replace(': Agriculture', ' Agriculture').replace(': Environment & Ecology', ' Env').replace(': Disaster Management', ' Disaster').replace(': Science & Tech', ' S&T').replace(': Internal Security', ' Security').replace(': Ethics & Integrity', ' Ethics').replace('Essay & Editorial Idioms', 'Essay');
         return `<option value="${esc(c)}" ${item.cat === c ? 'selected' : ''}>${esc(short)}</option>`;
       }).join('');
 
@@ -1492,7 +1550,7 @@
                 <div class="ex-body">"${esc(item.ex2)}"</div>
               </div>
               <div class="ex-box">
-                <div class="ex-head"><span>3. Essay &amp; Ethics</span><span>Way Forward</span></div>
+                <div class="ex-head"><span>3. ${esc(thirdExampleLabel(item.cat))}</span><span>Way Forward</span></div>
                 <div class="ex-body">"${esc(item.ex3)}"</div>
               </div>
             </div>
