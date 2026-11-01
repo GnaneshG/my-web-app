@@ -1,581 +1,1446 @@
-[data-theme="dark"] {
-  --bg-app: #090d16;
-  --bg-panel: #111827;
-  --bg-subtle: #1e293b;
-  --bg-hover: #172033;
-  --ink-1: #f8fafc;
-  --ink-2: #cbd5e1;
-  --ink-3: #94a3b8;
-  --border: #1e293b;
-  --border-strong: #334155;
-  --brand: #60a5fa;
-  --brand-soft: rgba(59, 130, 246, 0.15);
-  --tamil: #34d399;
-  --tamil-soft: rgba(16, 185, 129, 0.15);
-  --gold: #fbbf24;
-  --gold-soft: rgba(245, 158, 11, 0.15);
-  --danger: #f87171;
-}
+<!DOCTYPE html>
+<html lang="ta" data-theme="light">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEXICON PRO — UPSC-CSE Editorial & Tamil Concordance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tamil:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-app: #f4f4f0;
+      --bg-panel: #ffffff;
+      --bg-subtle: #ebeae4;
+      --bg-hover: #f9f9f6;
+      --ink-1: #0f172a;
+      --ink-2: #334155;
+      --ink-3: #64748b;
+      --border: #e2e0d8;
+      --border-strong: #cbd5e1;
+      --brand: #1e3a8a;
+      --brand-soft: #dbeafe;
+      --tamil: #065f46;
+      --tamil-soft: #d1fae5;
+      --gold: #b45309;
+      --gold-soft: #fef3c7;
+      --danger: #dc2626;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --radius: 6px;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg-app);
-  color: var(--ink-1);
-  font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', -apple-system, sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
+    [data-theme="dark"] {
+      --bg-app: #090d16;
+      --bg-panel: #111827;
+      --bg-subtle: #1e293b;
+      --bg-hover: #172033;
+      --ink-1: #f8fafc;
+      --ink-2: #cbd5e1;
+      --ink-3: #94a3b8;
+      --border: #1e293b;
+      --border-strong: #334155;
+      --brand: #60a5fa;
+      --brand-soft: rgba(59, 130, 246, 0.15);
+      --tamil: #34d399;
+      --tamil-soft: rgba(16, 185, 129, 0.15);
+      --gold: #fbbf24;
+      --gold-soft: rgba(245, 158, 11, 0.15);
+      --danger: #f87171;
+    }
 
-/* Top Command Header */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-sm);
-}
-.topbar-inner {
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 10px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.brand-group { display: flex; align-items: baseline; gap: 12px; }
-.brand-title {
-  font-family: 'Newsreader', Georgia, serif;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--ink-1);
-}
-.brand-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  padding: 2px 7px;
-  background: var(--brand-soft);
-  color: var(--brand);
-  border-radius: 4px;
-  font-weight: 600;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-app);
+      color: var(--ink-1);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.action-cluster { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.btn {
-  padding: 5px 10px;
-  font-size: 11.5px;
-  font-weight: 600;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-strong);
-  background: var(--bg-panel);
-  color: var(--ink-2);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.14s ease;
-}
-.btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
-.btn.active { background: var(--ink-1); color: var(--bg-panel); border-color: var(--ink-1); }
-.btn-primary {
-  background: var(--brand);
-  color: #ffffff;
-  border-color: var(--brand);
-  padding: 8px 16px;
-  font-size: 12.5px;
-}
-.btn-primary:hover { opacity: 0.92; background: var(--brand); color: #ffffff; }
-.btn-primary:disabled { opacity: 0.55; cursor: wait; }
+    /* Top Command Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .brand-group { display: flex; align-items: baseline; gap: 12px; }
+    .brand-title {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+      color: var(--ink-1);
+    }
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 2px 7px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      border-radius: 4px;
+      font-weight: 600;
+    }
 
-/* Main Workspace Grid */
-.workspace {
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 16px 18px 60px 18px;
-  display: grid;
-  grid-template-columns: 265px 1fr;
-  gap: 18px;
-  align-items: start;
-}
-@media (max-width: 980px) {
-  .workspace { grid-template-columns: 1fr; }
-}
+    .action-cluster { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .btn {
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-panel);
+      color: var(--ink-2);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.14s ease;
+    }
+    .btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
+    .btn.active { background: var(--ink-1); color: var(--bg-panel); border-color: var(--ink-1); }
+    .btn-primary {
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+      padding: 8px 16px;
+      font-size: 12.5px;
+    }
+    .btn-primary:hover { opacity: 0.92; background: var(--brand); color: #ffffff; }
+    .btn-primary:disabled { opacity: 0.55; cursor: wait; }
 
-/* Left Executive Sidebar */
-.sidebar {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-  position: sticky;
-  top: 64px;
-}
-@media (max-width: 980px) {
-  .sidebar { position: static; }
-}
-.side-heading {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  color: var(--ink-3);
-  margin: 8px 0 6px 4px;
-  display: flex;
-  justify-content: space-between;
-}
-.nav-list { display: flex; flex-direction: column; gap: 2px; }
-@media (max-width: 980px) {
-  .nav-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
-}
-.nav-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink-2);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  text-align: left;
-  white-space: nowrap;
-  gap: 8px;
-}
-.nav-item:hover { background: var(--bg-subtle); color: var(--ink-1); }
-.nav-item.active {
-  background: var(--brand-soft);
-  color: var(--brand);
-  font-weight: 700;
-}
-.nav-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  padding: 1px 6px;
-  border-radius: 99px;
-  background: var(--bg-subtle);
-  color: var(--ink-3);
-}
-.nav-item.active .nav-pill { background: var(--brand); color: #fff; }
+    /* Main Workspace Grid */
+    .workspace {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 16px 18px 60px 18px;
+      display: grid;
+      grid-template-columns: 265px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
 
-.brain-box {
-  margin-top: 14px;
-  padding: 10px;
-  background: var(--bg-app);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  font-size: 11.5px;
-}
-.brain-title {
-  font-weight: 700;
-  color: var(--ink-1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-.brain-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
-  max-height: 95px;
-  overflow-y: auto;
-}
-.brain-chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  padding: 1px 5px;
-  border-radius: 3px;
-  color: var(--ink-2);
-}
+    /* Left Executive Sidebar */
+    .sidebar {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      position: sticky;
+      top: 64px;
+    }
+    @media (max-width: 980px) {
+      .sidebar { position: static; }
+    }
+    .side-heading {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--ink-3);
+      margin: 8px 0 6px 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .nav-list { display: flex; flex-direction: column; gap: 2px; }
+    @media (max-width: 980px) {
+      .nav-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+    }
+    .nav-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      text-align: left;
+      white-space: nowrap;
+      gap: 8px;
+    }
+    .nav-item:hover { background: var(--bg-subtle); color: var(--ink-1); }
+    .nav-item.active {
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-weight: 700;
+    }
+    .nav-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: var(--bg-subtle);
+      color: var(--ink-3);
+    }
+    .nav-item.active .nav-pill { background: var(--brand); color: #fff; }
 
-/* Right Content Column */
-.main-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .brain-box {
+      margin-top: 14px;
+      padding: 10px;
+      background: var(--bg-app);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 11.5px;
+    }
+    .brain-title {
+      font-weight: 700;
+      color: var(--ink-1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .brain-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+      max-height: 95px;
+      overflow-y: auto;
+    }
+    .brain-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--ink-2);
+    }
 
-/* Smart Entry Console */
-.console-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  padding: 12px;
-  box-shadow: var(--shadow-sm);
-}
-.input-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1.2fr 185px auto auto;
-  gap: 8px;
-}
-@media (max-width: 920px) {
-  .input-grid { grid-template-columns: 1fr 1fr; }
-  .input-grid input { grid-column: span 2; }
-}
-input, select {
-  width: 100%;
-  padding: 8px 11px;
-  font-size: 13px;
-  font-family: inherit;
-  color: var(--ink-1);
-  background: var(--bg-app);
-  border: 1px solid var(--border-strong);
-  border-radius: 5px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-input:focus, select:focus {
-  border-color: var(--brand);
-  background: var(--bg-panel);
-}
+    /* Right Content Column */
+    .main-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
-/* A-Z Concordance Bar */
-.az-ribbon {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.az-ribbon::-webkit-scrollbar { display: none; }
-.az-btn {
-  min-width: 25px;
-  height: 23px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--ink-3);
-  cursor: pointer;
-}
-.az-btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
-.az-btn.active { background: var(--ink-1); color: var(--bg-panel); }
-.az-btn.has-words { color: var(--brand); font-weight: 700; }
-.az-btn.active.has-words { color: var(--bg-panel); }
+    /* Smart Entry Console */
+    .console-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1.2fr 185px auto auto;
+      gap: 8px;
+    }
+    @media (max-width: 920px) {
+      .input-grid { grid-template-columns: 1fr 1fr; }
+      .input-grid input { grid-column: span 2; }
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ink-1);
+      background: var(--bg-app);
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus {
+      border-color: var(--brand);
+      background: var(--bg-panel);
+    }
 
-#toastBanner {
-  display: none;
-  margin-top: 8px;
-  padding: 7px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--tamil-soft);
-  color: var(--tamil);
-  border-left: 3px solid var(--tamil);
-}
+    /* A-Z Concordance Bar */
+    .az-ribbon {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .az-ribbon::-webkit-scrollbar { display: none; }
+    .az-btn {
+      min-width: 25px;
+      height: 23px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--ink-3);
+      cursor: pointer;
+    }
+    .az-btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
+    .az-btn.active { background: var(--ink-1); color: var(--bg-panel); }
+    .az-btn.has-words { color: var(--brand); font-weight: 700; }
+    .az-btn.active.has-words { color: var(--bg-panel); }
 
-/* Lexicon Data Table */
-.table-box {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.col-headers {
-  display: grid;
-  grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
-  gap: 10px;
-  padding: 8px 12px;
-  background: var(--bg-subtle);
-  border-bottom: 1px solid var(--border-strong);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--ink-3);
-}
-@media (max-width: 780px) { .col-headers { display: none; } }
+    #toastBanner {
+      display: none;
+      margin-top: 8px;
+      padding: 7px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--tamil-soft);
+      color: var(--tamil);
+      border-left: 3px solid var(--tamil);
+    }
 
-.section-divider {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 12px;
-  background: var(--bg-app);
-  border-bottom: 1px solid var(--border);
-  border-left: 3px solid var(--brand);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink-1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+    /* Lexicon Data Table */
+    .table-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .col-headers {
+      display: grid;
+      grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-strong);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-3);
+    }
+    @media (max-width: 780px) { .col-headers { display: none; } }
 
-.lex-item {
-  border-bottom: 1px solid var(--border);
-  transition: background 0.1s;
-}
-.lex-item:last-child { border-bottom: none; }
-.lex-item:hover { background: var(--bg-hover); }
+    .section-divider {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background: var(--bg-app);
+      border-bottom: 1px solid var(--border);
+      border-left: 3px solid var(--brand);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-.lex-summary {
-  display: grid;
-  grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
-  gap: 10px;
-  padding: 9px 12px;
-  align-items: baseline;
-  cursor: pointer;
-}
-@media (max-width: 780px) {
-  .lex-summary { grid-template-columns: 24px 1fr auto; gap: 6px; }
-  .c-def { grid-column: 2 / span 2; }
-  .c-tamil { grid-column: 2 / span 2; }
-}
+    .lex-item {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    .lex-item:last-child { border-bottom: none; }
+    .lex-item:hover { background: var(--bg-hover); }
 
-.star-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--border-strong);
-  line-height: 1;
-}
-.star-btn.starred { color: var(--gold); }
+    .lex-summary {
+      display: grid;
+      grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
+      gap: 10px;
+      padding: 9px 12px;
+      align-items: baseline;
+      cursor: pointer;
+    }
+    @media (max-width: 780px) {
+      .lex-summary { grid-template-columns: 24px 1fr auto; gap: 6px; }
+      .c-def { grid-column: 2 / span 2; }
+      .c-tamil { grid-column: 2 / span 2; }
+    }
 
-.c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-.w-main {
-  font-weight: 700;
-  font-size: 13.8px;
-  color: var(--ink-1);
-}
-.w-merge-count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: var(--gold-soft);
-  color: var(--gold);
-  font-weight: 600;
-}
-.w-pos {
-  font-family: 'Newsreader', Georgia, serif;
-  font-style: italic;
-  font-size: 12.5px;
-  color: var(--ink-3);
-}
-.spk-icon {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 11px;
-  color: var(--ink-3);
-  padding: 0 2px;
-}
-.spk-icon:hover { color: var(--brand); }
+    .star-btn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--border-strong);
+      line-height: 1;
+    }
+    .star-btn.starred { color: var(--gold); }
 
-.c-tamil {
-  font-family: 'Noto Sans Tamil', sans-serif;
-  font-weight: 700;
-  font-size: 13.5px;
-  color: var(--tamil);
-}
-.t-nuance {
-  font-weight: 400;
-  font-size: 11.5px;
-  color: var(--ink-3);
-  margin-left: 4px;
-}
+    .c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+    .w-main {
+      font-weight: 700;
+      font-size: 13.8px;
+      color: var(--ink-1);
+    }
+    .w-merge-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: var(--gold-soft);
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .w-pos {
+      font-family: 'Newsreader', Georgia, serif;
+      font-style: italic;
+      font-size: 12.5px;
+      color: var(--ink-3);
+    }
+    .spk-icon {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--ink-3);
+      padding: 0 2px;
+    }
+    .spk-icon:hover { color: var(--brand); }
 
-.c-def {
-  font-size: 12.5px;
-  color: var(--ink-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    .c-tamil {
+      font-family: 'Noto Sans Tamil', sans-serif;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--tamil);
+    }
+    .t-nuance {
+      font-weight: 400;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      margin-left: 4px;
+    }
 
-/* Active Recall Blur Mode */
-body.recall-active .c-tamil,
-body.recall-active .c-def {
-  filter: blur(5px);
-  user-select: none;
-  transition: filter 0.15s;
-}
-body.recall-active .lex-item:hover .c-tamil,
-body.recall-active .lex-item:hover .c-def,
-body.recall-active .lex-item.open .c-tamil,
-body.recall-active .lex-item.open .c-def {
-  filter: none;
-}
+    .c-def {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-.c-meta {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-}
-.gs-mini-select {
-  padding: 2px 5px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 4px;
-  border: 1px solid var(--border-strong);
-  background: var(--bg-app);
-  color: var(--ink-2);
-  width: auto;
-  max-width: 112px;
-  cursor: pointer;
-}
-.icon-del {
-  border: none;
-  background: none;
-  color: var(--ink-3);
-  cursor: pointer;
-  font-size: 12px;
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-.icon-del:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
+    /* Active Recall Blur Mode */
+    body.recall-active .c-tamil,
+    body.recall-active .c-def {
+      filter: blur(5px);
+      user-select: none;
+      transition: filter 0.15s;
+    }
+    body.recall-active .lex-item:hover .c-tamil,
+    body.recall-active .lex-item:hover .c-def,
+    body.recall-active .lex-item.open .c-tamil,
+    body.recall-active .lex-item.open .c-def {
+      filter: none;
+    }
 
-/* Expanded Concordance Drawer */
-.lex-drawer {
-  display: none;
-  padding: 12px 16px 14px 40px;
-  background: var(--bg-app);
-  border-top: 1px dashed var(--border-strong);
-}
-@media (max-width: 780px) { .lex-drawer { padding-left: 14px; } }
-.lex-item.open .lex-drawer { display: block; }
-.lex-item.open .c-def { white-space: normal; }
+    .c-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    .gs-mini-select {
+      padding: 2px 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-app);
+      color: var(--ink-2);
+      width: auto;
+      max-width: 112px;
+      cursor: pointer;
+    }
+    .icon-del {
+      border: none;
+      background: none;
+      color: var(--ink-3);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    .icon-del:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
 
-.drawer-meta-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 14px;
-  margin-bottom: 10px;
-}
-@media (max-width: 720px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
+    /* Expanded Concordance Drawer */
+    .lex-drawer {
+      display: none;
+      padding: 12px 16px 14px 40px;
+      background: var(--bg-app);
+      border-top: 1px dashed var(--border-strong);
+    }
+    @media (max-width: 780px) { .lex-drawer { padding-left: 14px; } }
+    .lex-item.open .lex-drawer { display: block; }
+    .lex-item.open .c-def { white-space: normal; }
 
-.d-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--ink-3);
-  margin-bottom: 4px;
-}
-.syn-clickable {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
-  margin: 0 4px 4px 0;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--brand);
-  cursor: pointer;
-  transition: all 0.12s;
-}
-.syn-clickable:hover {
-  background: var(--brand);
-  color: #fff;
-  border-color: var(--brand);
-}
+    .drawer-meta-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 720px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
 
-.ex-trio {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 8px;
-}
-@media (max-width: 900px) { .ex-trio { grid-template-columns: 1fr; } }
+    .d-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-3);
+      margin-bottom: 4px;
+    }
+    .syn-clickable {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      margin: 0 4px 4px 0;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--brand);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .syn-clickable:hover {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
 
-.ex-box {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--brand);
-  padding: 9px 11px;
-  border-radius: 4px;
-}
-.ex-box:nth-child(2) { border-top-color: var(--tamil); }
-.ex-box:nth-child(3) { border-top-color: var(--gold); }
+    .ex-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    @media (max-width: 900px) { .ex-trio { grid-template-columns: 1fr; } }
 
-.ex-head {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
-}
-.ex-body {
-  font-family: 'Newsreader', Georgia, serif;
-  font-size: 13.5px;
-  line-height: 1.45;
-  color: var(--ink-1);
-}
+    .ex-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--brand);
+      padding: 9px 11px;
+      border-radius: 4px;
+    }
+    .ex-box:nth-child(2) { border-top-color: var(--tamil); }
+    .ex-box:nth-child(3) { border-top-color: var(--gold); }
 
+    .ex-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .ex-body {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--ink-1);
+    }
+  </style>
+</head>
+<body>
 
-  <div class="brain-box">
-    <div class="brain-title">
-      <span>🧠 Adaptive GS Brain</span>
-      <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--brand);">0 Rules</span>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <span class="brand-title">The CSE Lexicon</span>
+        <span class="brand-tag">GS-I to GS-IV Concordance</span>
+      </div>
+      <div class="action-cluster">
+        <button class="btn active" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
+        <button class="btn" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
+        <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
+        <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
+        <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
+        <button class="btn" onclick="exportCSV()">📥 CSV</button>
+        <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup</button>
+        <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
+        <button class="btn" onclick="toggleTheme()" title="Switch Theme">🌗</button>
+      </div>
     </div>
-    <div style="color:var(--ink-3); font-size:11px; line-height:1.35;">
-      Automatically learns domain stems from your searches and manual GS paper corrections.
-    </div>
-    <div class="brain-tags" id="brainPreview"></div>
+  </header>
+
+  <div class="workspace">
+    <!-- Left Syllabus & Self-Learning Sidebar -->
+    <aside class="sidebar">
+      <div class="side-heading">
+        <span>UPSC GS Syllabus</span>
+        <span id="totalBadge">0</span>
+      </div>
+      <div class="nav-list" id="sidebarNav"></div>
+
+      <div class="brain-box">
+        <div class="brain-title">
+          <span>🧠 Adaptive GS Brain</span>
+          <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--brand);">0 Rules</span>
+        </div>
+        <div style="color:var(--ink-3); font-size:11px; line-height:1.35;">
+          Automatically learns domain stems from your searches and manual GS paper corrections.
+        </div>
+        <div class="brain-tags" id="brainPreview"></div>
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:6px;">
+        <button class="btn" style="width:100%; justify-content:center;" onclick="loadStarterPack()">⚡ Load UPSC Starter Terms</button>
+      </div>
+    </aside>
+
+    <!-- Main Lexicon Stage -->
+    <main class="main-stage">
+      <section class="console-card">
+        <div class="input-grid">
+          <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
+          <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
+          <select id="gsOverride">
+            <option value="AUTO">⚡ Auto-Detect GS Paper</option>
+            <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
+            <option value="GS-2: Polity & Governance">GS-2: Polity & Governance</option>
+            <option value="GS-2: International Relations">GS-2: Int. Relations</option>
+            <option value="GS-3: Economy & Dev">GS-3: Economy & Dev</option>
+            <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
+            <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
+            <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
+            <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
+          </select>
+          <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
+          <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
+        </div>
+
+        <div class="az-ribbon" id="azBar"></div>
+        <div id="toastBanner"></div>
+      </section>
+
+      <section class="table-box">
+        <div class="col-headers">
+          <div>★</div>
+          <div>English Term(s) [Tamil-Merged]</div>
+          <div>Exact Tamil &amp; Nuances</div>
+          <div>UPSC Mains Definition</div>
+          <div style="text-align:right;">GS Paper</div>
+        </div>
+        <div id="tableBody"></div>
+      </section>
+    </main>
   </div>
 
-  <div style="margin-top:10px; display:flex; gap:6px;">
-    <button class="btn" style="width:100%; justify-content:center;" onclick="loadStarterPack()">⚡ Load UPSC Starter Terms</button>
-  </div>
-</aside>
+  <script>
+    const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
 
-<!-- Main Lexicon Stage -->
-<main class="main-stage">
-  <section class="console-card">
-    <div class="input-grid">
-      <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
-      <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
-      <select id="gsOverride">
-        <option value="AUTO">⚡ Auto-Detect GS Paper</option>
-        <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
-        <option value="GS-2: Polity & Governance">GS-2: Polity & Governance</option>
-        <option value="GS-2: International Relations">GS-2: Int. Relations</option>
-        <option value="GS-3: Economy & Dev">GS-3: Economy & Dev</option>
-        <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
-        <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
-        <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
-        <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
-      </select>
-      <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
-      <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
-    </div>
+    const GS_CATEGORIES = [
+      'GS-1: Society & Culture',
+      'GS-2: Polity & Governance',
+      'GS-2: International Relations',
+      'GS-3: Economy & Dev',
+      'GS-3: Environment & Ecology',
+      'GS-3: Science & Tech',
+      'GS-4: Ethics & Integrity',
+      'Essay & Editorial Idioms'
+    ];
 
-    <div class="az-ribbon" id="azBar"></div>
-    <div id="toastBanner"></div>
-  </section>
+    function esc(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-  <section class="table-box">
-    <div class="col-headers">
-      <div>★</div>
-      <div>English Term(s) [Tamil-Merged]</div>
-      <div>Exact Tamil &amp; Nuances</div>
-      <div>UPSC Mains Definition</div>
-      <div style="text-align:right;">GS Paper</div>
-    </div>
-    <div id="tableBody"></div>
-  </section>
-</main>
+    function normalizeTamil(str) {
+      return String(str || '')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function loadDatabase() {
+      const raw = localStorage.getItem('cse_lexicon_v5')
+        || localStorage.getItem('cse_lexicon_v4')
+        || localStorage.getItem('upsc_vocab_v3')
+        || localStorage.getItem('upsc_vocab_db')
+        || '[]';
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map(item => {
+          let cat = item.cat || 'Essay & Editorial Idioms';
+          if (cat === 'Polity & Governance') cat = 'GS-2: Polity & Governance';
+          else if (cat === 'Economy') cat = 'GS-3: Economy & Dev';
+          else if (cat === 'International Relations') cat = 'GS-2: International Relations';
+          else if (cat === 'Environment') cat = 'GS-3: Environment & Ecology';
+          else if (cat === 'Science & Tech') cat = 'GS-3: Science & Tech';
+          else if (cat === 'Society') cat = 'GS-1: Society & Culture';
+          else if (cat === 'Ethics') cat = 'GS-4: Ethics & Integrity';
+          else if (!GS_CATEGORIES.includes(cat)) cat = 'Essay & Editorial Idioms';
+
+          const trio = buildUPSCExamples(item.words || 'Term', item.eng || '', cat, item.ex1 || item.ex || '');
+          return {
+            id: item.id || (Date.now() + Math.floor(Math.random() * 10000)),
+            words: item.words || 'Unnamed',
+            pos: item.pos || '',
+            tamil: normalizeTamil(item.tamil || '—'),
+            nuance: item.nuance || '',
+            eng: item.eng || '',
+            syn: item.syn || '—',
+            cat: cat,
+            starred: Boolean(item.starred),
+            ex1: item.ex1 || trio.ex1,
+            ex2: item.ex2 || trio.ex2,
+            ex3: item.ex3 || trio.ex3
+          };
+        });
+      } catch (e) {
+        return [];
+      }
+    }
+
+    let db = loadDatabase();
+    let brain = {};
+    try {
+      brain = JSON.parse(localStorage.getItem('cse_brain_v5') || localStorage.getItem('cse_learned_brain') || '{}') || {};
+    } catch (e) { brain = {}; }
+
+    let selectedGS = 'ALL';
+    let selectedLetter = 'ALL';
+    let groupMode = 'gs';
+    let onlyStarred = false;
+    let expandAll = false;
+
+    if (localStorage.getItem('cse_theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('cse_theme', next);
+    }
+
+    function saveAll() {
+      try {
+        localStorage.setItem('cse_lexicon_v5', JSON.stringify(db));
+        localStorage.setItem('cse_brain_v5', JSON.stringify(brain));
+      } catch (e) {
+        console.warn('Storage quota warning:', e);
+      }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toastBanner');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 4200);
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 5500) {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: ctrl.signal });
+        clearTimeout(id);
+        return res;
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    }
+
+    function learnFromContext(word, definition, synonyms, targetGS) {
+      const stop = new Set(['about','above','after','again','against','among','because','before','being','below','between','both','Could','during','other','ought','shall','should','since','state','their','there','these','thing','those','through','under','until','where','which','while','would','person','action','process','practice','system']);
+      const text = `${word} ${definition} ${synonyms}`.toLowerCase().replace(/[^a-z\s]/g, ' ');
+      const tokens = text.split(/\s+/).filter(w => w.length >= 5 && !stop.has(w));
+      tokens.slice(0, 7).forEach(tk => {
+        brain[tk] = targetGS;
+      });
+      saveAll();
+    }
+
+    function buildUPSCExamples(word, def, gsPaper, existingEditorial) {
+      const leadWord = String(word).split(',')[0].trim();
+      const shortDef = def ? def.replace(/\.$/, '').toLowerCase() : 'its structural impact';
+
+      const matrix = {
+        'GS-1: Society & Culture': {
+          ex1: `The editorial observed that persistent "${leadWord}" continues to shape urban-rural social mobility and kinship networks across India.`,
+          ex2: `GS-1 Mains: Addressing "${leadWord}" (${shortDef}) requires targeted social empowerment rather than mere legislative symbolism.`,
+          ex3: `Essay / Way Forward: True constitutional fraternity can only emerge when societal institutions transcend "${leadWord}" in favor of inclusive pluralism.`
+        },
+        'GS-2: Polity & Governance': {
+          ex1: `The Supreme Court Constitution Bench emphasized that executive discretion cannot be equated with "${leadWord}" in a parliamentary democracy.`,
+          ex2: `GS-2 Mains: Strengthening parliamentary committee oversight acts as a vital bulwark against "${leadWord}" and institutionalises accountability.`,
+          ex3: `Way Forward: Reforming administrative rules to curb "${leadWord}" is indispensable for citizen-centric governance and constitutional morality.`
+        },
+        'GS-2: International Relations': {
+          ex1: `Amidst evolving Indo-Pacific alignments, New Delhi's calibrated stance on "${leadWord}" underscores its commitment to strategic autonomy.`,
+          ex2: `GS-2 IR Mains: Multilateral institutions must move beyond "${leadWord}" to address supply-chain weaponization and Global South representation.`,
+          ex3: `Diplomatic Way Forward: Constructive dialogue anchored in mutual respect offers a sustainable alternative to "${leadWord}".`
+        },
+        'GS-3: Economy & Dev': {
+          ex1: `The Economic Survey cautioned that structural bottlenecks linked to "${leadWord}" could constrain private capital formation and export competitiveness.`,
+          ex2: `GS-3 Economy Mains: Calibrating fiscal consolidation while mitigating "${leadWord}" is essential for sustaining non-inflationary macroeconomic growth.`,
+          ex3: `Policy Way Forward: Structural reforms in factor markets can insulate the domestic economy from the volatility of "${leadWord}".`
+        },
+        'GS-3: Environment & Ecology': {
+          ex1: `Climate scientists warned that accelerating "${leadWord}" poses an existential threat to fragile Himalayan and coastal ecosystems.`,
+          ex2: `GS-3 Environment Mains: Mainstreaming biodiversity impact assessments can arrest "${leadWord}" while supporting green infrastructure transitions.`,
+          ex3: `Ecological Way Forward: Community-led conservation and climate finance are critical to reversing "${leadWord}" under the Paris Agreement framework.`
+        },
+        'GS-3: Science & Tech': {
+          ex1: `As frontier digital architectures scale, regulatory sandboxes must address "${leadWord}" without stifling indigenous deep-tech innovation.`,
+          ex2: `GS-3 S&T Mains: Building sovereign capacity around "${leadWord}" strengthens critical information infrastructure and national cyber deterrence.`,
+          ex3: `Tech Governance Way Forward: An agile, risk-proportionate legal framework ensures that "${leadWord}" serves public digital goods ethically.`
+        },
+        'GS-4: Ethics & Integrity': {
+          ex1: `In public administration, an officer's commitment to "${leadWord}" distinguishes ethical leadership from mechanical rule-compliance.`,
+          ex2: `GS-4 Case Study: Invoking "${leadWord}" enables a civil servant to resolve conflicts of interest with objectivity, empathy, and probity.`,
+          ex3: `Ethical Way Forward: Institutionalizing citizen charters and social audits embeds "${leadWord}" into the everyday culture of governance.`
+        },
+        'Essay & Editorial Idioms': {
+          ex1: `The lead editorial invoked "${leadWord}" (${shortDef}) to critique short-term populist measures over enduring institutional reform.`,
+          ex2: `Mains Answer Integration: Framing the policy challenge through the lens of "${leadWord}" adds analytical depth to GS introductions.`,
+          ex3: `Essay Conclusion: Moving from the inertia of "${leadWord}" toward proactive institutional renewal defines the trajectory of a mature democracy.`
+        }
+      };
+
+      const chosen = matrix[gsPaper] || matrix['Essay & Editorial Idioms'];
+      return {
+        ex1: existingEditorial || chosen.ex1,
+        ex2: chosen.ex2,
+        ex3: chosen.ex3
+      };
+    }
+
+    function classifyUPSC(word, def, syns) {
+      const text = `${word} ${def} ${syns}`.toLowerCase();
+      const tokens = text.replace(/[^a-z\s]/g, ' ').split(/\s+/);
+      const scores = {};
+
+      tokens.forEach(tk => {
+        if (brain[tk]) {
+          scores[brain[tk]] = (scores[brain[tk]] || 0) + 3;
+        }
+      });
+
+      const rules = {
+        'GS-2: Polity & Governance': /constitution|parliament|judiciary|supreme court|fundamental rights|directive principles|federal|ordinance|legislation|statute|repeal|abrogate|quash|mandate|tribunal|amendment|autonomy|bureaucracy|devolution|panchayat|censure|prerogative|franchise|grievance|ombudsman|accountability|executive|coalition|sovereignty|secular|bicameral|promulgate|jurisdiction|litigation|impunity|despotism|oligarchy|plebiscite|referendum|filibuster|gerrymander|adjudicate/,
+        'GS-3: Economy & Dev': /fiscal|monetary|inflation|stagflation|deflation|liquidity|tariff|subsidy|revenue|deficit|gdp|macroeconomic|austerity|recession|capital|credit|bond|equity|trade|supply chain|monopoly|cartel|amortization|insolvency|conglomerate|remittance|fdi|disinvestment|protectionism|arbitrage|collateral|devaluation|exchequer|agrarian|msme|yield|solvency|moratorium|duopoly|windfall|securitization/,
+        'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state/,
+        'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere/,
+        'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency/,
+        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|heritage|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial/,
+        'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic/
+      };
+
+      for (const [gs, regex] of Object.entries(rules)) {
+        const m = text.match(new RegExp(regex.source, 'g'));
+        if (m) scores[gs] = (scores[gs] || 0) + m.length;
+      }
+
+      let best = 'Essay & Editorial Idioms';
+      let max = 0;
+      for (const [gs, sc] of Object.entries(scores)) {
+        if (sc > max) { max = sc; best = gs; }
+      }
+      return best;
+    }
+
+    async function processSingleTerm(rawTerm, customNote, overrideGS) {
+      const cleanWord = rawTerm.trim();
+      if (!cleanWord) return null;
+
+      let exactTamil = '';
+      let nuances = [];
+      let engDef = customNote;
+      let pos = '';
+      let syns = [];
+      let realEx = '';
+      let aiGS = '';
+
+      try {
+        const gtUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&dt=bd&dt=md&dt=ex&dt=ss&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(cleanWord)}`;
+        const gtRes = await fetchWithTimeout(gtUrl, {}, 5000);
+        if (gtRes.ok) {
+          const gt = await gtRes.json();
+          if (!exactTamil && gt[0]?.[0]?.[0]) {
+            exactTamil = normalizeTamil(gt[0][0][0]);
+          }
+          if (!nuances.length && gt[1]?.[0]?.[1]) {
+            nuances = gt[1][0][1].slice(0, 4).map(normalizeTamil);
+          }
+          if (!engDef && gt[12]?.[0]?.[1]?.[0]?.[0]) {
+            engDef = gt[12][0][1][0][0];
+          }
+          if (!pos && gt[12]?.[0]?.[0]) {
+            pos = gt[12][0][0];
+          }
+          if (!syns.length) {
+            if (gt[11]?.[0]?.[1]?.[0]?.[0]) syns = gt[11][0][1][0][0].slice(0, 6);
+            else if (gt[1]?.[0]?.[2]) syns = gt[1][0][2].flatMap(x => x[1] || []).slice(0, 6);
+          }
+          if (!realEx && gt[13]?.[0]?.[0]?.[0]) {
+            realEx = gt[13][0][0][0].replace(/<\/?b>/g, '');
+          }
+        }
+      } catch (e) {}
+
+      if (!engDef || syns.length < 2 || !realEx) {
+        try {
+          const dRes = await fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`, {}, 4500);
+          if (dRes.ok) {
+            const dJson = await dRes.json();
+            const m = dJson[0]?.meanings?.[0];
+            if (m) {
+              if (!pos) pos = m.partOfSpeech || '';
+              if (!engDef && m.definitions?.[0]?.definition) engDef = m.definitions[0].definition;
+              if (!realEx) {
+                const exItem = m.definitions?.find(d => d.example);
+                if (exItem) realEx = exItem.example;
+              }
+              const extraSyns = [...(m.synonyms || []), ...(m.definitions?.[0]?.synonyms || [])];
+              syns = [...new Set([...syns, ...extraSyns])].slice(0, 6);
+            }
+          }
+        } catch (e) {}
+      }
+
+      const formattedWord = cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1);
+
+      for (let item of db) {
+        const existingList = item.words.split(',').map(w => w.trim().toLowerCase());
+        if (existingList.includes(cleanWord.toLowerCase())) {
+          return { status: 'EXISTS', item };
+        }
+        if (exactTamil && exactTamil !== '—' && exactTamil !== '-' && normalizeTamil(item.tamil) === exactTamil) {
+          const mergedWords = [...new Set([...item.words.split(',').map(w => w.trim()), formattedWord])]
+            .sort((a, b) => a.localeCompare(b));
+          item.words = mergedWords.join(', ');
+          if (customNote && !item.eng.includes(customNote)) {
+            item.eng += ` | ${customNote}`;
+          }
+          if (syns.length) {
+            const mergedSyns = [...new Set([...item.syn.split(',').map(s => s.trim()).filter(s => s && s !== '—'), ...syns])].slice(0, 8);
+            item.syn = mergedSyns.join(', ') || '—';
+          }
+          saveAll();
+          return { status: 'MERGED', item };
+        }
+      }
+
+      const detectedGS = (overrideGS && overrideGS !== 'AUTO')
+        ? overrideGS
+        : (aiGS || classifyUPSC(cleanWord, engDef, syns.join(' ')));
+
+      learnFromContext(cleanWord, engDef, syns.join(' '), detectedGS);
+
+      const finalDef = engDef || `Editorial term synonymous with ${syns.slice(0, 3).join(', ') || formattedWord}`;
+      const examples = buildUPSCExamples(formattedWord, finalDef, detectedGS, realEx);
+
+      const newItem = {
+        id: Date.now() + Math.floor(Math.random() * 10000),
+        words: formattedWord,
+        pos: pos || 'term',
+        tamil: exactTamil || '—',
+        nuance: nuances.filter(n => n !== exactTamil).join(', '),
+        eng: finalDef,
+        syn: syns.join(', ') || '—',
+        cat: detectedGS,
+        starred: false,
+        ex1: examples.ex1,
+        ex2: examples.ex2,
+        ex3: examples.ex3
+      };
+
+      db.push(newItem);
+      saveAll();
+      return { status: 'ADDED', item: newItem };
+    }
+
+    async function triggerAiLookup() {
+      const wInput = document.getElementById('wordInput');
+      const word = wInput.value.trim().split(',')[0].trim();
+      if (!word) {
+        showToast('Please type an English word first to look up with AI.');
+        wInput.focus();
+        return;
+      }
+
+      const aiBtn = document.getElementById('aiBtn');
+      aiBtn.disabled = true;
+      aiBtn.textContent = 'AI Searching...';
+      showToast(`Querying Gemini AI for "${word}"...`);
+
+      try {
+        const res = await fetch(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ word })
+        });
+        
+        const rawText = await res.text();
+        let data = {};
+        try {
+          data = JSON.parse(rawText);
+        } catch (e) {
+          throw new Error("Invalid response format received from worker.");
+        }
+
+        if (!res.ok) throw new Error(data.error || 'AI lookup failed');
+
+        if (data.definition) {
+          document.getElementById('noteInput').value = data.definition;
+        } else if (data.context) {
+          document.getElementById('noteInput').value = data.context;
+        }
+
+        if (data.tamil) {
+          document.getElementById('wordInput').dataset.autoTamil = data.tamil;
+        }
+
+        if (data.category && GS_CATEGORIES.includes(data.category)) {
+          document.getElementById('gsOverride').value = data.category;
+        }
+
+        showToast(`✨ AI Lookup complete for "${word}"! Click "+ Analyze & Index".`);
+      } catch (err) {
+        showToast('AI lookup error: ' + err.message);
+      } finally {
+        aiBtn.disabled = false;
+        aiBtn.textContent = '✨ AI Lookup';
+      }
+    }
+
+    async function submitWords() {
+      const wInput = document.getElementById('wordInput');
+      const nInput = document.getElementById('noteInput');
+      const gsSelect = document.getElementById('gsOverride');
+      const btn = document.getElementById('submitBtn');
+
+      const raw = wInput.value.trim();
+      if (!raw) return;
+
+      const list = raw.split(',').map(w => w.trim()).filter(Boolean);
+      btn.disabled = true;
+      btn.textContent = `Indexing (${list.length})...`;
+
+      let lastResult = null;
+      for (const w of list) {
+        lastResult = await processSingleTerm(w, nInput.value.trim(), gsSelect.value);
+        if (wInput.dataset.autoTamil && lastResult?.item) {
+          lastResult.item.tamil = wInput.dataset.autoTamil;
+          delete wInput.dataset.autoTamil;
+          saveAll();
+        }
+      }
+
+      if (list.length > 1) {
+        showToast(`Indexed ${list.length} terms into UPSC GS Syllabus categories.`);
+      } else if (lastResult?.status === 'MERGED') {
+        showToast(`Identical Tamil meaning ("${lastResult.item.tamil}") — Merged side-by-side: ${lastResult.item.words}`);
+      } else if (lastResult?.status === 'EXISTS') {
+        showToast(`"${lastResult.item.words}" is already indexed under ${lastResult.item.cat}.`);
+      } else if (lastResult?.status === 'ADDED') {
+        showToast(`Indexed "${lastResult.item.words}" (${lastResult.item.tamil}) ➔ ${lastResult.item.cat}`);
+      }
+
+      wInput.value = '';
+      nInput.value = '';
+      btn.disabled = false;
+      btn.textContent = '+ Analyze & Index';
+      render();
+    }
+
+    async function chainSynonym(e, synWord, parentGS) {
+      e.stopPropagation();
+      const clean = synWord.trim();
+      if (!clean || clean === '—') return;
+      showToast(`Chaining synonym "${clean}"...`);
+      const res = await processSingleTerm(clean, '', parentGS);
+      if (res?.status === 'MERGED') {
+        showToast(`Synonym "${clean}" shared the same Tamil meaning ("${res.item.tamil}") — Merged into: ${res.item.words}`);
+      } else if (res?.status === 'ADDED') {
+        showToast(`Indexed synonym "${clean}" (${res.item.tamil}) under ${res.item.cat}`);
+      } else if (res?.status === 'EXISTS') {
+        showToast(`"${clean}" is already in your lexicon.`);
+      }
+      render();
+    }
+
+    function changeGS(e, id, newGS) {
+      e.stopPropagation();
+      const target = db.find(i => i.id === id);
+      if (target) {
+        target.cat = newGS;
+        const updatedEx = buildUPSCExamples(target.words, target.eng, newGS, '');
+        target.ex2 = updatedEx.ex2;
+        target.ex3 = updatedEx.ex3;
+        learnFromContext(target.words, target.eng, target.syn, newGS);
+        saveAll();
+        showToast(`Moved "${target.words}" to ${newGS} — Adaptive GS Brain updated.`);
+        render();
+      }
+    }
+
+    function toggleStar(e, id) {
+      e.stopPropagation();
+      const target = db.find(i => i.id === id);
+      if (target) {
+        target.starred = !target.starred;
+        saveAll();
+        render();
+      }
+    }
+
+    function deleteRow(e, id) {
+      e.stopPropagation();
+      db = db.filter(i => i.id !== id);
+      saveAll();
+      render();
+    }
+
+    function speakText(e, wordList) {
+      e.stopPropagation();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(String(wordList).split(',')[0].trim());
+        u.lang = 'en-IN';
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    function setGrouping(mode) {
+      groupMode = mode;
+      document.getElementById('btnViewGS').classList.toggle('active', mode === 'gs');
+      document.getElementById('btnViewAZ').classList.toggle('active', mode === 'az');
+      render();
+    }
+
+    function toggleStarFilter() {
+      onlyStarred = !onlyStarred;
+      document.getElementById('btnStarFilter').classList.toggle('active', onlyStarred);
+      render();
+    }
+
+    function toggleRecallMode() {
+      document.body.classList.toggle('recall-active');
+      document.getElementById('btnRecall').classList.toggle('active');
+    }
+
+    function toggleExpandAll() {
+      expandAll = !expandAll;
+      document.getElementById('btnExpandAll').classList.toggle('active', expandAll);
+      document.querySelectorAll('.lex-item').forEach(el => el.classList.toggle('open', expandAll));
+    }
+
+    function handleSearchInput() {
+      render();
+    }
+
+    function loadStarterPack() {
+      const seeds = [
+        {
+          words: 'Abrogate, Repeal',
+          pos: 'verb',
+          tamil: 'ரத்து செய்',
+          nuance: 'நீக்கு, தள்ளுபடி செய்',
+          eng: 'To formally abolish, annul, or revoke a law, constitutional provision, or treaty by authoritative action.',
+          syn: 'Annul, Rescind, Revoke, Quash',
+          cat: 'GS-2: Polity & Governance',
+          starred: true
+        },
+        {
+          words: 'Fiscal Consolidation',
+          pos: 'noun',
+          tamil: 'நிதி ஒருங்கிணைப்பு',
+          nuance: 'நிதிப் பற்றாக்குறை குறைப்பு',
+          eng: 'Concrete policy measures undertaken by government to reduce fiscal deficits and public debt accumulation.',
+          syn: 'Deficit Reduction, Fiscal Prudence, Debt Sustainability',
+          cat: 'GS-3: Economy & Dev',
+          starred: true
+        },
+        {
+          words: 'Strategic Autonomy',
+          pos: 'noun',
+          tamil: 'மூலோபாய தன்னாட்சி',
+          nuance: 'சுதந்திரமான வெளியுறவுக் கொள்கை',
+          eng: 'The capacity of a sovereign state to pursue its national interests and foreign policy without being constrained by alliances.',
+          syn: 'Multi-alignment, Non-alignment, Sovereign Agency',
+          cat: 'GS-2: International Relations',
+          starred: true
+        },
+        {
+          words: 'Probity',
+          pos: 'noun',
+          tamil: 'நேர்மை',
+          nuance: 'நன்னடத்தை, தூய்மை',
+          eng: 'Complete and confirmed integrity; adherence to the highest principles and ideals in public administration.',
+          syn: 'Rectitude, Uprightness, Integrity, Scrupulousness',
+          cat: 'GS-4: Ethics & Integrity',
+          starred: true
+        },
+        {
+          words: 'Anthropogenic',
+          pos: 'adjective',
+          tamil: 'மனிதனால் உருவாக்கப்பட்ட',
+          nuance: 'மனிதச் செயல்பாடுகளால் ஏற்படும்',
+          eng: 'Originating in human activity, chiefly used regarding environmental pollution and climate change.',
+          syn: 'Human-induced, Man-made',
+          cat: 'GS-3: Environment & Ecology',
+          starred: false
+        }
+      ];
+
+      let added = 0;
+      seeds.forEach(s => {
+        const exists = db.some(i => normalizeTamil(i.tamil) === normalizeTamil(s.tamil) || i.words.toLowerCase().includes(s.words.split(',')[0].toLowerCase()));
+        if (!exists) {
+          const ex = buildUPSCExamples(s.words, s.eng, s.cat, '');
+          db.push({ id: Date.now() + Math.random() * 1000, ...s, ...ex });
+          learnFromContext(s.words, s.eng, s.syn, s.cat);
+          added++;
+        }
+      });
+      saveAll();
+      showToast(added ? `Loaded ${added} high-yield UPSC editorial terms!` : 'Starter terms are already in your lexicon.');
+      render();
+    }
+
+    function renderSidebarAndAZ() {
+      document.getElementById('totalBadge').textContent = db.length;
+
+      const counts = { ALL: db.length };
+      GS_CATEGORIES.forEach(c => counts[c] = 0);
+      db.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
+
+      const navHTML = [
+        `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';render()">
+          <span>All GS Papers</span>
+          <span class="nav-pill">${counts.ALL}</span>
+        </button>`,
+        ...GS_CATEGORIES.map(c => `
+          <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS='${esc(c)}';render()">
+            <span>${esc(c.replace('International Relations', 'Int. Relations').replace('Environment & Ecology', 'Environment'))}</span>
+            <span class="nav-pill">${counts[c] || 0}</span>
+          </button>`)
+      ].join('');
+      document.getElementById('sidebarNav').innerHTML = navHTML;
+
+      const brainEntries = Object.entries(brain);
+      document.getElementById('brainCount').textContent = `${brainEntries.length} Rules`;
+      document.getElementById('brainPreview').innerHTML = brainEntries.slice(-12).reverse().map(([stem, gs]) =>
+        `<span class="brain-chip" title="${esc(gs)}">${esc(stem)} ➔ ${esc(gs.split(':')[0])}</span>`
+      ).join('') || `<span style="color:var(--ink-3); font-size:10.5px;">Add or reassign words to train.</span>`;
+
+      const activeInitials = new Set(db.map(i => i.words.trim().charAt(0).toUpperCase()));
+      const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+      document.getElementById('azBar').innerHTML = letters.map(l => {
+        const has = l !== 'ALL' && activeInitials.has(l);
+        return `<button class="az-btn ${selectedLetter === l ? 'active' : ''} ${has ? 'has-words' : ''}" onclick="selectedLetter='${l}';render()">${l}</button>`;
+      }).join('');
+    }
+
+    function buildRowHTML(item) {
+      const wordGroup = item.words.split(',').map(w => w.trim()).filter(Boolean);
+      const mergeBadge = wordGroup.length > 1
+        ? `<span class="w-merge-count" title="Merged English words sharing identical Tamil meaning">${wordGroup.length} Merged</span>`
+        : '';
+
+      const synList = (item.syn && item.syn !== '—' && item.syn !== '-')
+        ? item.syn.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
+      const synButtons = synList.length
+        ? synList.map(s => `<button class="syn-clickable" onclick="chainSynonym(event, '${esc(s)}', '${esc(item.cat)}')" title="Click to translate & index '${esc(s)}'">+ ${esc(s)}</button>`).join('')
+        : '<span style="color:var(--ink-3)">—</span>';
+
+      const gsOptions = GS_CATEGORIES.map(c => {
+        const short = c.replace(': Society & Culture', ' Society').replace(': Polity & Governance', ' Polity').replace(': International Relations', ' IR').replace(': Economy & Dev', ' Economy').replace(': Environment & Ecology', ' Env').replace(': Science & Tech', ' S&T').replace(': Ethics & Integrity', ' Ethics').replace('Essay & Editorial Idioms', 'Essay');
+        return `<option value="${esc(c)}" ${item.cat === c ? 'selected' : ''}>${esc(short)}</option>`;
+      }).join('');
+
+      return `
+        <div class="lex-item ${expandAll ? 'open' : ''}" onclick="this.classList.toggle('open')">
+          <div class="lex-summary">
+            <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${item.id})" title="Mark High-Yield">★</button>
+            <div class="c-word">
+              <span class="w-main">${esc(item.words)}</span>
+              ${mergeBadge}
+              ${item.pos ? `<span class="w-pos">${esc(item.pos)}</span>` : ''}
+              <button class="spk-icon" onclick="speakText(event, '${esc(item.words)}')" title="Pronounce">🔊</button>
+            </div>
+            <div class="c-tamil">
+              ${esc(item.tamil)}
+              ${item.nuance ? `<span class="t-nuance">(${esc(item.nuance)})</span>` : ''}
+            </div>
+            <div class="c-def">${esc(item.eng)}</div>
+            <div class="c-meta" onclick="event.stopPropagation()">
+              <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper (Trains Adaptive Brain)">
+                ${gsOptions}
+              </select>
+              <button class="icon-del" onclick="deleteRow(event, ${item.id})" title="Delete">✕</button>
+            </div>
+          </div>
+
+          <div class="lex-drawer">
+            <div class="drawer-meta-grid">
+              <div>
+                <div class="d-label">Authoritative Definition &amp; Tamil Nuance</div>
+                <div style="color:var(--ink-1); font-weight:500; margin-bottom:4px;">${esc(item.eng)}</div>
+                <div style="font-family:'Noto Sans Tamil',sans-serif; color:var(--tamil); font-weight:700;">
+                  தமிழ் பொருள்: ${esc(item.tamil)}
+                  ${item.nuance ? `<span style="font-weight:400; color:var(--ink-2);"> | மாற்றுச் சொற்கள்: ${esc(item.nuance)}</span>` : ''}
+                </div>
+              </div>
+              <div>
+                <div class="d-label">Interactive Synonyms (Click any to index)</div>
+                <div>${synButtons}</div>
+              </div>
+            </div>
+
+            <div class="ex-trio">
+              <div class="ex-box">
+                <div class="ex-head"><span>1. Newspaper Editorial</span><span>Context</span></div>
+                <div class="ex-body">"${esc(item.ex1)}"</div>
+              </div>
+              <div class="ex-box">
+                <div class="ex-head"><span>2. UPSC GS Mains</span><span>Answer Body</span></div>
+                <div class="ex-body">"${esc(item.ex2)}"</div>
+              </div>
+              <div class="ex-box">
+                <div class="ex-head"><span>3. Essay &amp; Ethics</span><span>Way Forward</span></div>
+                <div class="ex-body">"${esc(item.ex3)}"</div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function render() {
+      renderSidebarAndAZ();
+
+      const rawQ = document.getElementById('wordInput').value.toLowerCase().trim();
+      const q = rawQ.includes(',') ? '' : rawQ;
+
+      let filtered = db.filter(item => {
+        const firstChar = item.words.trim().charAt(0).toUpperCase();
+        const matchGS = selectedGS === 'ALL' || item.cat === selectedGS;
+        const matchLet = selectedLetter === 'ALL' || firstChar === selectedLetter;
+        const matchStar = !onlyStarred || item.starred;
+        const matchQ = !q ||
+          item.words.toLowerCase().includes(q) ||
+          item.tamil.includes(q) ||
+          (item.nuance && item.nuance.includes(q)) ||
+          item.syn.toLowerCase().includes(q) ||
+          item.eng.toLowerCase().includes(q);
+        return matchGS && matchLet && matchStar && matchQ;
+      });
+
+      filtered.sort((a, b) => a.words.localeCompare(b.words));
+
+      const body = document.getElementById('tableBody');
+      if (!filtered.length) {
+        body.innerHTML = `
+          <div style="padding:48px 20px; text-align:center; color:var(--ink-3);">
+            <div style="font-size:14px; font-weight:600; color:var(--ink-2); margin-bottom:6px;">No vocabulary terms match your current filter.</div>
+            <div style="font-size:12.5px;">Type any English word above and press <b>Enter</b>, or click <b>⚡ Load UPSC Starter Terms</b> in the left sidebar.</div>
+          </div>`;
+        return;
+      }
+
+      let html = '';
+      if (groupMode === 'gs') {
+        GS_CATEGORIES.forEach(gs => {
+          const subList = filtered.filter(i => i.cat === gs);
+          if (subList.length) {
+            html += `<div class="section-divider"><span>${esc(gs)} (Sorted A–Z)</span><span>${subList.length} Terms</span></div>`;
+            html += subList.map(buildRowHTML).join('');
+          }
+        });
+      } else {
+        let currentLetter = '';
+        filtered.forEach(item => {
+          const ch = item.words.trim().charAt(0).toUpperCase();
+          if (ch !== currentLetter) {
+            currentLetter = ch;
+            html += `<div class="section-divider"><span>Alphabetical Index — ${esc(ch)}</span></div>`;
+          }
+          html += buildRowHTML(item);
+        });
+      }
+      body.innerHTML = html;
+    }
+
+    function exportCSV() {
+      if (!db.length) return alert('Your lexicon is currently empty.');
+      const sorted = [...db].sort((a, b) => a.cat.localeCompare(b.cat) || a.words.localeCompare(b.words));
+      const headers = ['UPSC GS Paper', 'English Terms (A-Z)', 'Part of Speech', 'Exact Tamil Meaning', 'Tamil Nuances', 'UPSC Definition', 'Synonyms', 'Editorial Example', 'GS Mains Example', 'Way Forward Example'];
+      const rows = sorted.map(i => [
+        i.cat, i.words, i.pos, i.tamil, i.nuance, i.eng, i.syn, i.ex1, i.ex2, i.ex3
+      ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
+      const blob = new Blob(['\uFEFF' + [headers.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'UPSC_CSE_Lexicon_Pro.csv';
+      a.click();
+    }
+
+    function exportJSON() {
+      const payload = { version: 5, exportedAt: new Date().toISOString(), db, brain };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'UPSC_Lexicon_Backup.json';
+      a.click();
+    }
+
+    function importJSON(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.db)) {
+            db = data.db;
+            if (data.brain) brain = { ...brain, ...data.brain };
+            saveAll();
+            showToast(`Restored ${db.length} terms and learned rules!`);
+            render();
+          } else {
+            alert('Invalid backup file format.');
+          }
+        } catch (err) {
+          alert('Could not parse JSON backup file.');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    render();
+  </script>
+</body>
+</html>
