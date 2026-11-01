@@ -1816,6 +1816,42 @@
         #main-nav { min-width: 0; }
         #account-controls { min-width: 0; flex: 0 1 auto; }
         #admin-portal-btn { flex: 0 0 auto; max-width: 100%; }
+
+        /* Account actions live in a compact menu attached to Admin Portal. */
+        #account-controls {
+            position: absolute;
+            top: calc(100% + 0.7rem);
+            right: 0;
+            z-index: 60;
+            display: grid;
+            width: min(18rem, calc(100vw - 1.5rem));
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            background: var(--card-bg-color);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+        }
+        #account-controls[hidden] { display: none; }
+        #account-email { display: block; max-width: 100%; font-size: 0.82rem; }
+        #account-signout {
+            width: 100%;
+            min-height: 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.7rem;
+            background: var(--bg-color-100);
+            color: var(--text-color-800);
+            font-size: 0.84rem;
+            font-weight: 600;
+            text-align: left;
+        }
+        #account-signout:hover { border-color: var(--primary-color-500); background: var(--primary-color-100); }
+        #admin-portal-wrap { position: relative; flex: 0 0 auto; }
+        #admin-portal-btn[aria-expanded="true"] { box-shadow: 0 0 0 3px rgba(var(--primary-color-500-rgb), 0.16), 0 4px 15px -3px rgba(var(--primary-color-500-rgb), 0.3) !important; }
+        #account-menu-label { color: var(--text-color-500); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+        @media (max-width: 767px) {
+            #account-controls { right: 0; }
+        }
         @media (min-width: 768px) and (max-width: 1050px) {
             header.bg-card nav { flex-wrap: wrap; }
             #main-nav { order: 3; flex: 1 0 100%; justify-content: center; gap: 0.25rem; }
@@ -1901,6 +1937,11 @@
             border-radius: 0.7rem;
             background: var(--error-color-100);
         }
+        #account-error.success:not(:empty) {
+            border-color: color-mix(in srgb, var(--success-color-500) 25%, transparent);
+            background: var(--success-color-100);
+            color: var(--success-color-600);
+        }
         @media (max-width: 480px) {
             .account-card { border-radius: 1.2rem; }
         }
@@ -1983,49 +2024,6 @@
             .account-welcome-note { margin-top: 0.65rem; font-size: 0.82rem; }
             .account-form-panel { padding: 1.25rem 1.4rem 1.5rem; }
         }
-        /* Keep password recovery consistent with the sign-in experience. */
-        #otpResetModal {
-            z-index: 1200 !important;
-            background: rgba(15, 23, 42, 0.62) !important;
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-        }
-        .reset-card {
-            position: relative;
-            overflow: hidden;
-            width: min(100%, 440px) !important;
-            padding: 1.75rem !important;
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem !important;
-            background: var(--card-bg-color) !important;
-            color: var(--text-color-700);
-            box-shadow: 0 28px 80px rgba(15, 23, 42, 0.3) !important;
-        }
-        .reset-card::before {
-            content: '';
-            position: absolute;
-            inset: 0 12% auto;
-            height: 3px;
-            border-radius: 0 0 999px 999px;
-            background: linear-gradient(90deg, transparent, var(--primary-color-500), #8b5cf6, transparent);
-        }
-        .reset-card h3 { color: var(--text-color-900) !important; font-size: 1.35rem !important; font-weight: 700; letter-spacing: -0.04em; }
-        .reset-card input {
-            min-height: 2.8rem;
-            border-color: var(--border-color) !important;
-            border-radius: 0.7rem !important;
-            background: var(--input-bg) !important;
-            color: var(--text-color-800) !important;
-            outline-color: var(--primary-color-500);
-        }
-        .reset-card .reset-primary-button {
-            min-height: 2.8rem;
-            border-radius: 0.7rem !important;
-            background: linear-gradient(115deg, var(--primary-color-600), var(--primary-color-700)) !important;
-        }
-        #reset-account-summary { color: var(--text-color-600); }
-        @media (max-width: 480px) { .reset-card { padding: 1.25rem !important; } }
-
         /* Apple-inspired account experience: soft glass, generous spacing, quiet detail. */
         #account-gate {
             background:
@@ -2221,6 +2219,134 @@
             #target-consistency-dashboard > div:last-child > div > div > div > div,
             #weekly-target-list table tbody tr { animation: none !important; transition: none !important; }
         }
+
+        /* Unified refresh: clearer surfaces, stronger hierarchy, and consistent controls. */
+        :root {
+            --surface-shadow: 0 12px 32px rgba(29, 48, 78, 0.07);
+            --surface-shadow-hover: 0 18px 42px rgba(29, 48, 78, 0.11);
+        }
+        body {
+            background-image: radial-gradient(ellipse at 8% 0%, rgba(var(--primary-color-500-rgb), 0.09), transparent 32%),
+                              radial-gradient(ellipse at 96% 14%, rgba(139, 92, 246, 0.07), transparent 30%);
+        }
+        body[data-theme='graphite'] {
+            background-image: radial-gradient(ellipse at 8% 0%, rgba(96, 165, 250, 0.12), transparent 32%),
+                              radial-gradient(ellipse at 96% 14%, rgba(139, 92, 246, 0.1), transparent 30%);
+        }
+        header.bg-card {
+            border-bottom-color: color-mix(in srgb, var(--border-color) 72%, transparent) !important;
+            box-shadow: 0 8px 26px rgba(26, 45, 74, 0.06) !important;
+        }
+        #app-container { padding-top: clamp(1rem, 2.2vw, 1.8rem); }
+        .view { gap: clamp(0.9rem, 1.8vw, 1.35rem); }
+        .card-block,
+        .view > .card-block,
+        .view > div.card-block,
+        .tab-content > .card-block,
+        #admin-dashboard > .admin-tab-content {
+            border-color: color-mix(in srgb, var(--border-color) 82%, #9bb8df);
+            border-radius: 1.05rem;
+            box-shadow: var(--surface-shadow);
+        }
+        .card-block:hover { box-shadow: var(--surface-shadow-hover); }
+        body[data-theme='graphite'] .card-block,
+        body[data-theme='graphite'] .view > .card-block,
+        body[data-theme='graphite'] .view > div.card-block,
+        body[data-theme='graphite'] .tab-content > .card-block,
+        body[data-theme='graphite'] #admin-dashboard > .admin-tab-content {
+            border-color: rgba(148, 163, 184, 0.2);
+            box-shadow: 0 12px 34px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.035);
+        }
+        #home-view > section:first-child > .card-block {
+            min-height: 180px;
+            border-radius: 1.35rem;
+            background: radial-gradient(ellipse at 88% 10%, rgba(var(--primary-color-500-rgb), 0.17), transparent 38%),
+                        linear-gradient(135deg, var(--card-bg-color), color-mix(in srgb, var(--card-bg-color) 88%, var(--primary-color-100)));
+        }
+        #greeting-display { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+        #quote-display { max-width: 48rem; margin-inline: auto; }
+        #main-nav .nav-link { border-radius: 0.7rem; }
+        #main-nav .nav-link[aria-current="page"] { color: var(--primary-color-700); background: var(--primary-color-100); }
+        #admin-portal-wrap { position: relative; }
+        #account-controls {
+            top: calc(100% + 0.55rem);
+            width: min(19rem, calc(100vw - 1.5rem));
+            padding: 0.85rem;
+            border-radius: 1.05rem;
+            border-color: color-mix(in srgb, var(--border-color) 78%, #9bb8df);
+            background: color-mix(in srgb, var(--card-bg-color) 96%, transparent);
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
+            animation: portal-menu-enter 0.18s ease-out both;
+        }
+        #account-menu-label { padding: 0.15rem 0.2rem 0; }
+        #account-email { padding: 0 0.2rem 0.65rem; border-bottom: 1px solid var(--border-color); color: var(--text-color-800); font-weight: 600; }
+        #open-admin-dashboard { min-height: 2.8rem; border-radius: 0.75rem; box-shadow: 0 6px 14px rgba(var(--primary-color-500-rgb), 0.18); }
+        #account-signout { min-height: 2.65rem; border-radius: 0.75rem; }
+        @keyframes portal-menu-enter {
+            from { opacity: 0; transform: translateY(-5px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        #home-view > .flex.justify-center.border-b,
+        #admin-dashboard > .flex.justify-center.border-b {
+            border-radius: 1rem;
+            padding: 0.4rem;
+            box-shadow: 0 8px 24px rgba(29, 48, 78, 0.07);
+        }
+        .section-title { line-height: 1.3; }
+        .input-themed, select.input-themed, textarea.input-themed {
+            border-radius: 0.75rem;
+            border-color: color-mix(in srgb, var(--border-color) 82%, var(--text-color-500));
+        }
+        button.btn-hover, .note-template-btn { border-radius: 0.75rem; }
+        button:disabled { opacity: 0.62; cursor: not-allowed; transform: none !important; }
+        .accordion-trigger { border-radius: 0.7rem; }
+        .accordion-content { overscroll-behavior: contain; }
+        .link-preview-card { border-color: var(--border-color); box-shadow: 0 5px 16px rgba(29, 48, 78, 0.045); }
+        .link-preview-card:hover { transform: translateY(-2px); }
+        #target-consistency-dashboard { border-radius: 1.05rem; }
+        .analysis-progress-track { height: 7px; }
+        .analyser-stat-card { border-radius: 1rem; }
+        #dynamic-island-toast { z-index: 1000; }
+        @media (max-width: 767px) {
+            #app-container { padding: 0.85rem 0.75rem 1.5rem; }
+            #home-view > section:first-child > .card-block { min-height: 145px; }
+            #account-controls { right: 0; }
+            #home-view > .flex.justify-center.border-b,
+            #admin-dashboard > .flex.justify-center.border-b { border-radius: 0.85rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #account-controls { animation: none; }
+        }
+        /* Keep account recovery compact and usable on small viewports. */
+        .account-card { max-height: calc(100dvh - 1.5rem); overflow-y: auto; }
+        .account-form-panel { min-width: 0; }
+        #account-form input { box-sizing: border-box; width: 100%; min-width: 0; }
+        .account-card.reset-mode .account-welcome-panel { display: none; }
+        .account-card.reset-mode { grid-template-columns: minmax(0, 1fr); width: min(100%, 460px); min-height: 0; }
+        .account-card.reset-mode .account-form-panel { padding: clamp(1.2rem, 4vw, 2rem); }
+        .account-card.reset-mode #account-password-field,
+        .account-card.reset-mode #forgot-password-btn,
+        .account-card.reset-mode #account-submit,
+        .account-card.reset-mode #account-social-divider,
+        .account-card.reset-mode #google-signin-btn,
+        .account-card.reset-mode #account-mode-row,
+        .account-card.reset-mode #account-privacy-note,
+        .account-card.reset-mode #download-local-backup { display: none !important; }
+        .account-card.reset-mode #reset-stage-email:not(.hidden),
+        .account-card.reset-mode #reset-stage-verify:not(.hidden) { display: block; }
+        .account-card.reset-mode #reset-stage-verify:not(.hidden) { display: grid; }
+        .account-card.reset-verifying #account-email-field { display: none; }
+        #lexicon-view > .card-block { overflow: hidden; }
+        @media (min-width: 768px) and (max-width: 1200px) {
+            header.bg-card nav { flex-wrap: wrap; }
+            #main-nav { order: 3; flex: 1 0 100%; justify-content: center; flex-wrap: wrap; }
+        }
+        @media (max-width: 640px) {
+            .account-card { max-height: calc(100dvh - 1rem); }
+            .account-card.reset-mode { width: min(100%, 440px); }
+        }
     </style>
 </head>
 <body data-theme="royal">
@@ -2241,16 +2367,32 @@
             </div>
             <div class="account-form-panel">
                 <form id="account-form" class="space-y-4">
-                    <div><label for="account-email-input" class="mb-1 block text-sm font-medium text-body">Email</label><input id="account-email-input" type="email" class="input-themed w-full px-3 py-2" autocomplete="email" required></div>
-                    <div><label for="account-password-input" class="mb-1 block text-sm font-medium text-body">Password</label><input id="account-password-input" type="password" class="input-themed w-full px-3 py-2" autocomplete="current-password" minlength="6" required></div>
+                    <div id="account-email-field"><label for="account-email-input" class="mb-1 block text-sm font-medium text-body">Email</label><input id="account-email-input" type="email" class="input-themed w-full px-3 py-2" autocomplete="email" required></div>
+                    <div id="account-password-field"><label for="account-password-input" class="mb-1 block text-sm font-medium text-body">Password</label><input id="account-password-input" type="password" class="input-themed w-full px-3 py-2" autocomplete="current-password" minlength="6" required></div>
                     <button id="forgot-password-btn" type="button" class="justify-self-end py-1 text-sm font-semibold" style="color: var(--primary-color-600);">Forgot password?</button>
+                    <section id="reset-stage-email" class="hidden space-y-3 rounded-xl border border-themed p-4" aria-label="Send a password reset code">
+                        <h2 id="reset-heading" class="text-lg font-semibold text-header">Reset your password</h2>
+                        <p class="text-xs text-muted">Enter your account email above. We’ll send a six-digit verification code through Brevo.</p>
+                        <button id="send-reset-code-btn" type="button" class="w-full rounded-lg px-4 py-2.5 font-semibold text-white" style="background: var(--primary-color-600);">Send code</button>
+                        <button id="reset-cancel-btn" type="button" class="w-full py-1 text-sm font-semibold text-muted">Back to sign in</button>
+                    </section>
+                    <section id="reset-stage-verify" class="hidden space-y-3 rounded-xl border border-themed p-4" aria-label="Verify code and reset password">
+                        <h2 class="text-lg font-semibold text-header">Choose a new password</h2>
+                        <p class="text-xs text-muted">Enter the code from your email. Check your spam folder if needed.</p>
+                        <div><label for="reset-code-input">Email code</label><input id="reset-code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" class="input-themed w-full px-3 py-2"></div>
+                        <div><label for="reset-password-input">New password</label><input id="reset-password-input" type="password" autocomplete="new-password" minlength="6" class="input-themed w-full px-3 py-2"></div>
+                        <div><label for="reset-confirm-input">Confirm new password</label><input id="reset-confirm-input" type="password" autocomplete="new-password" minlength="6" class="input-themed w-full px-3 py-2"></div>
+                        <button id="verify-reset-btn" type="button" class="w-full rounded-lg px-4 py-2.5 font-semibold text-white" style="background: var(--primary-color-600);">Update password</button>
+                        <button id="reset-retry-btn" type="button" class="w-full py-1 text-sm font-semibold text-muted">Change email / request another code</button>
+                        <button id="reset-verify-cancel-btn" type="button" class="w-full py-1 text-sm font-semibold text-muted">Back to sign in</button>
+                    </section>
                     <p id="account-error" class="text-sm" role="alert" aria-live="polite"></p>
                     <button id="account-submit" type="submit" class="w-full rounded-lg px-4 py-3 font-semibold text-white" style="background: var(--primary-color-600);">Sign In</button>
                 </form>
-                <div class="my-4 flex items-center gap-3 text-xs text-muted"><span class="h-px flex-1 bg-gray-200"></span><span>or</span><span class="h-px flex-1 bg-gray-200"></span></div>
+                <div id="account-social-divider" class="my-4 flex items-center gap-3 text-xs text-muted"><span class="h-px flex-1 bg-gray-200"></span><span>or</span><span class="h-px flex-1 bg-gray-200"></span></div>
                 <button id="google-signin-btn" type="button" class="w-full px-4 py-2.5"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">Continue with Google</button>
-                <p class="mt-5 text-center text-sm text-muted"><span id="account-mode-prompt">New here?</span> <button id="account-mode-toggle" type="button" class="font-semibold" style="color: var(--primary-color-600);">Create an account</button></p>
-                <p class="mt-4 text-center text-xs text-muted">Your data is private to your account. Use the same sign-in on each device.</p>
+                <p id="account-mode-row" class="mt-5 text-center text-sm text-muted"><span id="account-mode-prompt">New here?</span> <button id="account-mode-toggle" type="button" class="font-semibold" style="color: var(--primary-color-600);">Create an account</button></p>
+                <p id="account-privacy-note" class="mt-4 text-center text-xs text-muted">Your data is private to your account. Use the same sign-in on each device.</p>
                 <button id="download-local-backup" type="button" class="mt-4 w-full rounded-lg border border-themed px-3 py-2 text-xs text-body">Download this device’s current data first</button>
             </div>
         </section>
@@ -2272,16 +2414,21 @@
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="analyser-view"><i class="fas fa-chart-pie"></i>Analyser</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="target-set-view"><i class="fas fa-bullseye"></i>Target Set</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="notes-view"><i class="fas fa-sticky-note"></i>Notes</a>
+                <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="lexicon-view"><i class="fas fa-language"></i>Lexicon</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="links-view"><i class="fas fa-link"></i>Links</a>
                 <a href="#" class="nav-link text-body hover:text-primary-600 transition-colors flex items-center gap-2" data-view="pomodoro-view"><i class="fas fa-clock"></i>Pomodoro</a>
             </div>
-            <div id="account-controls" hidden>
-                <span id="account-email"></span>
-                <button id="account-signout" type="button"><i class="fas fa-right-from-bracket mr-1"></i>Sign out</button>
+            <div id="admin-portal-wrap">
+                <button id="admin-portal-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-controls" class="text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-px transition-all flex items-center btn-hover" style="background: linear-gradient(to right, var(--primary-color-600), var(--primary-color-700)); box-shadow: 0 4px 15px -3px rgba(var(--primary-color-500-rgb), 0.3);">
+                    <i class="fas fa-user-shield mr-2"></i>Admin Portal<i class="fas fa-chevron-down ml-2 text-xs" aria-hidden="true"></i>
+                </button>
+                <div id="account-controls" hidden>
+                    <span id="account-menu-label">Signed in as</span>
+                    <span id="account-email"></span>
+                    <button id="open-admin-dashboard" type="button" class="w-full rounded-lg px-3 py-2.5 text-sm font-semibold text-white" style="background: linear-gradient(to right, var(--primary-color-600), var(--primary-color-700));"><i class="fas fa-shield-halved mr-2"></i>Open Admin Portal</button>
+                    <button id="account-signout" type="button"><i class="fas fa-right-from-bracket mr-2"></i>Sign out</button>
+                </div>
             </div>
-            <button id="admin-portal-btn" class="text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-px transition-all flex items-center btn-hover" style="background: linear-gradient(to right, var(--primary-color-600), var(--primary-color-700)); box-shadow: 0 4px 15px -3px rgba(var(--primary-color-500-rgb), 0.3);">
-                <i class="fas fa-user-shield mr-2"></i>Admin Portal
-            </button>
         </nav>
     </header>
 
@@ -2444,6 +2591,14 @@
                     <label class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-sm text-body"><input id="show-archived-notes" type="checkbox" class="h-4 w-4"> Include archived</label>
                 </div>
                 <div id="notes-display-container" class="space-y-6" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section id="lexicon-view" class="view animate-fadeInUp">
+            <div class="card-block">
+                <h2 class="section-title">The CSE Lexicon</h2>
+                <p class="text-sm text-muted mb-4">English–Tamil vocabulary, GS classification, and active recall. Meanings can be entered manually for offline study.</p>
+                <iframe id="lexicon-frame" src="lexicon.html" title="UPSC English–Tamil vocabulary workspace" style="display:block;width:100%;height:78vh;min-height:500px;border:0;border-radius:0.75rem;"></iframe>
             </div>
         </section>
 
@@ -2673,29 +2828,6 @@
         </section>
     </div>
     
-    <!-- Admin Access Code Modal -->
-    <div id="admin-login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="card-block w-full max-w-sm m-4">
-            <div class="card-window-header">
-                <div class="window-controls" aria-label="Window controls">
-                    <button type="button" class="window-dot dot-red" aria-label="Close"></button>
-                    <span class="window-dot dot-yellow" aria-hidden="true"></span>
-                    <span class="window-dot dot-green" aria-hidden="true"></span>
-                </div>
-                <h2 id="admin-modal-title" class="window-title">Admin Access Code</h2>
-            </div>
-            <div class="p-8">
-                <form id="admin-pin-form" class="space-y-4">
-                    <p id="admin-pin-description" class="text-sm text-body">Enter your 6-digit access code.</p>
-                    <div><label for="admin-pin-code" class="block text-sm font-medium text-body">6-digit access code</label><input type="password" id="admin-pin-code" class="w-full p-3 rounded-lg input-themed text-center tracking-widest" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" minlength="6" required autocomplete="off"></div>
-                    <div id="admin-pin-confirm-container" class="hidden"><label for="admin-pin-confirm" class="block text-sm font-medium text-body">Confirm access code</label><input type="password" id="admin-pin-confirm" class="w-full p-3 rounded-lg input-themed text-center tracking-widest" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" minlength="6" autocomplete="off"></div>
-                    <button id="admin-pin-submit" type="submit" class="w-full text-white font-bold py-3 rounded-lg btn-hover" style="background-color: var(--primary-color-600);">Enter</button>
-                    <p class="text-xs text-center text-muted">This code belongs to your signed-in account and syncs across devices. It is an extra access gate, not a substitute for your account password.</p>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="card-block w-full max-w-md m-4">
@@ -2730,11 +2862,11 @@
         const cloudKeys = [
             'upsc_tracker_subjects', 'upsc_tracker_mark_subjects', 'upsc_tracker_topics',
             'upsc_tracker_marks', 'upsc_tracker_targets', 'upsc_tracker_target_consistency',
-            'upsc_tracker_recurring_config', 'upsc_tracker_ncert', 'upsc_tracker_notes',
+            'upsc_tracker_recurring_config', 'upsc_tracker_ncert', 'upsc_tracker_ncert_catalog_version', 'upsc_tracker_notes',
             'upsc_tracker_links', 'upsc_tracker_theme', 'upsc_tracker_analysis_settings',
             'upsc_tracker_pomodoro_settings', 'upsc_tracker_pomodoro_logs',
             'upsc_tracker_custom_theme_color', 'upsc_tracker_pomodoro_sound', 'upsc_tracker_ui_sound',
-            'upsc_tracker_admin_pin'
+            'upsc_tracker_lexicon', 'upsc_tracker_lexicon_brain'
         ];
         const nativeSetItem = Storage.prototype.setItem;
         const nativeRemoveItem = Storage.prototype.removeItem;
@@ -2742,8 +2874,10 @@
         let cloudReady = false, appStarted = false, appInitialized = false, applyingCloudData = false, saveTimeout = null;
         let signupMode = false;
 
-        function setAccountError(message = '') {
-            document.getElementById('account-error').textContent = message;
+        function setAccountError(message = '', isSuccess = false) {
+            const error = document.getElementById('account-error');
+            error.textContent = message;
+            error.classList.toggle('success', isSuccess);
         }
         function clearLocalAccountData() {
             cloudKeys.forEach(key => nativeRemoveItem.call(localStorage, key));
@@ -2812,10 +2946,119 @@
             setAccountError();
         });
 
-        document.getElementById('forgot-password-btn').addEventListener('click', () => {
-            const email = document.getElementById('account-email-input').value.trim();
-            document.getElementById('resetUserEmail').value = email;
-            openResetModal();
+        // Set this to your deployed HTTPS Worker origin; never put backend secrets here.
+        const RESET_WORKER_URL = '';
+        let resetRequestId = '', resetEmail = '', resetGeneration = 0;
+        const accountCard = document.querySelector('.account-card');
+        const accountForm = document.getElementById('account-form');
+        const accountGate = document.getElementById('account-gate');
+
+        function clearResetSession() {
+            resetGeneration++;
+            resetRequestId = '';
+            resetEmail = '';
+            ['reset-code-input', 'reset-password-input', 'reset-confirm-input'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+        }
+        function openResetEmail() {
+            clearResetSession();
+            setAccountError();
+            accountCard.classList.add('reset-mode');
+            accountCard.classList.remove('reset-verifying');
+            accountForm.noValidate = true;
+            accountGate.setAttribute('aria-labelledby', 'reset-heading');
+            document.getElementById('reset-stage-email').classList.remove('hidden');
+            document.getElementById('reset-stage-verify').classList.add('hidden');
+            document.getElementById('account-email-input').focus();
+        }
+        function closeReset() {
+            clearResetSession();
+            accountCard.classList.remove('reset-mode', 'reset-verifying');
+            accountForm.noValidate = false;
+            accountGate.setAttribute('aria-labelledby', 'account-heading');
+            document.getElementById('reset-stage-email').classList.add('hidden');
+            document.getElementById('reset-stage-verify').classList.add('hidden');
+            document.getElementById('account-password-input').value = '';
+            setAccountError();
+            document.getElementById('account-email-input').focus();
+        }
+        async function resetApi(path, body) {
+            if (!RESET_WORKER_URL) throw new Error('Configure RESET_WORKER_URL with your deployed Worker URL first.');
+            const origin = new URL(RESET_WORKER_URL);
+            if (origin.protocol !== 'https:') throw new Error('The recovery Worker must use HTTPS.');
+            const response = await fetch(new URL(path, origin), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: AbortSignal.timeout(30000)
+            });
+            const data = await response.json();
+            if (!response.ok || data.success !== true) throw new Error(data.error || 'Password recovery failed. Try again.');
+            return data;
+        }
+        document.getElementById('forgot-password-btn').addEventListener('click', openResetEmail);
+        document.getElementById('reset-retry-btn').addEventListener('click', openResetEmail);
+        document.getElementById('reset-cancel-btn').addEventListener('click', closeReset);
+        document.getElementById('reset-verify-cancel-btn').addEventListener('click', closeReset);
+
+        document.getElementById('send-reset-code-btn').addEventListener('click', async event => {
+            const button = event.currentTarget;
+            const emailInput = document.getElementById('account-email-input');
+            setAccountError();
+            if (!emailInput.reportValidity()) return;
+            const email = emailInput.value.trim().toLowerCase();
+            const generation = resetGeneration;
+            button.disabled = true;
+            button.textContent = 'Sending…';
+            try {
+                const data = await resetApi('/api/send-otp', { email });
+                if (generation !== resetGeneration) return;
+                // A signed token containing the OTP does not prove access to the email.
+                if (data.token || typeof data.requestId !== 'string' || !data.requestId) {
+                    throw new Error('The Worker must return an opaque requestId, not a token containing the email code. Update the backend first.');
+                }
+                resetRequestId = data.requestId;
+                resetEmail = email;
+                accountCard.classList.add('reset-verifying');
+                accountGate.setAttribute('aria-labelledby', 'reset-stage-verify');
+                document.getElementById('reset-stage-email').classList.add('hidden');
+                document.getElementById('reset-stage-verify').classList.remove('hidden');
+                setAccountError('If this email has an account, a code has been sent. Check your inbox and spam folder.', true);
+                document.getElementById('reset-code-input').focus();
+            } catch (error) {
+                if (generation === resetGeneration) setAccountError(error.message || 'Unable to send the code.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send code';
+            }
+        });
+
+        document.getElementById('verify-reset-btn').addEventListener('click', async event => {
+            const button = event.currentTarget;
+            const otp = document.getElementById('reset-code-input').value.trim();
+            const newPassword = document.getElementById('reset-password-input').value;
+            const confirmation = document.getElementById('reset-confirm-input').value;
+            setAccountError();
+            if (!resetRequestId) return setAccountError('Request a new email code first.');
+            if (!/^\d{6}$/.test(otp)) return setAccountError('Enter the six-digit code from your email.');
+            if (newPassword.length < 6) return setAccountError('Use at least six characters for your new password.');
+            if (newPassword !== confirmation) return setAccountError('The new passwords do not match.');
+            const generation = resetGeneration;
+            button.disabled = true;
+            button.textContent = 'Updating…';
+            try {
+                await resetApi('/api/verify-reset', { requestId: resetRequestId, otp, newPassword });
+                if (generation !== resetGeneration) return;
+                document.getElementById('account-email-input').value = resetEmail;
+                closeReset();
+                setAccountError('Password updated. Sign in with your new password.', true);
+            } catch (error) {
+                if (generation === resetGeneration) setAccountError(error.message || 'Unable to reset your password.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Update password';
+            }
         });
 
         document.getElementById('google-signin-btn').addEventListener('click', async () => {
@@ -2840,6 +3083,10 @@
 
         document.getElementById('account-form').addEventListener('submit', async event => {
             event.preventDefault();
+            if (accountCard.classList.contains('reset-mode')) {
+                document.getElementById(accountCard.classList.contains('reset-verifying') ? 'verify-reset-btn' : 'send-reset-code-btn').click();
+                return;
+            }
             setAccountError();
             const email = document.getElementById('account-email-input').value.trim();
             const password = document.getElementById('account-password-input').value;
@@ -2898,10 +3145,12 @@
                     if (previousUser) clearLocalAccountData();
                     document.getElementById('account-gate').hidden = false;
                     document.getElementById('account-controls').hidden = true;
+                    document.getElementById('admin-portal-btn').setAttribute('aria-expanded', 'false');
                     return;
                 }
 
-                document.getElementById('account-controls').hidden = false;
+                document.getElementById('account-controls').hidden = true;
+                document.getElementById('admin-portal-btn').setAttribute('aria-expanded', 'false');
                 document.getElementById('account-email').textContent = user.email || 'Signed in';
                 setAccountError();
                 const stateRef = doc(firestore, 'users', user.uid, 'data', 'app');
@@ -2989,10 +3238,121 @@
                 {id: crypto.randomUUID(), name: "Optional: Sociology Paper 1", order: 21},
                 {id: crypto.randomUUID(), name: "Optional: Sociology Paper 2", order: 22}
             ];
-             const defaultNcertBooks = [
-                { id: crypto.randomUUID(), subject: "Mains GS I: Ancient Indian History", bookName: "6th Our Pasts - I", order: 0, chapters: [ { id: crypto.randomUUID(), name: "What, Where, How and When?", progress: Array(7).fill(false) }, { id: crypto.randomUUID(), name: "On The Trail of the Earliest People", progress: Array(7).fill(false) } ]},
-                { id: crypto.randomUUID(), subject: "Mains GS I: Geography", bookName: "6th The Earth: Our Habitat", order: 1, chapters: [], progress: Array(5).fill(false) }
+            // Shared NCERT catalog. These books feed NCERT tracking and its analysis only.
+            const sharedNcertBooks = [
+                ['Mains GS I: Geography', '6th The Earth: Our Habitat', [
+                    'The Earth in the Solar System', 'Globe: Latitudes and Longitudes', 'Motions of the Earth', 'Maps', 'Major Domains of the Earth', 'Our Country – India'
+                ]],
+                ['Mains GS I: Geography', '7th Our Environment', [
+                    'Environment', 'Inside Our Earth', 'Our Changing Earth', 'Air', 'Water', 'Human Environment Interactions – The Tropical and the Subtropical Region', 'Life in the Deserts'
+                ]],
+                ['Mains GS I: Geography', '8th Resources and Development', [
+                    'Resources', 'Land, Soil, Water, Natural Vegetation and Wildlife Resources', 'Agriculture', 'Industries', 'Human Resources'
+                ]],
+                ['Mains GS I: Geography', '9th Contemporary India – I', [
+                    'India – Size and Location', 'Physical Features of India', 'Drainage', 'Climate', 'Natural Vegetation and Wildlife', 'Population'
+                ]],
+                ['Mains GS I: Geography', '10th Contemporary India – II', [
+                    'Resources and Development', 'Forest and Wildlife Resources', 'Water Resources', 'Agriculture', 'Minerals and Energy Resources', 'Manufacturing Industries', 'Life Lines of National Economy'
+                ]],
+                ['Mains GS I: Geography', '11th Fundamentals of Physical Geography', [
+                    'Geography as a Discipline', 'The Origin and Evolution of the Earth', 'Interior of the Earth', 'Distribution of Oceans and Continents', 'Geomorphic Processes', 'Landforms and their Evolution', 'Composition and Structure of Atmosphere', 'Solar Radiation, Heat Balance and Temperature', 'Atmospheric Circulation and Weather Systems', 'Water in the Atmosphere', 'World Climate and Climate Change', 'Water (Oceans)', 'Movements of Ocean Water', 'Biodiversity and Conservation'
+                ]],
+                ['Mains GS I: Geography', '11th India – Physical Environment', [
+                    'India – Location', 'Structure and Physiography', 'Drainage System', 'Climate', 'Natural Vegetation', 'Soils', 'Natural Hazards and Disasters'
+                ]],
+                ['Mains GS I: Geography', '12th Fundamentals of Human Geography', [
+                    'Human Geography: Nature and Scope', 'The World Population: Distribution, Density and Growth', 'Human Development', 'Primary Activities', 'Secondary Activities', 'Tertiary and Quaternary Activities', 'Transport and Communication', 'International Trade'
+                ]],
+                ['Mains GS I: Geography', '12th India – People and Economy', [
+                    'Population: Distribution, Density, Growth and Composition', 'Human Settlements', 'Land Resources and Agriculture', 'Water Resources', 'Mineral and Energy Resources', 'Planning and Sustainable Development in Indian Context', 'Transport and Communication', 'International Trade', 'Geographical Perspective on Selected Issues and Problems'
+                ]],
+                ['Mains GS I: Ancient Indian History', '6th Our Pasts-I', [
+                    'What, Where, How and When?', 'From Hunting-Gathering to Growing Food', 'In the Earliest Cities', 'What Books and Burials Tell Us', 'Kingdoms, Kings and an Early Republic', 'New Questions and Ideas', 'From a Kingdom to an Empire', 'Villages, Towns and Trade', 'New Empires and Kingdoms', 'Buildings, Paintings and Books'
+                ]],
+                ['Mains GS I: Indian Heritage and Culture', '7th Our Pasts-II', [
+                    'Introduction: Tracing Changes Through a Thousand Years', 'Kings and Kingdoms', 'Delhi: 12th to 15th Century', 'The Mughals (16th to 17th Century)', 'Tribes, Nomads and Settled Communities', 'Devotional Paths to the Divine', 'The Making of Regional Cultures', 'Eighteenth-Century Political Formations'
+                ]],
+                ['Mains GS I: Modern Indian History', '8th Our Pasts-III Part-I', [
+                    'Introduction: How, When and Where', 'From Trade to Territory: The Company Establishes Power', 'Ruling the Countryside', 'Tribals, Dikus and the Vision of a Golden Age', 'When People Rebel: 1857 and After', 'Civilising the "Native", Educating the Nation', 'Women, Caste and Reform', 'The Making of the National Movement: 1870s–1947'
+                ]],
+                ['Mains GS I: World History', '9th India and the Contemporary World-I', [
+                    'The French Revolution', 'Socialism in Europe and the Russian Revolution', 'Nazism and the Rise of Hitler', 'Forest Society and Colonialism', 'Pastoralists in the Modern World'
+                ]],
+                ['Mains GS I: Modern Indian History', '10th India and the Contemporary World-II', [
+                    'The Rise of Nationalism in Europe', 'Nationalism in India', 'The Making of a Global World', 'The Age of Industrialisation', 'Print Culture and the Modern World'
+                ]],
+                ['Mains GS I: World History', '11th Themes in World History', [
+                    'Writing and City Life', 'An Empire Across Three Continents', 'Nomadic Empires', 'The Three Orders', 'Changing Cultural Traditions', 'Displacing Indigenous Peoples', 'Paths to Modernisation'
+                ]],
+                ['Mains GS I: Ancient Indian History', '12th Themes in Indian History – Part I', [
+                    'Bricks, Beads and Bones: The Harappan Civilisation', 'Kings, Farmers and Towns: Early States and Economies (c. 600 BCE – 600 CE)', 'Kinship, Caste and Class: Early Societies (c. 600 BCE – 600 CE)', 'Thinkers, Beliefs and Buildings: Cultural Developments (c. 600 BCE – 600 CE)'
+                ]],
+                ['Mains GS I: Indian Heritage and Culture', '12th Themes in Indian History – Part II', [
+                    'Through the Eyes of Travellers: Perceptions of Society (c. tenth to seventeenth century)', 'Bhakti-Sufi Traditions: Changes in Religious Beliefs and Devotional Texts (c. eighth to eighteenth century)', 'An Imperial Capital: Vijayanagara (c. fourteenth to sixteenth century)', 'Peasants, Zamindars and the State: Agrarian Society and the Mughal Empire (c. sixteenth-seventeenth centuries)'
+                ]],
+                ['Mains GS I: Modern Indian History', '12th Themes in Indian History – Part III', [
+                    'Colonialism and the Countryside: Exploring Official Archives', 'Rebels and the Raj: The Revolt of 1857 and Its Representations', 'Mahatma Gandhi and the Nationalist Movement: Civil Disobedience and Beyond', 'Framing the Constitution: The Beginning of a New Era'
+                ]],
+                ['Mains GS I: Indian Heritage and Culture', '11th An Introduction to Indian Art – Part I', [
+                    'Prehistoric Rock Paintings', 'Arts of the Indus Valley', 'Arts of the Mauryan Period', 'Post-Mauryan Trends in Indian Art and Architecture', 'Later Mural Traditions', 'Temple Architecture and Sculpture', 'Indian Bronze Sculpture', 'Some Aspects of Indo-Islamic Architecture'
+                ]],
+                ['Mains GS II: Governance & Constitution', '6th Social and Political Life – I', [
+                    'Understanding Diversity', 'Diversity and Discrimination', 'What is Government?', 'Panchayati Raj', 'Rural Administration', 'Urban Administration', 'Rural Livelihoods', 'Urban Livelihoods'
+                ]],
+                ['Mains GS II: Governance & Constitution', '7th Social and Political Life – II', [
+                    'On Equality', 'Role of the Government in Health', 'How the State Government Works', 'Growing up as Boys and Girls', 'Women Change the World', 'Understanding Media', 'Markets Around Us', 'A Shirt in the Market'
+                ]],
+                ['Mains GS II: Governance & Constitution', '8th Social and Political Life – III', [
+                    'The Indian Constitution', 'Understanding Secularism', 'Parliament and the Making of Laws', 'Judiciary', 'Understanding Marginalisation', 'Confronting Marginalisation', 'Public Facilities', 'Law and Social Justice'
+                ]],
+                ['Mains GS II: Polity', '9th Democratic Politics – I', [
+                    'What is Democracy? Why Democracy?', 'Constitutional Design', 'Electoral Politics', 'Working of Institutions', 'Democratic Rights'
+                ]],
+                ['Mains GS II: Polity', '10th Democratic Politics – II', [
+                    'Power Sharing', 'Federalism', 'Gender, Religion and Caste', 'Political Parties', 'Outcomes of Democracy'
+                ]],
+                ['Mains GS II: Governance & Constitution', '11th Indian Constitution at Work', [
+                    'Constitution: Why and How?', 'Rights in the Indian Constitution', 'Election and Representation', 'Executive', 'Legislature', 'Judiciary', 'Federalism', 'Local Governments', 'Constitution as a Living Document', 'The Philosophy of the Constitution'
+                ]],
+                ['Mains GS II: Polity', '11th Political Theory', [
+                    'Political Theory: An Introduction', 'Freedom', 'Equality', 'Social Justice', 'Rights', 'Citizenship', 'Nationalism', 'Secularism'
+                ]],
+                ['Mains GS II: International Relations', '12th Contemporary World Politics', [
+                    'The End of Bipolarity', 'Contemporary Centres of Power', 'Contemporary South Asia', 'International Organisations', 'Security in the Contemporary World', 'Environment and Natural Resources', 'Globalisation'
+                ]],
+                ['Mains GS II: Polity', '12th Politics in India Since Independence', [
+                    'Challenges of Nation Building', 'Era of One-Party Dominance', 'Politics of Planned Development', 'India’s External Relations', 'Challenges to and Restoration of the Congress System', 'The Crisis of Democratic Order', 'Regional Aspirations', 'Recent Developments in Indian Politics'
+                ]],
+                ['Mains GS III: Indian Economy', '9th Economics', [
+                    'The Story of Village Palampur', 'People as Resource', 'Poverty as a Challenge', 'Food Security in India'
+                ]],
+                ['Mains GS III: Indian Economy', '10th Understanding Economic Development', [
+                    'Development', 'Sectors of the Indian Economy', 'Money and Credit', 'Globalisation and the Indian Economy', 'Consumer Rights'
+                ]],
+                ['Mains GS III: Indian Economy', '11th Indian Economic Development', [
+                    'Indian Economy on the Eve of Independence', 'Indian Economy 1950–1990', 'Liberalisation, Privatisation and Globalisation: An Appraisal', 'Human Capital Formation in India', 'Rural Development', 'Employment: Growth, Informalisation and Other Issues', 'Environment and Sustainable Development', 'Development Experiences of India: A Comparison with Neighbours'
+                ]],
+                ['Mains GS III: Indian Economy', '12th Introductory Macroeconomics', [
+                    'Introduction', 'National Income Accounting', 'Money and Banking', 'Determination of Income and Employment', 'Government Budget and the Economy', 'Open Economy Macroeconomics'
+                ]],
+                ['Mains GS III: Environment and Ecology', '12th Biology – Unit X: Ecology', [
+                    'Organisms and Populations', 'Ecosystem', 'Biodiversity and Conservation', 'Environmental Issues (Reference Edition Chapter)'
+                ]],
+                ['Mains GS I: Indian Society', '11th Introducing Sociology', [
+                    'Sociology and Society', 'Terms, Concepts and their Use in Sociology', 'Understanding Social Institutions', 'Culture and Socialisation'
+                ]],
+                ['Mains GS I: Indian Society', '11th Understanding Society', [
+                    'Social Structure, Stratification and Social Processes in Society', 'Social Change and Social Order in Rural and Urban Society', 'Environment and Society', 'Introducing Western Sociologists', 'Indian Sociologists'
+                ]],
+                ['Mains GS I: Indian Society', '12th Indian Society', [
+                    'Introducing Indian Society', 'The Demographic Structure of the Indian Society', 'Social Institutions: Continuity and Change', 'The Market as a Social Institution', 'Patterns of Social Inequality and Exclusion', 'The Challenges of Cultural Diversity'
+                ]],
+                ['Mains GS I: Indian Society', '12th Social Change and Development in India', [
+                    'Structural Change', 'Cultural Change', 'The Story of Indian Democracy', 'Change and Development in Rural Society', 'Change and Development in Industrial Society', 'Social Movements'
+                ]]
             ];
+            const defaultNcertBooks = [];
             const defaultPomodoroSettings = { work: 25, shortBreak: 5, longBreak: 15, cycles: 4 };
             const soundOptions = {
                 'default-synth': { name: 'Default Synth', play: () => { const synth = new Tone.Synth().toDestination(); synth.triggerAttackRelease("C5", "8n", Tone.now()); synth.triggerAttackRelease("G5", "8n", Tone.now() + 0.2); } },
@@ -3119,7 +3479,7 @@
                 toast.classList.remove('expanded');
                 dynamicIslandTimeout = setTimeout(() => toast.classList.remove('show'), 420);
             };
-            const showView = (viewId) => { document.querySelectorAll('.view').forEach(v=>v.style.display='none');const a=document.getElementById(viewId);if(a){a.style.display='block';a.classList.add('animate-fadeInUp')}if(viewId==='home-view'){switchTab('mark-entry-tab');}else if(viewId==='admin-dashboard'){switchAdminTab(currentAdminTab); refreshAdminButtonsVisibility();}};
+            const showView = (viewId) => { document.querySelectorAll('.view').forEach(v=>v.style.display='none');const a=document.getElementById(viewId);if(a){a.style.display='block';a.classList.add('animate-fadeInUp')}if(viewId==='home-view'){switchTab('mark-entry-tab');}else if(viewId==='admin-dashboard'){switchAdminTab(currentAdminTab);} refreshAdminButtonsVisibility(); };
             const switchTab = (tabId) => { document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); const content = document.getElementById(tabId); const button = document.querySelector(`.tab-btn[data-tab="${tabId}"]`); if(content) content.style.display='block'; if(button) button.classList.add('active'); };
             const switchAdminTab = (tabId) => { document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none'); document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active')); const content = document.getElementById(tabId); const button = document.querySelector(`.admin-tab-btn[data-tab="${tabId}"]`); if (content) content.style.display = 'block'; if (button) button.classList.add('active'); currentAdminTab = tabId; };
             function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}};
@@ -3211,7 +3571,13 @@
                 return `${day}/${month}/${d.getFullYear()}`;
             }
 
-            function refreshAdminButtonsVisibility() { document.querySelectorAll('.admin-reset-btn, .reset-subject-progress-btn, #reset-targets-btn').forEach(btn => { btn.style.display = isAdminLoggedIn ? 'inline-block' : 'none'; }); }
+            function refreshAdminButtonsVisibility() {
+                // Admin reset controls stay available across the app until Admin Portal Logout.
+                const adminSessionActive = isAdminLoggedIn;
+                document.querySelectorAll('.admin-reset-btn, .reset-subject-progress-btn, .reset-ncert-progress-btn, #reset-targets-btn').forEach(btn => {
+                    btn.style.display = adminSessionActive ? 'inline-block' : 'none';
+                });
+            }
             
             function showConfirmationModal(message, onConfirm) {
                 const modal = document.getElementById('confirmation-modal');
@@ -3685,6 +4051,7 @@
             }
 
             function setupInitialData() {
+                localStorage.removeItem('upsc_tracker_admin_pin');
                 if(!localStorage.getItem(DB_KEYS.SUBJECTS)){db.set(DB_KEYS.SUBJECTS, defaultSubjects)};
                 if (!localStorage.getItem(DB_KEYS.MARK_SUBJECTS)) {
                     const initialMarkSubjects = (db.get(DB_KEYS.SUBJECTS) || []).map(subject => ({
@@ -3718,6 +4085,56 @@
                 if(!localStorage.getItem(DB_KEYS.ANALYSIS_SETTINGS)) { db.set(DB_KEYS.ANALYSIS_SETTINGS, { overallProgressStyle: 'gauge' }); }
                 if(!localStorage.getItem(DB_KEYS.CUSTOM_THEME_COLOR)) { db.set(DB_KEYS.CUSTOM_THEME_COLOR, '#2563eb'); }
                 if(!localStorage.getItem(DB_KEYS.POMODORO_SOUND_SETTINGS)) { db.set(DB_KEYS.POMODORO_SOUND_SETTINGS, { sound: 'default-synth' }); }
+                ensureSharedCatalogDefaults();
+            }
+
+            function ensureSharedCatalogDefaults() {
+                const catalogVersionKey = 'upsc_tracker_ncert_catalog_version';
+                const catalogVersion = '2026-10-29-v2';
+                if (db.get(catalogVersionKey) === catalogVersion) return;
+
+                const books = db.get(DB_KEYS.NCERT) || [];
+                const normalize = value => String(value || '').toLocaleLowerCase()
+                    .replace(/^(?:class *)?[0-9]+(st|nd|rd|th)?[ :.-]*/, '')
+                    .replace(/[–—-]/g, ' ')
+                    .replace(/[^a-z0-9]+/g, ' ')
+                    .trim();
+
+                sharedNcertBooks.forEach(([subject, bookName, chapterNames]) => {
+                    const normalizedBookName = normalize(bookName);
+                    let book = books.find(item => String(item.subject || '').trim().toLocaleLowerCase() === subject.toLocaleLowerCase()
+                        && normalize(item.bookName) === normalizedBookName);
+                    if (!book) {
+                        // Reuse legacy shared-book records so their existing progress is retained.
+                        book = books.find(item => normalize(item.bookName) === normalizedBookName);
+                        if (book) {
+                            book.subject = subject;
+                            book.bookName = bookName;
+                        }
+                    }
+                    if (!book) {
+                        book = {
+                            id: crypto.randomUUID(), subject, bookName, order: books.length,
+                            chapters: [], progress: Array(5).fill(false)
+                        };
+                        books.push(book);
+                    }
+
+                    const existingChapters = Array.isArray(book.chapters) ? book.chapters : [];
+                    const defaultNames = new Set(chapterNames.map(normalize));
+                    const existingByName = new Map(existingChapters.map(chapter => [normalize(chapter.name), chapter]));
+                    const defaultChapters = chapterNames.map(name => {
+                        const existing = existingByName.get(normalize(name));
+                        return existing
+                            ? { ...existing, id: existing.id || crypto.randomUUID(), progress: Array.isArray(existing.progress) ? existing.progress : Array(7).fill(false) }
+                            : { id: crypto.randomUUID(), name, progress: Array(7).fill(false) };
+                    });
+                    const customChapters = existingChapters.filter(chapter => !defaultNames.has(normalize(chapter.name)));
+                    book.chapters = [...defaultChapters, ...customChapters];
+                });
+
+                db.set(DB_KEYS.NCERT, books);
+                db.set(catalogVersionKey, catalogVersion);
             }
             
             function refreshData(){
@@ -3778,6 +4195,7 @@
 
                 calculateAndRenderAnalysis();
                 refreshAdminButtonsVisibility();
+                document.getElementById('lexicon-frame')?.contentWindow?.postMessage({ type: 'tracker-lexicon-refresh' }, '*');
                 if (document.getElementById('admin-dashboard').style.display === 'block') { switchAdminTab(currentAdminTab); }
             }
 
@@ -4547,7 +4965,7 @@
                             if (target.dataset.parentProgress === 'true') {
                                 if (target.dataset.parentHasChildren === 'true') return;
                                 if (topic && Number.isInteger(index) && index >= 0 && index < 7) {
-                                                                    if (!Array.isArray(topic.progress)) topic.progress = Array(3).fill(false);
+                                                                    if (!Array.isArray(topic.progress)) topic.progress = Array(7).fill(false);
                                 topic.progress[index] = target.checked;
                                     db.set(DB_KEYS.TOPICS, topics);
                                     calculateAndRenderAnalysis();
@@ -4555,7 +4973,7 @@
                                 return;
                             }
                             if (topic && Number.isInteger(index) && index >= 0 && index < 7) {
-                                if (!Array.isArray(topic.progress)) topic.progress = Array(3).fill(false);
+                                if (!Array.isArray(topic.progress)) topic.progress = Array(7).fill(false);
                                 topic.progress[index] = target.checked;
                                 syncParentFirstProgress(topicId, topics);
                                 db.set(DB_KEYS.TOPICS, topics);
@@ -4794,101 +5212,39 @@
             function setupAuth() {
                 const portalButton = document.getElementById('admin-portal-btn');
                 const logoutButton = document.getElementById('logout-btn');
-                const modal = document.getElementById('admin-login-modal');
-                const pinForm = document.getElementById('admin-pin-form');
-                const pinInput = document.getElementById('admin-pin-code');
-                const confirmInput = document.getElementById('admin-pin-confirm');
-                const confirmContainer = document.getElementById('admin-pin-confirm-container');
-                const description = document.getElementById('admin-pin-description');
-                const submitButton = document.getElementById('admin-pin-submit');
-                const modalTitle = document.getElementById('admin-modal-title');
-                const pinKey = 'upsc_tracker_admin_pin';
-                let failedAttempts = 0;
-                let lockoutUntil = 0;
+                const accountMenu = document.getElementById('account-controls');
+                const openAdminButton = document.getElementById('open-admin-dashboard');
+                const portalWrap = document.getElementById('admin-portal-wrap');
 
-                const bytesToHex = bytes => Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
-                const hashPin = async (pin, saltHex) => {
-                    const salt = saltHex ? new Uint8Array(saltHex.match(/.{2}/g).map(byte => parseInt(byte, 16))) : crypto.getRandomValues(new Uint8Array(16));
-                    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
-                    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' }, key, 256);
-                    return { salt: bytesToHex(salt), hash: bytesToHex(bits) };
+                const closeAccountMenu = () => {
+                    accountMenu.hidden = true;
+                    portalButton.setAttribute('aria-expanded', 'false');
                 };
-                const openDashboard = () => {
+
+                portalButton.addEventListener('click', () => {
+                    const isOpening = accountMenu.hidden;
+                    accountMenu.hidden = !isOpening;
+                    portalButton.setAttribute('aria-expanded', String(isOpening));
+                });
+                openAdminButton.addEventListener('click', () => {
+                    closeAccountMenu();
                     isAdminLoggedIn = true;
-                    modal.style.display = 'none';
-                    pinForm.reset();
                     currentAdminTab = 'admin-settings-tab';
                     showView('admin-dashboard');
-                    showToast('Login successful!');
+                    showToast('Admin Portal opened.');
                     refreshData();
-                };
-                const showAccessModal = () => {
-                    const isSetup = !localStorage.getItem(pinKey);
-                    pinForm.reset();
-                    confirmContainer.classList.toggle('hidden', !isSetup);
-                    confirmInput.required = isSetup;
-                    modalTitle.textContent = isSetup ? 'Create Access Code' : 'Admin Access Code';
-                    description.textContent = isSetup ? 'Create and confirm a 6-digit access code.' : 'Enter your 6-digit access code.';
-                    submitButton.textContent = isSetup ? 'Create Code' : 'Enter';
-                    modal.style.display = 'flex';
-                    pinInput.focus();
-                };
-
-                portalButton.addEventListener('click', showAccessModal);
+                });
+                document.addEventListener('click', event => {
+                    if (!portalWrap.contains(event.target)) closeAccountMenu();
+                });
+                document.addEventListener('keydown', event => {
+                    if (event.key === 'Escape') closeAccountMenu();
+                });
                 logoutButton.addEventListener('click', () => {
                     isAdminLoggedIn = false;
-                    pinForm.reset();
                     showView('home-view');
-                    showToast('Logged out.');
+                    showToast('Admin Portal closed.');
                     refreshAdminButtonsVisibility();
-                });
-
-                pinForm.addEventListener('submit', async event => {
-                    event.preventDefault();
-                    const pin = pinInput.value;
-                    if (!/^\d{6}$/.test(pin)) {
-                        showToast('Enter exactly 6 digits.', true);
-                        return;
-                    }
-
-                    const stored = localStorage.getItem(pinKey);
-                    if (!stored) {
-                        if (pin !== confirmInput.value) {
-                            showToast('Access codes do not match.', true);
-                            return;
-                        }
-                        const pinData = await hashPin(pin);
-                        localStorage.setItem(pinKey, JSON.stringify(pinData));
-                        localStorage.removeItem('upsc_tracker_accounts');
-                        openDashboard();
-                        return;
-                    }
-
-                    if (Date.now() < lockoutUntil) {
-                        showToast(`Try again in ${Math.ceil((lockoutUntil - Date.now()) / 1000)} seconds.`, true);
-                        return;
-                    }
-
-                    try {
-                        const pinData = JSON.parse(stored);
-                        if (!/^[a-f0-9]{32}$/i.test(pinData.salt || '') || !/^[a-f0-9]{64}$/i.test(pinData.hash || '')) throw new Error('Invalid saved code');
-                        const enteredHash = await hashPin(pin, pinData.salt);
-                        if (enteredHash.hash === pinData.hash) {
-                            failedAttempts = 0;
-                            openDashboard();
-                        } else {
-                            failedAttempts++;
-                            if (failedAttempts >= 5) {
-                                failedAttempts = 0;
-                                lockoutUntil = Date.now() + 30000;
-                                showToast('Too many incorrect attempts. Wait 30 seconds.', true);
-                            } else {
-                                showToast('Incorrect access code.', true);
-                            }
-                        }
-                    } catch (_) {
-                        showToast('Saved access code is invalid. Clear browser data to set it up again.', true);
-                    }
                 });
             }
 
@@ -5531,6 +5887,8 @@
                             requiredKeys.forEach(key => {
                                 db.set(key, importedData[key] || []);
                             });
+                            // Treat an imported NCERT list as intentional, even when it omits default books.
+                            db.set('upsc_tracker_ncert_catalog_version', '2026-10-29-v2');
                             const importedMarkSubjects = importedData[DB_KEYS.MARK_SUBJECTS] || (importedData[DB_KEYS.SUBJECTS] || []).map(subject => ({
                                 id: crypto.randomUUID(),
                                 name: subject.name,
@@ -5606,172 +5964,6 @@
         });
     </script>
 
-    <!-- Password Reset Modal -->
-    <div id="otpResetModal" role="dialog" aria-modal="true" aria-labelledby="reset-modal-heading" style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; padding:16px;">
-      <section class="reset-card">
-        <div class="flex items-start justify-between gap-4 mb-5">
-          <div>
-            <span class="account-eyebrow">ACCOUNT RECOVERY</span>
-            <h3 id="reset-modal-heading" class="mt-1">Reset your password</h3>
-          </div>
-          <button type="button" onclick="closeResetModal()" class="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full text-muted hover:bg-bg-color-200" aria-label="Close password reset">&times;</button>
-        </div>
-        <!-- Stage 1: Request Code -->
-        <div id="resetStageEmail">
-          <p class="mb-4 text-sm text-body">Enter your account email. We’ll send you a 6-digit verification code.</p>
-          <label for="resetUserEmail" class="mb-1 block text-sm font-medium text-body">Email address</label>
-          <input type="email" id="resetUserEmail" autocomplete="email" placeholder="you@example.com" class="mb-4 w-full px-3 py-2" />
-          <button type="button" id="btnSendOtp" onclick="submitSendOtp()" class="reset-primary-button w-full px-4 py-3 font-semibold text-white">Send verification code</button>
-        </div>
-        <!-- Stage 2: Verify Code & Set Password -->
-        <div id="resetStageVerify" style="display:none;">
-          <p class="mb-1 text-sm text-body">Enter the code sent to this address and choose a new password.</p>
-          <p id="reset-account-summary" class="mb-4 text-sm font-semibold"></p>
-          <label for="resetInputOtp" class="mb-1 block text-sm font-medium text-body">6-digit verification code</label>
-          <input type="text" id="resetInputOtp" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" class="mb-4 w-full px-3 py-2 text-center font-semibold tracking-[0.35em]" />
-          <label for="resetInputPassword" class="mb-1 block text-sm font-medium text-body">New password</label>
-          <input type="password" id="resetInputPassword" autocomplete="new-password" placeholder="At least 6 characters" minlength="6" class="mb-4 w-full px-3 py-2" />
-          <button type="button" id="btnConfirmReset" onclick="submitVerifyReset()" class="reset-primary-button w-full px-4 py-3 font-semibold text-white">Update password</button>
-        </div>
-        <p id="resetMessage" class="mt-4 min-h-5 text-center text-sm" role="status" aria-live="polite"></p>
-      </section>
-    </div>
 
-    <script>
-      const RESET_WORKER_URL = "https://tracker-reset.studiz.workers.dev";
-      let resetActiveEmail = "";
-      let currentResetToken = "";
-
-      function openResetModal() {
-        currentResetToken = "";
-        resetActiveEmail = document.getElementById("resetUserEmail").value.trim();
-        document.getElementById("otpResetModal").style.display = "flex";
-        document.getElementById("resetStageEmail").style.display = "block";
-        document.getElementById("resetStageVerify").style.display = "none";
-        document.getElementById("resetMessage").innerText = "";
-      }
-
-      function closeResetModal() {
-        document.getElementById("otpResetModal").style.display = "none";
-      }
-
-      async function submitSendOtp() {
-        const email = document.getElementById("resetUserEmail").value.trim();
-        const msg = document.getElementById("resetMessage");
-        const btn = document.getElementById("btnSendOtp");
-
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          msg.style.color = "#d93025";
-          msg.innerText = "Enter a valid email address to continue.";
-          return;
-        }
-        resetActiveEmail = email;
-        currentResetToken = "";
-
-        btn.disabled = true;
-        btn.innerText = "Sending code...";
-        msg.style.color = "#5f6368";
-        msg.innerText = "Connecting to server...";
-
-        try {
-          const res = await fetch(`${RESET_WORKER_URL}/api/send-otp`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-          const data = await res.json();
-
-          if (!res.ok) throw new Error(data.details?.message || data.error || "Could not send the verification code. Please try again.");
-
-          const tokenSources = [data, data.data, data.result, data.reset, data.payload]
-            .filter(value => value && typeof value === "object");
-          currentResetToken = tokenSources
-            .map(value => value.resetToken || value.reset_token || value.token || "")
-            .find(Boolean) || "";
-          if (!currentResetToken) {
-            throw new Error("The reset service did not provide a recovery token. Please try again or contact support.");
-          }
-          resetActiveEmail = email;
-          document.getElementById("reset-account-summary").textContent = email;
-          document.getElementById("resetInputOtp").value = "";
-          document.getElementById("resetInputPassword").value = "";
-          msg.innerText = "";
-          document.getElementById("resetStageEmail").style.display = "none";
-          document.getElementById("resetStageVerify").style.display = "block";
-          document.getElementById("resetInputOtp").focus();
-        } catch (err) {
-          msg.style.color = "#d93025";
-          msg.innerText = err.message;
-        } finally {
-          btn.disabled = false;
-          btn.innerText = "Send Verification Code";
-        }
-      }
-
-      async function submitVerifyReset() {
-        const otp = document.getElementById("resetInputOtp").value.trim();
-        const newPassword = document.getElementById("resetInputPassword").value;
-        const msg = document.getElementById("resetMessage");
-        const btn = document.getElementById("btnConfirmReset");
-
-        if (!/^\d{6}$/.test(otp)) {
-          msg.style.color = "#d93025";
-          msg.innerText = "Enter the 6-digit verification code from your email.";
-          return;
-        }
-
-        if (!newPassword || newPassword.length < 6) {
-          msg.style.color = "#d93025";
-          msg.innerText = "Choose a password with at least 6 characters.";
-          return;
-        }
-
-        if (!resetActiveEmail || !currentResetToken) {
-          msg.style.color = "#d93025";
-          msg.innerText = "Your recovery session has expired. Request a new verification code.";
-          currentResetToken = "";
-          document.getElementById("resetStageEmail").style.display = "block";
-          document.getElementById("resetStageVerify").style.display = "none";
-          return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "Updating...";
-        msg.style.color = "#5f6368";
-        msg.innerText = "Verifying code...";
-
-        try {
-          const res = await fetch(`${RESET_WORKER_URL}/api/verify-reset`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: resetActiveEmail,
-              otp,
-              newPassword,
-              resetToken: currentResetToken,
-            }),
-          });
-          const data = await res.json();
-
-          if (!res.ok) throw new Error(data.details?.message || data.error || "Could not update your password. Check the code and try again.");
-
-          msg.style.color = "#008767";
-          msg.innerText = "Password reset successful. You can now sign in with your new password.";
-          currentResetToken = "";
-          resetActiveEmail = "";
-          document.getElementById("resetStageVerify").style.display = "none";
-
-          setTimeout(() => {
-            closeResetModal();
-          }, 2500);
-        } catch (err) {
-          msg.style.color = "#d93025";
-          msg.innerText = err.message;
-        } finally {
-          btn.disabled = false;
-          btn.innerText = "Update Password";
-        }
-      }
-    </script>
 </body>
 </html>
