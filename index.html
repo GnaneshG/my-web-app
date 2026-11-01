@@ -28,6 +28,158 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Madurai:wght@400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    #admin-lexicon-panel {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 200 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: #f4f4f0 !important;
+      box-shadow: none !important;
+    }
+    #admin-lexicon-panel[hidden] { display: none !important; }
+    #admin-lexicon-panel:not([hidden]) { display: flex !important; flex-direction: column; }
+    .admin-lexicon-toolbar {
+      display: flex;
+      flex: 0 0 54px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px clamp(12px, 2vw, 28px);
+      border-bottom: 1px solid #d9e0ea;
+      background: #fff;
+      color: #17243a;
+      font: 600 14px/1.4 Inter, sans-serif;
+    }
+    .admin-lexicon-toolbar button {
+      min-height: 36px;
+      padding: 6px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      color: #1e3a8a;
+      font: inherit;
+      cursor: pointer;
+    }
+    #admin-lexicon-frame {
+      display: block;
+      flex: 1 1 auto;
+      width: 100%;
+      min-width: 0;
+      height: calc(100% - 54px);
+      border: 0;
+      background: #f4f4f0;
+    }
+    @media (max-width: 600px) {
+      .admin-lexicon-toolbar { flex-basis: 50px; }
+      #admin-lexicon-frame { height: calc(100% - 50px); }
+    }
+    #analysis-container .insight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      background: var(--card-bg-color);
+      box-shadow: 0 4px 14px rgba(30, 64, 110, 0.05);
+    }
+    #analysis-container .insight-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      place-items: center;
+      border-radius: 13px;
+      color: var(--primary-color-700);
+      background: var(--primary-color-100);
+    }
+    #analysis-container .insight-warning .insight-icon { color: #b45309; background: #fef3c7; }
+    #analysis-container .insight-success .insight-icon { color: #047857; background: #d1fae5; }
+    #analysis-container .insight-card h3 { margin: 1px 0 5px; color: var(--text-color-900); font-size: 0.96rem; font-weight: 700; }
+    #analysis-container .insight-card p { color: var(--text-color-700); font-size: 0.86rem; line-height: 1.6; }
+    #analysis-container .insight-disclaimer { color: var(--text-color-500); font-size: 0.76rem; line-height: 1.5; }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('click', function (event) {
+        const link = event.target.closest('header a, header button');
+        if (!link || !/\blexicon\b/i.test(link.textContent)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        window.location.assign(new URL('./lexicon.html', document.baseURI).href);
+      }, true);
+
+      const dashboard = document.getElementById('admin-dashboard');
+      const tabs = dashboard?.querySelector(':scope > .flex.justify-center.border-b');
+      if (!dashboard || !tabs || document.getElementById('admin-lexicon-tab')) return;
+
+      const lexiconTab = document.createElement('button');
+      lexiconTab.type = 'button';
+      lexiconTab.id = 'admin-lexicon-tab';
+      lexiconTab.className = 'admin-tab-btn';
+      lexiconTab.textContent = '📚 Lexicon';
+      lexiconTab.setAttribute('aria-controls', 'admin-lexicon-panel');
+      tabs.appendChild(lexiconTab);
+
+      const panel = document.createElement('section');
+      panel.id = 'admin-lexicon-panel';
+      panel.setAttribute('aria-label', 'Lexicon editor');
+      panel.hidden = true;
+      panel.innerHTML = '<div class="admin-lexicon-toolbar"><span>📚 CSE Lexicon · Full-screen editor</span><button type="button" id="admin-lexicon-back">← Back to Admin Portal</button></div><iframe id="admin-lexicon-frame" title="CSE Lexicon editor" src="./lexicon.html?embed=admin"></iframe>';
+      document.body.appendChild(panel);
+
+      let previousPaneStyles = [];
+      let previousTabStates = [];
+      let previousBodyOverflow = '';
+
+      function closeLexicon() {
+        if (panel.hidden) return;
+        panel.hidden = true;
+        previousPaneStyles.forEach(([pane, display]) => { pane.style.display = display; });
+        previousTabStates.forEach(([tab, active]) => tab.classList.toggle('active', active));
+        document.body.style.overflow = previousBodyOverflow;
+      }
+
+      function openLexicon() {
+        const panes = Array.from(dashboard.querySelectorAll(':scope > .admin-tab-content'));
+        const buttons = Array.from(tabs.querySelectorAll('.admin-tab-btn'));
+        previousPaneStyles = panes.map(pane => [pane, pane.style.display]);
+        previousTabStates = buttons.map(tab => [tab, tab.classList.contains('active')]);
+        panes.forEach(pane => { pane.style.display = 'none'; });
+        buttons.forEach(tab => tab.classList.toggle('active', tab === lexiconTab));
+        previousBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        panel.hidden = false;
+      }
+
+      lexiconTab.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openLexicon();
+      });
+      panel.querySelector('#admin-lexicon-back').addEventListener('click', closeLexicon);
+      window.addEventListener('message', function (event) {
+        const frame = document.getElementById('admin-lexicon-frame');
+        if (event.origin === window.location.origin && event.source === frame?.contentWindow && event.data?.type === 'tracker-lexicon-close') {
+          closeLexicon();
+        }
+      });
+      tabs.addEventListener('click', function (event) {
+        if (panel.hidden || event.target.closest('#admin-lexicon-tab')) return;
+        closeLexicon();
+      }, true);
+    });
+  </script>
     <style>
         /* * ==============================================
          * THEME & COLOR SYSTEM
@@ -2632,8 +2784,8 @@
 
             <div id="overall-progress-wrapper"></div>
             <div class="card-block p-6">
-                <h2 class="section-title mb-6">Analysis & Improvement</h2>
-                <div id="analysis-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div class="mb-5"><h2 class="section-title mb-2">Analysis &amp; Improvement</h2><p class="text-sm text-muted">Personalized recommendations update with your selected period and saved study records.</p></div>
+                <div id="analysis-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 <div class="card-block p-4">
@@ -3652,7 +3804,7 @@
                 const analysisSettings = db.get(DB_KEYS.ANALYSIS_SETTINGS) || {};
                 const style = analysisSettings.overallProgressStyle || 'gauge';
                 renderOverallProgressSection(style, overallProgressPercentage, { 'Syllabus': topicProgress, 'NCERT': ncertProgress, 'Standard Tasks': { 'Tasks': recurringTasksTotal > 0 ? recurringTasksCompleted / recurringTasksTotal : 0 } });
-                generateAnalysisText(topicProgress, marks);
+                generateAnalysisText(topicProgress, ncertProgress, marks, pomodoroLogs);
                 renderAllCharts(topicProgress, ncertProgress, marks);
             }
 
@@ -3822,20 +3974,82 @@
                 chartInstances['overall-progress-gauge'] = new Chart(gaugeCtx, { type: 'doughnut', data: { datasets: [{ data: [percentage, 100 - percentage], backgroundColor: [ themePrimary, themeBg ], borderColor: [ themePrimary, themeBg ], borderWidth: 1, circumference: 180, rotation: 270 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { tooltip: { enabled: false } } } });
             }
 
-            function generateAnalysisText(subjectProgress, marks) {
+            function generateAnalysisText(subjectProgress, ncertProgress, marks, pomodoroLogs) {
                 const analysisContainer = document.getElementById('analysis-container');
                 if (!analysisContainer) return;
-                let recommendations = [];
-                const marksBySubject = {};
-                (marks || []).forEach(mark => { if (mark.breakdown) { mark.breakdown.forEach(item => { if(!marksBySubject[item.subject]) marksBySubject[item.subject] = []; if (Number(item.maximum) > 0) { marksBySubject[item.subject].push((Number(item.obtained) / Number(item.maximum)) * 100); } }); } });
-                const avgScores = Object.entries(marksBySubject).map(([subject, scores]) => ({ subject, avg: scores.reduce((a, b) => a + b, 0) / scores.length }));
-                const sortedByScore = avgScores.sort((a, b) => a.avg - b.avg);
-                const strongestSubjects = sortedByScore.slice(-3).reverse();
-                const weakestSubjects = sortedByScore.slice(0, 3);
-                if (strongestSubjects.length > 0) { recommendations.push({ title: "Your Strengths", text: `You consistently score high in: <strong>${strongestSubjects.map(s => escapeHtml(s.subject.split(': ')[1] || s.subject)).join(', ')}</strong>. Keep revising to maintain this advantage.`, icon: 'fa-shield-halved', color: 'var(--success-color-600)', bgColor: 'var(--success-color-100)' }); }
-                if (weakestSubjects.length > 0) { recommendations.push({ title: "Critical Weak Areas", text: `Scores are lowest in <strong>${weakestSubjects.map(s => escapeHtml(s.subject.split(': ')[1] || s.subject)).join(', ')}</strong>. This requires immediate attention, from basics to testing.`, icon: 'fa-crosshairs', color: 'var(--error-color-600)', bgColor: 'var(--error-color-100)' }); }
-                recommendations.push({ title: "Strategic Tip", text: "Balance your preparation. Use your strengths to clear cut-offs, but work on weaknesses to maximize your overall score.", icon: 'fa-lightbulb', color: 'var(--primary-color-700)', bgColor: 'var(--primary-color-100)' });
-                if (recommendations.length <= 1) { analysisContainer.innerHTML = `<p class="text-body italic md:col-span-2 lg:col-span-3 text-center">Not enough data for a detailed analysis. Keep tracking your progress and marks to get personalized insights!</p>`; } else { analysisContainer.innerHTML = recommendations.map(rec => `<div class="bg-card p-4 rounded-xl flex items-start space-x-4 border border-themed"><div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center" style="background-color: ${rec.bgColor};"><i class="fas ${rec.icon} text-lg" style="color: ${rec.color};"></i></div><div><h4 class="font-bold text-header">${rec.title}</h4><p class="text-body text-sm mt-1">${rec.text}</p></div></div>`).join(''); }
+
+                const recommendations = [];
+                const syllabusTopics = db.get(DB_KEYS.TOPICS) || [];
+                const trackedSyllabus = Object.entries(subjectProgress || {})
+                    .map(([subject, progress]) => ({ subject, progress, count: syllabusTopics.filter(topic => topic.subject === subject).length }))
+                    .filter(item => item.count > 0)
+                    .sort((a, b) => a.progress - b.progress);
+                const trackedNcert = Object.entries(ncertProgress || {}).sort((a, b) => a[1] - b[1]);
+                const scoresBySubject = {};
+                (marks || []).forEach(mark => (mark.breakdown || []).forEach(item => {
+                    const maximum = Number(item.maximum);
+                    const obtained = Number(item.obtained);
+                    if (!item.subject || !Number.isFinite(maximum) || maximum <= 0 || !Number.isFinite(obtained)) return;
+                    const scores = scoresBySubject[item.subject] || (scoresBySubject[item.subject] = []);
+                    scores.push((obtained / maximum) * 100);
+                }));
+                const subjectScores = Object.entries(scoresBySubject)
+                    .map(([subject, scores]) => ({ subject, average: scores.reduce((sum, score) => sum + score, 0) / scores.length, tests: scores.length }))
+                    .sort((a, b) => a.average - b.average);
+                const focusSessions = Array.isArray(pomodoroLogs) ? pomodoroLogs.length : 0;
+                const focusMinutes = (pomodoroLogs || []).reduce((sum, log) => sum + (Number(log.duration) || 0), 0);
+                const targets = db.get(DB_KEYS.TARGETS) || [];
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const pendingTargets = targets.filter(target => {
+                    const dueDate = parseLocalDate(target.assignedDate);
+                    return !target.completed && dueDate && dueDate <= today;
+                }).length;
+                const notesCount = (db.get(DB_KEYS.NOTES) || []).filter(note => !note.archived).length;
+                const todayKey = localDateKey();
+                const recurringTasks = db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || [];
+                const recurringDoneToday = recurringTasks.filter(task => Array.isArray(task.completionDates)
+                    ? task.completionDates.includes(todayKey)
+                    : Boolean(task.completed)).length;
+                const addInsight = (title, detail, icon, tone = 'primary') => recommendations.push({ title, detail, icon, tone });
+
+                if (subjectScores.length) {
+                    const weakest = subjectScores[0];
+                    const strongest = subjectScores[subjectScores.length - 1];
+                    addInsight('Marks: focus your next revision', `${escapeHtml(weakest.subject.split(': ').pop())} averages ${weakest.average.toFixed(1)}% across ${weakest.tests} recorded ${weakest.tests === 1 ? 'score' : 'scores'} in this period. Review one weak answer, revise its core concepts, then attempt a timed question.`, 'fa-crosshairs', 'warning');
+                    if (strongest.average >= 70 && strongest.subject !== weakest.subject) {
+                        addInsight('Protect a proven strength', `${escapeHtml(strongest.subject.split(': ').pop())} averages ${strongest.average.toFixed(1)}% in this period. Keep it warm with a short weekly revision while prioritising lower-scoring areas.`, 'fa-shield-halved', 'success');
+                    }
+                } else {
+                    addInsight('Build a useful marks baseline', 'No valid mark breakdown is recorded for the selected period. Add subject-wise marks after your next test to unlock score comparisons and targeted practice suggestions.', 'fa-chart-column', 'primary');
+                }
+
+                if (trackedSyllabus.length) {
+                    const [subject, ratio] = [trackedSyllabus[0].subject, trackedSyllabus[0].progress];
+                    const percent = Math.round(ratio * 100);
+                    addInsight('Syllabus coverage: make progress measurable', `${escapeHtml(subject)} is at ${percent}% across ${trackedSyllabus[0].count} tracked topic records. Choose one unfinished microtopic and schedule a specific completion target.`, 'fa-book-open', 'warning');
+                } else {
+                    addInsight('Set up syllabus tracking', 'There are no syllabus topics to compare yet. Add parent topics and microtopics in Admin Portal, then use the progress checks to make coverage recommendations data-based.', 'fa-book-open', 'primary');
+                }
+
+                if (trackedNcert.length) {
+                    const [subject, ratio] = trackedNcert[0];
+                    addInsight('NCERT reading next step', `${escapeHtml(subject)} has the lowest tracked NCERT completion at ${Math.round(ratio * 100)}%. Read one chapter and mark the completed revision step so your coverage stays current.`, 'fa-book-reader', ratio < 0.5 ? 'warning' : 'primary');
+                }
+
+                if (focusSessions > 0) {
+                    addInsight('Focus time logged', `${focusSessions} Pomodoro ${focusSessions === 1 ? 'session' : 'sessions'} (${focusMinutes} minutes) are logged for this period. Attach sessions to a subject and use a short recall task after each block to connect time spent with learning.`, 'fa-clock', 'success');
+                } else {
+                    addInsight('Make focused study visible', 'No Pomodoro sessions are logged for this period. Try one focused block on the weakest tracked area; its subject and duration will help future reports be more specific.', 'fa-clock', 'primary');
+                }
+
+                if (pendingTargets > 0) {
+                    addInsight('Bring due targets back on track', `${pendingTargets} incomplete target${pendingTargets === 1 ? ' is' : 's are'} due or overdue. Complete one small target today or edit its date range to make the plan realistic.`, 'fa-bullseye', 'warning');
+                } else if (recurringTasks.length > 0 && recurringDoneToday < recurringTasks.length) {
+                    addInsight('Keep today’s routine consistent', `${recurringDoneToday} of ${recurringTasks.length} recurring tasks are marked complete today. Pick the next routine task and check it off when finished.`, 'fa-calendar-check', 'primary');
+                }
+
+                analysisContainer.innerHTML = recommendations.map(rec => `<article class="insight-card insight-${rec.tone}"><div class="insight-icon"><i class="fas ${rec.icon}" aria-hidden="true"></i></div><div class="min-w-0"><h3>${rec.title}</h3><p>${rec.detail}</p></div></article>`).join('') + `<p class="insight-disclaimer md:col-span-2 lg:col-span-3">Evidence uses your saved marks, syllabus and NCERT progress, targets, routine checks, and Pomodoro logs${notesCount ? `; ${notesCount} active note${notesCount === 1 ? '' : 's'} are available for revision` : ''}. These are transparent, on-device rules—not an external AI model. No study data is sent to an AI service.</p>`;
             }
 
             function renderAllCharts(subjectProgress, ncertProgress, marks) {
