@@ -1,106 +1,581 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The CSE Lexicon</title>
-<style>
-:root{--bg:#f3f6fb;--panel:#fff;--ink:#17243a;--muted:#718198;--border:#e2e9f2;--accent:#2563eb;--soft:#e0eaff;--tamil:#008767}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 system-ui,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button,input,select,textarea{border:1px solid var(--border);border-radius:9px;padding:8px 10px;background:var(--panel);color:var(--ink)}button:hover,button.active{background:var(--soft);color:var(--accent)}button:disabled{opacity:.6;cursor:wait}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;background:var(--panel);border-bottom:1px solid var(--border)}header strong{margin-right:auto}main{display:grid;grid-template-columns:210px minmax(0,1fr);gap:12px;padding:12px}aside,.console,.table{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}aside{align-self:start}.nav{display:grid;gap:4px}.nav button{text-align:left;font-size:12px}.small{font-size:12px;color:var(--muted)}h2{font-size:13px;margin:12px 0 6px}.brain{display:flex;flex-wrap:wrap;gap:4px}.chip{font-size:11px;padding:2px 6px;background:var(--soft);border-radius:5px}.stage{min-width:0}.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fields label{display:grid;gap:4px;font-size:12px}.fields .wide{grid-column:1/-1}textarea{resize:vertical;width:100%}.primary{background:var(--accent);color:#fff}.letters{display:flex;overflow:auto;gap:3px;margin-top:10px}.letters button{font-size:11px;padding:4px 7px}#status{margin:8px 0;color:var(--tamil);font-size:12px}.table{margin-top:12px;padding:0;overflow:hidden}.divider{background:var(--bg);padding:8px 12px;font-size:12px;font-weight:700;border-left:3px solid var(--accent)}article{border-bottom:1px solid var(--border);padding:10px 12px}.summary{display:grid;grid-template-columns:26px minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:start}.word{font-weight:700;text-align:left;border:0;padding:0;background:transparent}.tamil{color:var(--tamil);font-weight:600}.definition{grid-column:2/-1;font-size:13px}.star{padding:0;border:0;color:var(--muted)}.star.selected{color:#b45309}.actions{display:flex;gap:4px}.actions button{font-size:12px;padding:3px 6px}.drawer{display:none;background:var(--bg);padding:12px;border-radius:8px;margin-top:8px}article.open .drawer{display:block}.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.example{padding:10px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:8px}.recall .tamil,.recall .definition{filter:blur(5px)}.recall article:hover .tamil,.recall article:hover .definition,.recall article.open .tamil,.recall article.open .definition{filter:none}#search{width:100%;margin-top:10px}.drawer select{max-width:100%}.synonyms{display:flex;flex-wrap:wrap;gap:5px}
-@media(max-width:850px){main{grid-template-columns:1fr}.nav{display:flex;overflow:auto}.nav button{flex-shrink:0}.examples{grid-template-columns:1fr}}@media(max-width:520px){main{padding:6px}.fields{grid-template-columns:1fr}.fields .wide{grid-column:auto}.summary{grid-template-columns:24px minmax(0,1fr) auto}.tamil{grid-column:2/-1}.definition{grid-column:2/-1}header button{font-size:12px}}
-</style>
-</head>
-<body>
-<header><strong>The CSE Lexicon</strong><button id="group">A–Z Index</button><button id="stars">★ High-yield only</button><button id="recall">Active recall</button><button id="expand">Expand all</button><button id="csv">CSV</button><button id="backup">Backup</button><button id="restore">Restore</button><input id="file" type="file" accept=".json" hidden></header>
-<main>
-<aside><h2>UPSC GS syllabus · <span id="total">0</span></h2><div id="nav" class="nav"></div><h2>Adaptive GS rules</h2><p class="small">Keyword associations learn from saved terms and manual paper corrections—not an AI model.</p><div id="brain" class="brain"></div><button id="starter" style="width:100%;margin-top:12px">Load starter terms</button></aside>
-<div class="stage">
-<section class="console">
-<form id="entry" class="fields">
-<label>English term(s)<input id="words" required placeholder="Comma-separated for bulk entry"></label>
-<label>Tamil meaning<input id="tamil" lang="ta" placeholder="Enter a reviewed translation"></label>
-<label class="wide">English definition / editorial context<textarea id="definition" rows="2" placeholder="Enter a definition or context"></textarea></label>
-<label>Synonyms<input id="synonyms" placeholder="Comma-separated"></label><label>GS paper<select id="category"><option value="AUTO">Auto-detect GS paper</option></select></label>
-<div style="display:grid; grid-template-columns: 1fr auto; gap:8px;" class="wide">   <button class="primary" type="submit">+ Add & index</button>   <button type="button" id="aiBtn" onclick="triggerAiLookup()">✨ AI Lookup</button> </div>
-</form>
-<p class="small">Offline edition: no automatic translation or live dictionary requests. Bulk entries share the supplied meaning/context. Identical Tamil meanings are merged; review that the senses really match.</p>
-<label class="small" for="search">Search your lexicon</label><input id="search" type="search" placeholder="English, Tamil, definition or synonym…"><div id="letters" class="letters"></div><p id="status" role="status" aria-live="polite"></p>
-</section>
-<section id="table" class="table" aria-label="Vocabulary entries"></section>
-</div>
-</main>
-<script>
-const categories=['GS-1: Society & Culture','GS-2: Polity & Governance','GS-2: International Relations','GS-3: Economy & Dev','GS-3: Environment & Ecology','GS-3: Science & Tech','GS-4: Ethics & Integrity','Essay & Editorial Idioms'];
-const rules=[/society|culture|caste|kinship|migration|heritage|pluralism/i,/constitution|parliament|judiciary|repeal|abrogate|law|governance|federal/i,/diplomacy|strategic|treaty|bilateral|autonomy|international/i,/fiscal|inflation|economy|debt|capital|budget|trade/i,/climate|carbon|environment|ecology|biodiversity|anthropogenic/i,/science|technology|cyber|quantum|algorithm|genome/i,/ethics|integrity|probity|empathy|conscience|rectitude/i];
-const key='upsc_tracker_lexicon',brainKey='upsc_tracker_lexicon_brain';
-const $=id=>document.getElementById(id);
-const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const normalize=value=>String(value||'').normalize('NFC').replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/\s+/g,' ').trim();
-// Use the parent Storage methods so account cloud synchronization observes writes.
-const storage=window.parent===window?localStorage:window.parent.localStorage;
-let db=[],brain={},selectedGS='ALL',letter='ALL',mode='gs',starred=false,expanded=false;
-function validItem(item){return item&&typeof item==='object'&&typeof item.words==='string'&&item.words.trim()&&(!item.cat||categories.includes(item.cat))}
-function cleanItem(item){return {id:crypto.randomUUID(),words:item.words.trim(),tamil:normalize(item.tamil),eng:String(item.eng||''),syn:String(item.syn||''),pos:String(item.pos||''),nuance:String(item.nuance||''),cat:item.cat||categories[7],starred:Boolean(item.starred),ex1:String(item.ex1||''),ex2:String(item.ex2||''),ex3:String(item.ex3||'')}}
-function load(){try{const saved=JSON.parse(storage.getItem(key)||'[]');db=Array.isArray(saved)?saved.filter(validItem).map(cleanItem):[];const savedBrain=JSON.parse(storage.getItem(brainKey)||'{}');brain=Object.fromEntries(Object.entries(savedBrain||{}).filter(([stem,cat])=>/^[a-z]+$/.test(stem)&&categories.includes(cat)))}catch(_){db=[];brain={}}syncTheme();render()}
-function save(){try{storage.setItem(key,JSON.stringify(db));storage.setItem(brainKey,JSON.stringify(brain));return true}catch(_){$('status').textContent='Could not save data. Export a backup before leaving.';return false}}
-function syncTheme(){if(window.parent===window)return;const style=window.parent.getComputedStyle(window.parent.document.body);const map={'--bg':'--bg-color-100','--panel':'--card-bg-color','--ink':'--text-color-900','--muted':'--text-color-600','--border':'--border-color','--accent':'--primary-color-600','--soft':'--primary-color-100','--tamil':'--success-color-500'};for(const [local,parent]of Object.entries(map))document.documentElement.style.setProperty(local,style.getPropertyValue(parent))}
-function tokens(text){return (text.toLowerCase().match(/[a-z]{5,}/g)||[]).filter(w=>!['about','their','which','other','there','being','would','should','process','system'].includes(w))}
-function learn(item){tokens(item.words+' '+item.eng+' '+item.syn).slice(0,7).forEach(w=>brain[w]=item.cat)}
-function classify(text){const scores=categories.map((cat,i)=>(rules[i]?.test(text)?2:0)+tokens(text).reduce((sum,w)=>sum+(brain[w]===cat?3:0),0));return Math.max(...scores)?categories[scores.indexOf(Math.max(...scores))]:categories[7]}
-function add(words,tamil,eng,syn,cat,star=false){if(db.some(item=>item.words.split(',').some(w=>w.trim().toLowerCase()===words.toLowerCase())))return 'exists';const same=tamil&&tamil!=='—'?db.find(item=>normalize(item.tamil)===tamil):null;if(same){same.words=[...new Set([...same.words.split(',').map(w=>w.trim()),words])].sort().join(', ');if(eng&&!same.eng.includes(eng))same.eng=[same.eng,eng].filter(Boolean).join(' | ');same.syn=[...new Set([same.syn,syn].join(',').split(',').map(w=>w.trim()).filter(Boolean))].join(', ');return 'merged'}const item=cleanItem({words,tamil,eng,syn,cat,starred:star});db.push(item);learn(item);return 'added'}
-function render(){syncTheme();$('total').textContent=db.length;$('nav').innerHTML=['ALL',...categories].map(cat=>`<button data-cat="${esc(cat)}" class="${cat===selectedGS?'active':''}">${cat==='ALL'?'All GS papers':esc(cat)} (${db.filter(i=>cat==='ALL'||i.cat===cat).length})</button>`).join('');$('brain').innerHTML=Object.entries(brain).slice(-12).map(([stem,cat])=>`<span class="chip" title="${esc(cat)}">${esc(stem)}</span>`).join('')||'<span class="small">No learned rules yet.</span>';$('letters').innerHTML=['ALL',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(ch=>`<button data-letter="${ch}" class="${letter===ch?'active':''}">${ch}</button>`).join('');const query=$('search').value.trim().toLowerCase();const filtered=db.filter(i=>(selectedGS==='ALL'||i.cat===selectedGS)&&(!starred||i.starred)&&(letter==='ALL'||i.words.split(',').some(w=>w.trim().toUpperCase().startsWith(letter)))&&[i.words,i.tamil,i.eng,i.syn].join(' ').toLowerCase().includes(query)).sort((a,b)=>a.words.localeCompare(b.words));const groups=mode==='gs'?categories:[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ','#'];$('table').innerHTML=groups.map(group=>{const items=filtered.filter(i=>mode==='gs'?i.cat===group:(/^[A-Z]/.test(i.words.toUpperCase())?i.words[0].toUpperCase():'#')===group);return items.length?`<div class="divider">${esc(group)} · ${items.length}</div>`+items.map(row).join(''):''}).join('')||'<p style="padding:24px" class="small">No matching vocabulary. Add a term or load the starter pack.</p>'}
-function row(item){const examples=[item.ex1,item.ex2,item.ex3];return `<article data-id="${item.id}" class="${expanded?'open':''}"><div class="summary"><button class="star ${item.starred?'selected':''}" data-action="star" aria-label="Toggle high-yield" aria-pressed="${item.starred}">★</button><button class="word" data-action="open" aria-expanded="${expanded}">${esc(item.words)} <span class="small">${esc(item.pos)}</span></button><div class="tamil" lang="ta">${esc(item.tamil||'—')} <span class="small">${esc(item.nuance)}</span></div><div class="actions"><button data-action="speak" aria-label="Pronounce">🔊</button><button data-action="delete" aria-label="Delete term">✕</button></div><div class="definition">${esc(item.eng||'Definition not supplied')}</div></div><div class="drawer"><label class="small">Reassign GS paper <select data-action="category">${categories.map(cat=>`<option ${cat===item.cat?'selected':''}>${esc(cat)}</option>`).join('')}</select></label><h2>Synonyms · click to start a new entry</h2><div class="synonyms">${item.syn.split(',').map(w=>w.trim()).filter(w=>w&&w!=='—').map(w=>`<button data-action="synonym" data-word="${esc(w)}">+ ${esc(w)}</button>`).join('')||'—'}</div><div class="examples">${examples.map((ex,i)=>`<div class="example"><div class="small">${['Editorial context','GS mains application','Essay / way forward'][i]}</div>${esc(ex||'No reviewed example supplied. Add context in the definition field.')}</div>`).join('')}</div></div></article>`}
-$('category').insertAdjacentHTML('beforeend',categories.map(cat=>`<option>${esc(cat)}</option>`).join(''));
-$('entry').addEventListener('submit',event=>{event.preventDefault();const words=[...new Set($('words').value.split(',').map(w=>w.trim()).filter(Boolean))];let counts={added:0,merged:0,exists:0};for(const word of words){const cat=$('category').value==='AUTO'?classify(word+' '+$('definition').value+' '+$('synonyms').value):$('category').value;counts[add(word,normalize($('tamil').value),$('definition').value.trim(),$('synonyms').value.trim(),cat)]++}if(save())$('status').textContent=`${counts.added} added · ${counts.merged} merged · ${counts.exists} already indexed.`;$('entry').reset();render()});
-$('nav').onclick=event=>{const button=event.target.closest('[data-cat]');if(button){selectedGS=button.dataset.cat;render()}};$('letters').onclick=event=>{const button=event.target.closest('[data-letter]');if(button){letter=button.dataset.letter;render()}};$('search').oninput=render;
-$('group').onclick=()=>{mode=mode==='gs'?'az':'gs';$('group').textContent=mode==='gs'?'A–Z Index':'GS syllabus';render()};$('stars').onclick=()=>{starred=!starred;$('stars').classList.toggle('active',starred);render()};$('recall').onclick=()=>{document.body.classList.toggle('recall');$('recall').classList.toggle('active')};$('expand').onclick=()=>{expanded=!expanded;$('expand').classList.toggle('active',expanded);render()};
-$('table').onclick=event=>{const button=event.target.closest('[data-action]');const article=button?.closest('article');if(!article)return;const item=db.find(i=>i.id===article.dataset.id);switch(button.dataset.action){case'open':article.classList.toggle('open');button.setAttribute('aria-expanded',article.classList.contains('open'));break;case'star':item.starred=!item.starred;save();render();break;case'delete':if(confirm('Delete this vocabulary entry?')){db=db.filter(i=>i!==item);save();render()}break;case'speak':if('speechSynthesis'in window){speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(item.words.split(',')[0]);utterance.lang='en-IN';speechSynthesis.speak(utterance)}else $('status').textContent='Speech synthesis is unavailable in this browser.';break;case'synonym':$('words').value=button.dataset.word;$('tamil').value='';$('definition').value='';$('synonyms').value='';$('category').value=item.cat;$('words').focus();$('status').textContent='Enter a reviewed meaning for this synonym, then add it.';break}};
-$('table').onchange=event=>{if(event.target.dataset.action!=='category')return;const item=db.find(i=>i.id===event.target.closest('article').dataset.id);item.cat=event.target.value;learn(item);save();render()};
-$('starter').onclick=()=>{const seeds=[['Abrogate, Repeal','ரத்து செய்','Formally abolish or revoke a law or treaty.','Annul, Rescind, Revoke',categories[1]],['Fiscal Consolidation','நிதி ஒருங்கிணைப்பு','Policy measures to reduce fiscal deficits and public debt.','Deficit reduction, Fiscal prudence',categories[3]],['Strategic Autonomy','மூலோபாய தன்னாட்சி','Capacity to pursue national interests without being constrained by alliances.','Multi-alignment',categories[2]],['Probity','நேர்மை','Adherence to the highest standards of integrity in public administration.','Rectitude, Integrity',categories[6]],['Anthropogenic','மனிதனால் உருவாக்கப்பட்ட','Originating in human activity.','Human-induced',categories[4]]];for(const [words,tamil,eng,syn,cat]of seeds)add(words,tamil,eng,syn,cat,true);save();render();$('status').textContent='Starter pack loaded; existing terms retained.'};
-function download(text,name,type){const url=URL.createObjectURL(new Blob([text],{type}));const link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-$('backup').onclick=()=>download(JSON.stringify({version:5,db,brain},null,2),'UPSC_Lexicon_Backup.json','application/json');$('csv').onclick=()=>{const columns=['cat','words','pos','tamil','nuance','eng','syn','ex1','ex2','ex3'];const cell=value=>'"'+String(value||'').replace(/^[=+@-]/,"'$&").replace(/"/g,'""')+'"';download('\uFEFF'+[columns.join(','),...db.map(i=>columns.map(k=>cell(i[k])).join(','))].join('\n'),'UPSC_CSE_Lexicon.csv','text/csv;charset=utf-8')};$('restore').onclick=()=>$('file').click();$('file').onchange=async event=>{const file=event.target.files[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error('Maximum backup size is 5 MB.');const data=JSON.parse(await file.text());if(!Array.isArray(data.db)||!data.db.every(validItem))throw Error('Invalid vocabulary backup.');if(!confirm('Replace the vocabulary list with this backup?'))return;db=data.db.map(cleanItem);brain=Object.fromEntries(Object.entries(data.brain||{}).filter(([stem,cat])=>/^[a-z]+$/.test(stem)&&categories.includes(cat)));save();render();$('status').textContent='Vocabulary backup restored.'}catch(error){$('status').textContent=error.message}finally{event.target.value=''}};
-window.addEventListener('message',event=>{if(event.source===window.parent&&event.data?.type==='tracker-lexicon-refresh')load()});
-
-async function triggerAiLookup() {
-  const wordsInput = $('words');
-  const word = wordsInput.value.trim().split(',')[0].trim();
-  if (!word) {
-    $('status').textContent = 'Please type an English term first to look up with AI.';
-    wordsInput.focus();
-    return;
-  }
-
-  const aiBtn = $('aiBtn');
-  aiBtn.disabled = true;
-  aiBtn.textContent = 'AI Searching...';
-  $('status').textContent = `Querying Gemini for "${word}"...`;
-
-  try {
-    const res = await fetch('https://tracker.studiz.workers.dev/api/ai-lookup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ word })
-    });
-    
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'AI lookup failed');
-
-    if (data.definition) $('definition').value = data.definition;
-    if (data.tamil) $('tamil').value = data.tamil;
-    if (data.category && categories.includes(data.category)) {
-      $('category').value = data.category;
-    }
-
-    $('status').textContent = `✨ AI lookup complete for "${word}"! Review and click "+ Add & index".`;
-  } catch (err) {
-    $('status').textContent = 'AI lookup error: ' + err.message;
-  } finally {
-    aiBtn.disabled = false;
-    aiBtn.textContent = '✨ AI Lookup';
-  }
+[data-theme="dark"] {
+  --bg-app: #090d16;
+  --bg-panel: #111827;
+  --bg-subtle: #1e293b;
+  --bg-hover: #172033;
+  --ink-1: #f8fafc;
+  --ink-2: #cbd5e1;
+  --ink-3: #94a3b8;
+  --border: #1e293b;
+  --border-strong: #334155;
+  --brand: #60a5fa;
+  --brand-soft: rgba(59, 130, 246, 0.15);
+  --tamil: #34d399;
+  --tamil-soft: rgba(16, 185, 129, 0.15);
+  --gold: #fbbf24;
+  --gold-soft: rgba(245, 158, 11, 0.15);
+  --danger: #f87171;
 }
 
-load();
-</script>
-</body>
-</html>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-app);
+  color: var(--ink-1);
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Top Command Header */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+.topbar-inner {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.brand-group { display: flex; align-items: baseline; gap: 12px; }
+.brand-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--ink-1);
+}
+.brand-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 2px 7px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.action-cluster { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.btn {
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.14s ease;
+}
+.btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
+.btn.active { background: var(--ink-1); color: var(--bg-panel); border-color: var(--ink-1); }
+.btn-primary {
+  background: var(--brand);
+  color: #ffffff;
+  border-color: var(--brand);
+  padding: 8px 16px;
+  font-size: 12.5px;
+}
+.btn-primary:hover { opacity: 0.92; background: var(--brand); color: #ffffff; }
+.btn-primary:disabled { opacity: 0.55; cursor: wait; }
+
+/* Main Workspace Grid */
+.workspace {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 16px 18px 60px 18px;
+  display: grid;
+  grid-template-columns: 265px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 980px) {
+  .workspace { grid-template-columns: 1fr; }
+}
+
+/* Left Executive Sidebar */
+.sidebar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  position: sticky;
+  top: 64px;
+}
+@media (max-width: 980px) {
+  .sidebar { position: static; }
+}
+.side-heading {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--ink-3);
+  margin: 8px 0 6px 4px;
+  display: flex;
+  justify-content: space-between;
+}
+.nav-list { display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 980px) {
+  .nav-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+}
+.nav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+  white-space: nowrap;
+  gap: 8px;
+}
+.nav-item:hover { background: var(--bg-subtle); color: var(--ink-1); }
+.nav-item.active {
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 700;
+}
+.nav-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: var(--bg-subtle);
+  color: var(--ink-3);
+}
+.nav-item.active .nav-pill { background: var(--brand); color: #fff; }
+
+.brain-box {
+  margin-top: 14px;
+  padding: 10px;
+  background: var(--bg-app);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 11.5px;
+}
+.brain-title {
+  font-weight: 700;
+  color: var(--ink-1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.brain-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  max-height: 95px;
+  overflow-y: auto;
+}
+.brain-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--ink-2);
+}
+
+/* Right Content Column */
+.main-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+/* Smart Entry Console */
+.console-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.input-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 185px auto auto;
+  gap: 8px;
+}
+@media (max-width: 920px) {
+  .input-grid { grid-template-columns: 1fr 1fr; }
+  .input-grid input { grid-column: span 2; }
+}
+input, select {
+  width: 100%;
+  padding: 8px 11px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ink-1);
+  background: var(--bg-app);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus {
+  border-color: var(--brand);
+  background: var(--bg-panel);
+}
+
+/* A-Z Concordance Bar */
+.az-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.az-ribbon::-webkit-scrollbar { display: none; }
+.az-btn {
+  min-width: 25px;
+  height: 23px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.az-btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
+.az-btn.active { background: var(--ink-1); color: var(--bg-panel); }
+.az-btn.has-words { color: var(--brand); font-weight: 700; }
+.az-btn.active.has-words { color: var(--bg-panel); }
+
+#toastBanner {
+  display: none;
+  margin-top: 8px;
+  padding: 7px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--tamil-soft);
+  color: var(--tamil);
+  border-left: 3px solid var(--tamil);
+}
+
+/* Lexicon Data Table */
+.table-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.col-headers {
+  display: grid;
+  grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-strong);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+}
+@media (max-width: 780px) { .col-headers { display: none; } }
+
+.section-divider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--bg-app);
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--brand);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lex-item {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.lex-item:last-child { border-bottom: none; }
+.lex-item:hover { background: var(--bg-hover); }
+
+.lex-summary {
+  display: grid;
+  grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
+  gap: 10px;
+  padding: 9px 12px;
+  align-items: baseline;
+  cursor: pointer;
+}
+@media (max-width: 780px) {
+  .lex-summary { grid-template-columns: 24px 1fr auto; gap: 6px; }
+  .c-def { grid-column: 2 / span 2; }
+  .c-tamil { grid-column: 2 / span 2; }
+}
+
+.star-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--border-strong);
+  line-height: 1;
+}
+.star-btn.starred { color: var(--gold); }
+
+.c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.w-main {
+  font-weight: 700;
+  font-size: 13.8px;
+  color: var(--ink-1);
+}
+.w-merge-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-weight: 600;
+}
+.w-pos {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.spk-icon {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--ink-3);
+  padding: 0 2px;
+}
+.spk-icon:hover { color: var(--brand); }
+
+.c-tamil {
+  font-family: 'Noto Sans Tamil', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--tamil);
+}
+.t-nuance {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-left: 4px;
+}
+
+.c-def {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Active Recall Blur Mode */
+body.recall-active .c-tamil,
+body.recall-active .c-def {
+  filter: blur(5px);
+  user-select: none;
+  transition: filter 0.15s;
+}
+body.recall-active .lex-item:hover .c-tamil,
+body.recall-active .lex-item:hover .c-def,
+body.recall-active .lex-item.open .c-tamil,
+body.recall-active .lex-item.open .c-def {
+  filter: none;
+}
+
+.c-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.gs-mini-select {
+  padding: 2px 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-app);
+  color: var(--ink-2);
+  width: auto;
+  max-width: 112px;
+  cursor: pointer;
+}
+.icon-del {
+  border: none;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.icon-del:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
+
+/* Expanded Concordance Drawer */
+.lex-drawer {
+  display: none;
+  padding: 12px 16px 14px 40px;
+  background: var(--bg-app);
+  border-top: 1px dashed var(--border-strong);
+}
+@media (max-width: 780px) { .lex-drawer { padding-left: 14px; } }
+.lex-item.open .lex-drawer { display: block; }
+.lex-item.open .c-def { white-space: normal; }
+
+.drawer-meta-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+@media (max-width: 720px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
+
+.d-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.syn-clickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  margin: 0 4px 4px 0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--brand);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.syn-clickable:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.ex-trio {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+@media (max-width: 900px) { .ex-trio { grid-template-columns: 1fr; } }
+
+.ex-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--brand);
+  padding: 9px 11px;
+  border-radius: 4px;
+}
+.ex-box:nth-child(2) { border-top-color: var(--tamil); }
+.ex-box:nth-child(3) { border-top-color: var(--gold); }
+
+.ex-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+.ex-body {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink-1);
+}
+
+
+  <div class="brain-box">
+    <div class="brain-title">
+      <span>🧠 Adaptive GS Brain</span>
+      <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--brand);">0 Rules</span>
+    </div>
+    <div style="color:var(--ink-3); font-size:11px; line-height:1.35;">
+      Automatically learns domain stems from your searches and manual GS paper corrections.
+    </div>
+    <div class="brain-tags" id="brainPreview"></div>
+  </div>
+
+  <div style="margin-top:10px; display:flex; gap:6px;">
+    <button class="btn" style="width:100%; justify-content:center;" onclick="loadStarterPack()">⚡ Load UPSC Starter Terms</button>
+  </div>
+</aside>
+
+<!-- Main Lexicon Stage -->
+<main class="main-stage">
+  <section class="console-card">
+    <div class="input-grid">
+      <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
+      <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
+      <select id="gsOverride">
+        <option value="AUTO">⚡ Auto-Detect GS Paper</option>
+        <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
+        <option value="GS-2: Polity & Governance">GS-2: Polity & Governance</option>
+        <option value="GS-2: International Relations">GS-2: Int. Relations</option>
+        <option value="GS-3: Economy & Dev">GS-3: Economy & Dev</option>
+        <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
+        <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
+        <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
+        <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
+      </select>
+      <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
+    </div>
+
+    <div class="az-ribbon" id="azBar"></div>
+    <div id="toastBanner"></div>
+  </section>
+
+  <section class="table-box">
+    <div class="col-headers">
+      <div>★</div>
+      <div>English Term(s) [Tamil-Merged]</div>
+      <div>Exact Tamil &amp; Nuances</div>
+      <div>UPSC Mains Definition</div>
+      <div style="text-align:right;">GS Paper</div>
+    </div>
+    <div id="tableBody"></div>
+  </section>
+</main>
