@@ -49,17 +49,16 @@
       --danger: #f87171;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: text; }
     body {
       background: var(--bg-app);
       color: var(--ink-1);
       font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', -apple-system, sans-serif;
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 13.5px;
+      line-height: 1.55;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Command Header */
     .topbar {
       position: sticky;
       top: 0;
@@ -69,9 +68,9 @@
       box-shadow: var(--shadow-sm);
     }
     .topbar-inner {
-      max-width: 1380px;
+      max-width: 1560px;
       margin: 0 auto;
-      padding: 10px 18px;
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -81,17 +80,17 @@
     .brand-group { display: flex; align-items: baseline; gap: 12px; }
     .brand-title {
       font-family: 'Newsreader', Georgia, serif;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 600;
       letter-spacing: -0.4px;
       color: var(--ink-1);
     }
     .brand-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      padding: 2px 7px;
+      padding: 2px 8px;
       background: var(--brand-soft);
       color: var(--brand);
       border-radius: 4px;
@@ -100,8 +99,8 @@
 
     .action-cluster { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .btn {
-      padding: 5px 10px;
-      font-size: 11.5px;
+      padding: 6px 12px;
+      font-size: 12px;
       font-weight: 600;
       border-radius: var(--radius);
       border: 1px solid var(--border-strong);
@@ -119,41 +118,39 @@
       background: var(--brand);
       color: #ffffff;
       border-color: var(--brand);
-      padding: 8px 16px;
-      font-size: 12.5px;
+      padding: 8px 18px;
+      font-size: 13px;
     }
-    .btn-primary:hover { opacity: 0.92; background: var(--brand); color: #ffffff; }
+    .btn-primary:hover { opacity: 0.92; }
     .btn-primary:disabled { opacity: 0.55; cursor: wait; }
 
-    /* Main Workspace Grid */
     .workspace {
-      max-width: 1380px;
+      max-width: 1560px;
       margin: 0 auto;
-      padding: 16px 18px 60px 18px;
+      padding: 20px 24px 60px 24px;
       display: grid;
-      grid-template-columns: 265px 1fr;
-      gap: 18px;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
       align-items: start;
     }
-    @media (max-width: 980px) {
-      .workspace { grid-template-columns: 1fr; }
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: 1fr; padding: 12px; }
     }
 
-    /* Left Executive Sidebar */
     .sidebar {
       background: var(--bg-panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 12px;
+      padding: 14px;
       position: sticky;
-      top: 64px;
+      top: 72px;
     }
-    @media (max-width: 980px) {
+    @media (max-width: 1024px) {
       .sidebar { position: static; }
     }
     .side-heading {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       text-transform: uppercase;
       letter-spacing: 0.7px;
       color: var(--ink-3);
@@ -161,17 +158,17 @@
       display: flex;
       justify-content: space-between;
     }
-    .nav-list { display: flex; flex-direction: column; gap: 2px; }
-    @media (max-width: 980px) {
+    .nav-list { display: flex; flex-direction: column; gap: 3px; }
+    @media (max-width: 1024px) {
       .nav-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
     }
     .nav-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 8px;
+      padding: 7px 10px;
       border-radius: 5px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 500;
       color: var(--ink-2);
       cursor: pointer;
@@ -189,8 +186,8 @@
     }
     .nav-pill {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      padding: 1px 6px;
+      font-size: 11px;
+      padding: 1px 7px;
       border-radius: 99px;
       background: var(--bg-subtle);
       color: var(--ink-3);
@@ -198,12 +195,12 @@
     .nav-item.active .nav-pill { background: var(--brand); color: #fff; }
 
     .brain-box {
-      margin-top: 14px;
-      padding: 10px;
+      margin-top: 16px;
+      padding: 12px;
       background: var(--bg-app);
       border: 1px solid var(--border);
       border-radius: 5px;
-      font-size: 11.5px;
+      font-size: 12px;
     }
     .brain-title {
       font-weight: 700;
@@ -211,50 +208,48 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .brain-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
       margin-top: 6px;
-      max-height: 95px;
+      max-height: 110px;
       overflow-y: auto;
     }
     .brain-chip {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       background: var(--bg-panel);
       border: 1px solid var(--border);
-      padding: 1px 5px;
+      padding: 2px 6px;
       border-radius: 3px;
       color: var(--ink-2);
     }
 
-    /* Right Content Column */
-    .main-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .main-stage { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
-    /* Smart Entry Console */
     .console-card {
       background: var(--bg-panel);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius);
-      padding: 12px;
+      padding: 14px;
       box-shadow: var(--shadow-sm);
     }
     .input-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1.2fr 185px auto auto;
-      gap: 8px;
+      grid-template-columns: 1.5fr 1.2fr 190px auto auto;
+      gap: 10px;
     }
-    @media (max-width: 920px) {
+    @media (max-width: 960px) {
       .input-grid { grid-template-columns: 1fr 1fr; }
       .input-grid input { grid-column: span 2; }
     }
     input, select {
       width: 100%;
-      padding: 8px 11px;
-      font-size: 13px;
+      padding: 9px 12px;
+      font-size: 13.5px;
       font-family: inherit;
       color: var(--ink-1);
       background: var(--bg-app);
@@ -268,23 +263,22 @@
       background: var(--bg-panel);
     }
 
-    /* A-Z Concordance Bar */
     .az-ribbon {
       display: flex;
       align-items: center;
-      gap: 2px;
-      margin-top: 10px;
-      padding-top: 8px;
+      gap: 3px;
+      margin-top: 12px;
+      padding-top: 10px;
       border-top: 1px solid var(--border);
       overflow-x: auto;
       scrollbar-width: none;
     }
     .az-ribbon::-webkit-scrollbar { display: none; }
     .az-btn {
-      min-width: 25px;
-      height: 23px;
+      min-width: 28px;
+      height: 25px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       border: none;
       border-radius: 4px;
@@ -300,16 +294,15 @@
     #toastBanner {
       display: none;
       margin-top: 8px;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
       background: var(--tamil-soft);
       color: var(--tamil);
       border-left: 3px solid var(--tamil);
     }
 
-    /* Lexicon Data Table */
     .table-box {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -318,30 +311,30 @@
     }
     .col-headers {
       display: grid;
-      grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
-      gap: 10px;
-      padding: 8px 12px;
+      grid-template-columns: 32px 1.4fr 1.3fr 1.9fr 140px;
+      gap: 12px;
+      padding: 10px 14px;
       background: var(--bg-subtle);
       border-bottom: 1px solid var(--border-strong);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--ink-3);
     }
-    @media (max-width: 780px) { .col-headers { display: none; } }
+    @media (max-width: 800px) { .col-headers { display: none; } }
 
     .section-divider {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 12px;
+      padding: 8px 14px;
       background: var(--bg-app);
       border-bottom: 1px solid var(--border);
       border-left: 3px solid var(--brand);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--ink-1);
       text-transform: uppercase;
@@ -357,14 +350,13 @@
 
     .lex-summary {
       display: grid;
-      grid-template-columns: 28px 1.35fr 1.2fr 1.75fr 140px;
-      gap: 10px;
-      padding: 9px 12px;
+      grid-template-columns: 32px 1.4fr 1.3fr 1.9fr 140px;
+      gap: 12px;
+      padding: 11px 14px;
       align-items: baseline;
-      cursor: pointer;
     }
-    @media (max-width: 780px) {
-      .lex-summary { grid-template-columns: 24px 1fr auto; gap: 6px; }
+    @media (max-width: 800px) {
+      .lex-summary { grid-template-columns: 28px 1fr auto; gap: 8px; }
       .c-def { grid-column: 2 / span 2; }
       .c-tamil { grid-column: 2 / span 2; }
     }
@@ -373,7 +365,7 @@
       border: none;
       background: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 15px;
       color: var(--border-strong);
       line-height: 1;
     }
@@ -382,13 +374,13 @@
     .c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
     .w-main {
       font-weight: 700;
-      font-size: 13.8px;
+      font-size: 14.2px;
       color: var(--ink-1);
     }
     .w-merge-count {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      padding: 1px 5px;
+      font-size: 10px;
+      padding: 1px 6px;
       border-radius: 3px;
       background: var(--gold-soft);
       color: var(--gold);
@@ -397,41 +389,40 @@
     .w-pos {
       font-family: 'Newsreader', Georgia, serif;
       font-style: italic;
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--ink-3);
     }
     .spk-icon {
       border: none;
       background: none;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--ink-3);
-      padding: 0 2px;
+      padding: 0 3px;
     }
     .spk-icon:hover { color: var(--brand); }
 
     .c-tamil {
       font-family: 'Noto Sans Tamil', sans-serif;
       font-weight: 700;
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--tamil);
     }
     .t-nuance {
       font-weight: 400;
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--ink-3);
       margin-left: 4px;
     }
 
     .c-def {
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--ink-2);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Active Recall Blur Mode */
     body.recall-active .c-tamil,
     body.recall-active .c-def {
       filter: blur(5px);
@@ -449,19 +440,19 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 4px;
+      gap: 6px;
     }
     .gs-mini-select {
-      padding: 2px 5px;
+      padding: 3px 6px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 600;
       border-radius: 4px;
       border: 1px solid var(--border-strong);
       background: var(--bg-app);
       color: var(--ink-2);
       width: auto;
-      max-width: 112px;
+      max-width: 120px;
       cursor: pointer;
     }
     .icon-del {
@@ -469,34 +460,33 @@
       background: none;
       color: var(--ink-3);
       cursor: pointer;
-      font-size: 12px;
-      padding: 2px 4px;
+      font-size: 13px;
+      padding: 3px 6px;
       border-radius: 3px;
     }
     .icon-del:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
 
-    /* Expanded Concordance Drawer */
     .lex-drawer {
       display: none;
-      padding: 12px 16px 14px 40px;
+      padding: 14px 18px 16px 44px;
       background: var(--bg-app);
       border-top: 1px dashed var(--border-strong);
     }
-    @media (max-width: 780px) { .lex-drawer { padding-left: 14px; } }
+    @media (max-width: 800px) { .lex-drawer { padding-left: 14px; } }
     .lex-item.open .lex-drawer { display: block; }
     .lex-item.open .c-def { white-space: normal; }
 
     .drawer-meta-grid {
       display: grid;
       grid-template-columns: 1.2fr 1fr;
-      gap: 14px;
-      margin-bottom: 10px;
+      gap: 16px;
+      margin-bottom: 12px;
     }
-    @media (max-width: 720px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
 
     .d-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--ink-3);
@@ -506,12 +496,12 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      padding: 2px 8px;
+      padding: 3px 9px;
       margin: 0 4px 4px 0;
       background: var(--bg-panel);
       border: 1px solid var(--border-strong);
       border-radius: 4px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--brand);
       cursor: pointer;
@@ -526,16 +516,16 @@
     .ex-trio {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 8px;
+      gap: 12px;
+      margin-top: 10px;
     }
-    @media (max-width: 900px) { .ex-trio { grid-template-columns: 1fr; } }
+    @media (max-width: 920px) { .ex-trio { grid-template-columns: 1fr; } }
 
     .ex-box {
       background: var(--bg-panel);
       border: 1px solid var(--border);
       border-top: 2px solid var(--brand);
-      padding: 9px 11px;
+      padding: 10px 12px;
       border-radius: 4px;
     }
     .ex-box:nth-child(2) { border-top-color: var(--tamil); }
@@ -543,20 +533,23 @@
 
     .ex-head {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
       color: var(--ink-3);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       display: flex;
       justify-content: space-between;
     }
     .ex-body {
       font-family: 'Newsreader', Georgia, serif;
-      font-size: 13.5px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.5;
       color: var(--ink-1);
     }
+    /* Make summary text interactive for highlighting/copying without triggering drawer close */
+    .c-word, .c-tamil, .c-def, .drawer-meta-grid, .ex-box { cursor: text; }
+    .clickable-row-toggle { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -583,7 +576,6 @@
   </header>
 
   <div class="workspace">
-    <!-- Left Syllabus & Self-Learning Sidebar -->
     <aside class="sidebar">
       <div class="side-heading">
         <span>UPSC GS Syllabus</span>
@@ -594,20 +586,19 @@
       <div class="brain-box">
         <div class="brain-title">
           <span>🧠 Adaptive GS Brain</span>
-          <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--brand);">0 Rules</span>
+          <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--brand);">0 Rules</span>
         </div>
-        <div style="color:var(--ink-3); font-size:11px; line-height:1.35;">
+        <div style="color:var(--ink-3); font-size:11.5px; line-height:1.4;">
           Automatically learns domain stems from your searches and manual GS paper corrections.
         </div>
         <div class="brain-tags" id="brainPreview"></div>
       </div>
 
-      <div style="margin-top:10px; display:flex; gap:6px;">
+      <div style="margin-top:12px; display:flex; gap:6px;">
         <button class="btn" style="width:100%; justify-content:center;" onclick="loadStarterPack()">⚡ Load UPSC Starter Terms</button>
       </div>
     </aside>
 
-    <!-- Main Lexicon Stage -->
     <main class="main-stage">
       <section class="console-card">
         <div class="input-grid">
@@ -785,44 +776,44 @@
 
       const matrix = {
         'GS-1: Society & Culture': {
-          ex1: `The editorial observed that persistent "${leadWord}" continues to shape urban-rural social mobility and kinship networks across India.`,
-          ex2: `GS-1 Mains: Addressing "${leadWord}" (${shortDef}) requires targeted social empowerment rather than mere legislative symbolism.`,
-          ex3: `Essay / Way Forward: True constitutional fraternity can only emerge when societal institutions transcend "${leadWord}" in favor of inclusive pluralism.`
+          ex1: `Recent Newspaper Context: Editorial coverage highlights how "${leadWord}" continues to shape demographic transitions and social cohesion.`,
+          ex2: `GS-1 Mains Answer Body: Addressing "${leadWord}" requires targeted institutional reforms in accordance with constitutional values.`,
+          ex3: `Essay & Ethics Way Forward: Fostering pluralism and inclusive growth offers a sustainable pathway to overcome "${leadWord}".`
         },
         'GS-2: Polity & Governance': {
-          ex1: `The Supreme Court Constitution Bench emphasized that executive discretion cannot be equated with "${leadWord}" in a parliamentary democracy.`,
-          ex2: `GS-2 Mains: Strengthening parliamentary committee oversight acts as a vital bulwark against "${leadWord}" and institutionalises accountability.`,
-          ex3: `Way Forward: Reforming administrative rules to curb "${leadWord}" is indispensable for citizen-centric governance and constitutional morality.`
+          ex1: `Recent Newspaper Context: Constitutional experts emphasized that executive overreach regarding "${leadWord}" undermines statutory balance.`,
+          ex2: `GS-2 Mains Answer Body: Strengthening institutional transparency and accountability acts as a vital safeguard against "${leadWord}".`,
+          ex3: `Essay & Ethics Way Forward: Upholding constitutional morality and separation of powers is paramount in resolving issues concerning "${leadWord}".`
         },
         'GS-2: International Relations': {
-          ex1: `Amidst evolving Indo-Pacific alignments, New Delhi's calibrated stance on "${leadWord}" underscores its commitment to strategic autonomy.`,
-          ex2: `GS-2 IR Mains: Multilateral institutions must move beyond "${leadWord}" to address supply-chain weaponization and Global South representation.`,
-          ex3: `Diplomatic Way Forward: Constructive dialogue anchored in mutual respect offers a sustainable alternative to "${leadWord}".`
+          ex1: `Recent Newspaper Context: Geopolitical commentaries suggest that "${leadWord}" influences multilateral trade negotiations and security pacts.`,
+          ex2: `GS-2 Mains Answer Body: Leveraging strategic partnerships while maintaining autonomy ensures national security amid "${leadWord}".`,
+          ex3: `Essay & Ethics Way Forward: Collaborative multilateralism anchored in equity provides a viable alternative regarding "${leadWord}".`
         },
         'GS-3: Economy & Dev': {
-          ex1: `The Economic Survey cautioned that structural bottlenecks linked to "${leadWord}" could constrain private capital formation and export competitiveness.`,
-          ex2: `GS-3 Economy Mains: Calibrating fiscal consolidation while mitigating "${leadWord}" is essential for sustaining non-inflationary macroeconomic growth.`,
-          ex3: `Policy Way Forward: Structural reforms in factor markets can insulate the domestic economy from the volatility of "${leadWord}".`
+          ex1: `Recent Newspaper Context: The Economic Survey underscored that systemic bottlenecks around "${leadWord}" impact private capital formation.`,
+          ex2: `GS-3 Mains Answer Body: Balancing fiscal prudence with targeted investment is critical to mitigating the risks posed by "${leadWord}".`,
+          ex3: `Essay & Ethics Way Forward: Implementing structural reforms in factor markets promotes resilient, non-inflationary macroeconomic growth.`
         },
         'GS-3: Environment & Ecology': {
-          ex1: `Climate scientists warned that accelerating "${leadWord}" poses an existential threat to fragile Himalayan and coastal ecosystems.`,
-          ex2: `GS-3 Environment Mains: Mainstreaming biodiversity impact assessments can arrest "${leadWord}" while supporting green infrastructure transitions.`,
-          ex3: `Ecological Way Forward: Community-led conservation and climate finance are critical to reversing "${leadWord}" under the Paris Agreement framework.`
+          ex1: `Recent Newspaper Context: Recent climate reports warn that accelerating "${leadWord}" threatens vulnerable regional ecosystems.`,
+          ex2: `GS-3 Mains Answer Body: Mainstreaming environmental impact assessments helps counteract "${leadWord}" while supporting green transitions.`,
+          ex3: `Essay & Ethics Way Forward: Community-led conservation and robust climate finance are essential to reversing "${leadWord}".`
         },
         'GS-3: Science & Tech': {
-          ex1: `As frontier digital architectures scale, regulatory sandboxes must address "${leadWord}" without stifling indigenous deep-tech innovation.`,
-          ex2: `GS-3 S&T Mains: Building sovereign capacity around "${leadWord}" strengthens critical information infrastructure and national cyber deterrence.`,
-          ex3: `Tech Governance Way Forward: An agile, risk-proportionate legal framework ensures that "${leadWord}" serves public digital goods ethically.`
+          ex1: `Recent Newspaper Context: Emerging digital governance frameworks seek to regulate "${leadWord}" without stifling indigenous innovation.`,
+          ex2: `GS-3 Mains Answer Body: Building secure domestic tech architecture around "${leadWord}" strengthens critical cyber deterrence.`,
+          ex3: `Essay & Ethics Way Forward: An ethical, risk-proportionate regulatory approach ensures "${leadWord}" serves public welfare.`
         },
         'GS-4: Ethics & Integrity': {
-          ex1: `In public administration, an officer's commitment to "${leadWord}" distinguishes ethical leadership from mechanical rule-compliance.`,
-          ex2: `GS-4 Case Study: Invoking "${leadWord}" enables a civil servant to resolve conflicts of interest with objectivity, empathy, and probity.`,
-          ex3: `Ethical Way Forward: Institutionalizing citizen charters and social audits embeds "${leadWord}" into the everyday culture of governance.`
+          ex1: `Recent Newspaper Context: Editorial debates focus on public administrative accountability and upholding "${leadWord}" in governance.`,
+          ex2: `GS-4 Mains Answer Body: Applying "${leadWord}" enables civil servants to resolve ethical dilemmas with empathy and probity.`,
+          ex3: `Essay & Ethics Way Forward: Institutionalizing rigorous ethics training embeds "${leadWord}" deeply into administrative culture.`
         },
         'Essay & Editorial Idioms': {
-          ex1: `The lead editorial invoked "${leadWord}" (${shortDef}) to critique short-term populist measures over enduring institutional reform.`,
-          ex2: `Mains Answer Integration: Framing the policy challenge through the lens of "${leadWord}" adds analytical depth to GS introductions.`,
-          ex3: `Essay Conclusion: Moving from the inertia of "${leadWord}" toward proactive institutional renewal defines the trajectory of a mature democracy.`
+          ex1: `Recent Newspaper Context: The lead editorial invoked "${leadWord}" to critique short-term populist responses over long-term reform.`,
+          ex2: `GS-3/Mains Integration: Framing administrative challenges through "${leadWord}" provides analytical depth to core GS arguments.`,
+          ex3: `Essay & Ethics Way Forward: Moving from systemic inertia toward proactive institutional renewal defines progressive statecraft.`
         }
       };
 
@@ -1159,6 +1150,13 @@
       render();
     }
 
+    // Toggle drawer open/close ONLY when clicking summary container cells, allowing free text selection/copying
+    function handleSummaryClick(e, articleEl) {
+      if (window.getSelection().toString().length > 0) return; // Don't toggle if text is being highlighted
+      if (e.target.closest('button') || e.target.closest('select')) return; // Ignore interactive buttons/dropdowns
+      articleEl.classList.toggle('open');
+    }
+
     function loadStarterPack() {
       const seeds = [
         {
@@ -1236,12 +1234,12 @@
       db.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
 
       const navHTML = [
-        `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';render()">
+        `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';selectedLetter='ALL';render()">
           <span>All GS Papers</span>
           <span class="nav-pill">${counts.ALL}</span>
         </button>`,
         ...GS_CATEGORIES.map(c => `
-          <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS='${esc(c)}';render()">
+          <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS='${esc(c)}';selectedLetter='ALL';render()">
             <span>${esc(c.replace('International Relations', 'Int. Relations').replace('Environment & Ecology', 'Environment'))}</span>
             <span class="nav-pill">${counts[c] || 0}</span>
           </button>`)
@@ -1252,7 +1250,7 @@
       document.getElementById('brainCount').textContent = `${brainEntries.length} Rules`;
       document.getElementById('brainPreview').innerHTML = brainEntries.slice(-12).reverse().map(([stem, gs]) =>
         `<span class="brain-chip" title="${esc(gs)}">${esc(stem)} ➔ ${esc(gs.split(':')[0])}</span>`
-      ).join('') || `<span style="color:var(--ink-3); font-size:10.5px;">Add or reassign words to train.</span>`;
+      ).join('') || `<span style="color:var(--ink-3); font-size:11px;">Add or reassign words to train.</span>`;
 
       const activeInitials = new Set(db.map(i => i.words.trim().charAt(0).toUpperCase()));
       const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
@@ -1282,7 +1280,7 @@
       }).join('');
 
       return `
-        <div class="lex-item ${expandAll ? 'open' : ''}" onclick="this.classList.toggle('open')">
+        <div class="lex-item ${expandAll ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
           <div class="lex-summary">
             <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${item.id})" title="Mark High-Yield">★</button>
             <div class="c-word">
@@ -1291,20 +1289,20 @@
               ${item.pos ? `<span class="w-pos">${esc(item.pos)}</span>` : ''}
               <button class="spk-icon" onclick="speakText(event, '${esc(item.words)}')" title="Pronounce">🔊</button>
             </div>
-            <div class="c-tamil">
+            <div class="c-tamil" lang="ta">
               ${esc(item.tamil)}
               ${item.nuance ? `<span class="t-nuance">(${esc(item.nuance)})</span>` : ''}
             </div>
             <div class="c-def">${esc(item.eng)}</div>
             <div class="c-meta" onclick="event.stopPropagation()">
-              <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper (Trains Adaptive Brain)">
+              <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper">
                 ${gsOptions}
               </select>
               <button class="icon-del" onclick="deleteRow(event, ${item.id})" title="Delete">✕</button>
             </div>
           </div>
 
-          <div class="lex-drawer">
+          <div class="lex-drawer" onclick="event.stopPropagation()">
             <div class="drawer-meta-grid">
               <div>
                 <div class="d-label">Authoritative Definition &amp; Tamil Nuance</div>
@@ -1322,7 +1320,7 @@
 
             <div class="ex-trio">
               <div class="ex-box">
-                <div class="ex-head"><span>1. Newspaper Editorial</span><span>Context</span></div>
+                <div class="ex-head"><span>1. Recent Newspaper</span><span>Context</span></div>
                 <div class="ex-body">"${esc(item.ex1)}"</div>
               </div>
               <div class="ex-box">
@@ -1365,7 +1363,7 @@
         body.innerHTML = `
           <div style="padding:48px 20px; text-align:center; color:var(--ink-3);">
             <div style="font-size:14px; font-weight:600; color:var(--ink-2); margin-bottom:6px;">No vocabulary terms match your current filter.</div>
-            <div style="font-size:12.5px;">Type any English word above and press <b>Enter</b>, or click <b>⚡ Load UPSC Starter Terms</b> in the left sidebar.</div>
+            <div style="font-size:13px;">Type any English word above or click <b>⚡ Load UPSC Starter Terms</b> in the left sidebar.</div>
           </div>`;
         return;
       }
