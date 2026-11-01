@@ -60,6 +60,46 @@ $('starter').onclick=()=>{const seeds=[['Abrogate, Repeal','ரத்து ச�
 function download(text,name,type){const url=URL.createObjectURL(new Blob([text],{type}));const link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $('backup').onclick=()=>download(JSON.stringify({version:5,db,brain},null,2),'UPSC_Lexicon_Backup.json','application/json');$('csv').onclick=()=>{const columns=['cat','words','pos','tamil','nuance','eng','syn','ex1','ex2','ex3'];const cell=value=>'"'+String(value||'').replace(/^[=+@-]/,"'$&").replace(/"/g,'""')+'"';download('\uFEFF'+[columns.join(','),...db.map(i=>columns.map(k=>cell(i[k])).join(','))].join('\n'),'UPSC_CSE_Lexicon.csv','text/csv;charset=utf-8')};$('restore').onclick=()=>$('file').click();$('file').onchange=async event=>{const file=event.target.files[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error('Maximum backup size is 5 MB.');const data=JSON.parse(await file.text());if(!Array.isArray(data.db)||!data.db.every(validItem))throw Error('Invalid vocabulary backup.');if(!confirm('Replace the vocabulary list with this backup?'))return;db=data.db.map(cleanItem);brain=Object.fromEntries(Object.entries(data.brain||{}).filter(([stem,cat])=>/^[a-z]+$/.test(stem)&&categories.includes(cat)));save();render();$('status').textContent='Vocabulary backup restored.'}catch(error){$('status').textContent=error.message}finally{event.target.value=''}};
 window.addEventListener('message',event=>{if(event.source===window.parent&&event.data?.type==='tracker-lexicon-refresh')load()});
+
+async function triggerAiLookup() {
+  const wordsInput = $('words');
+  const word = wordsInput.value.trim().split(',')[0].trim();
+  if (!word) {
+    $('status').textContent = 'Please type an English term first to look up with AI.';
+    wordsInput.focus();
+    return;
+  }
+
+  const aiBtn = $('aiBtn');
+  aiBtn.disabled = true;
+  aiBtn.textContent = 'AI Searching...';
+  $('status').textContent = `Querying Gemini for "${word}"...`;
+
+  try {
+    const res = await fetch('https://tracker.studiz.workers.dev/api/ai-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ word })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'AI lookup failed');
+
+    if (data.definition) $('definition').value = data.definition;
+    if (data.tamil) $('tamil').value = data.tamil;
+    if (data.category && categories.includes(data.category)) {
+      $('category').value = data.category;
+    }
+
+    $('status').textContent = `✨ AI lookup complete for "${word}"! Review and click "+ Add & index".`;
+  } catch (err) {
+    $('status').textContent = 'AI lookup error: ' + err.message;
+  } finally {
+    aiBtn.disabled = false;
+    aiBtn.textContent = '✨ AI Lookup';
+  }
+}
+
 load();
 </script>
 </body>
