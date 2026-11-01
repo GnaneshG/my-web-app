@@ -308,35 +308,25 @@
     }
 
     .table-box {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      overflow: visible;
     }
     .col-headers {
-      display: grid;
-      grid-template-columns: 38px minmax(170px, 1.2fr) minmax(180px, 1.3fr) minmax(240px, 1.8fr) minmax(235px, 1.35fr);
-      gap: 16px;
-      padding: 10px 14px;
-      background: var(--bg-subtle);
-      border-bottom: 1px solid var(--border-strong);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--ink-3);
+      display: none;
     }
-    @media (max-width: 1350px) { .col-headers { display: none; } }
 
     .section-divider {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 14px;
-      background: var(--bg-app);
-      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
       border-left: 3px solid var(--brand);
+      border-radius: var(--radius);
+      margin: 16px 0 10px 0;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       font-weight: 700;
@@ -345,24 +335,44 @@
       letter-spacing: 0.5px;
     }
 
-    .lex-item {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
+    .lex-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
     }
-    .lex-item:last-child { border-bottom: none; }
-    .lex-item:hover { background: var(--bg-hover); }
+    @media (max-width: 1200px) {
+      .lex-grid-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .lex-grid-container { grid-template-columns: 1fr; }
+    }
+
+    .lex-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .lex-item:hover { border-color: var(--brand); transform: translateY(-1px); }
 
     .lex-summary {
-      display: grid;
-      grid-template-columns: 38px minmax(170px, 1.2fr) minmax(180px, 1.3fr) minmax(240px, 1.8fr) minmax(235px, 1.35fr);
-      gap: 16px;
-      padding: 11px 14px;
-      align-items: center;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
     }
-    @media (max-width: 1350px) {
-      .lex-summary { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; }
-      .c-def, .c-tamil, .c-meta { grid-column: 2 / span 2; }
-      .c-meta { justify-content: flex-start; }
+
+    .lex-summary-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     .star-btn {
@@ -375,10 +385,10 @@
     }
     .star-btn.starred { color: var(--gold); }
 
-    .c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+    .c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; flex: 1; }
     .w-main {
       font-weight: 700;
-      font-size: 14.2px;
+      font-size: 15px;
       color: var(--ink-1);
     }
     .w-merge-count {
@@ -393,7 +403,7 @@
     .w-pos {
       font-family: 'Newsreader', Georgia, serif;
       font-style: italic;
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--ink-3);
     }
     .spk-icon {
@@ -406,68 +416,80 @@
     }
     .spk-icon:hover { color: var(--brand); }
 
+    .c-tamil-box {
+      padding: 6px 10px;
+      background: var(--tamil-soft);
+      border-radius: 4px;
+      border-left: 3px solid var(--tamil);
+    }
     .c-tamil {
       font-family: 'Noto Sans Tamil', sans-serif;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--tamil);
     }
     .t-nuance {
       font-weight: 400;
-      font-size: 12px;
-      color: var(--ink-3);
-      margin-left: 4px;
-    }
-
-    .c-def {
-      font-size: 13px;
+      font-size: 11.5px;
       color: var(--ink-2);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: block;
+      margin-top: 2px;
     }
 
-    body.recall-active .c-tamil,
+    body.recall-active .c-tamil-box,
     body.recall-active .c-def {
       filter: blur(5px);
       user-select: none;
       transition: filter 0.15s;
     }
-    body.recall-active .lex-item:hover .c-tamil,
+    body.recall-active .lex-item:hover .c-tamil-box,
     body.recall-active .lex-item:hover .c-def,
-    body.recall-active .lex-item.open .c-tamil,
+    body.recall-active .lex-item.open .c-tamil-box,
     body.recall-active .lex-item.open .c-def {
       filter: none;
+    }
+
+    .c-def {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .c-meta {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 6px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 2px;
     }
     .gs-mini-select {
       padding: 3px 6px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 600;
       border-radius: 4px;
       border: 1px solid var(--border-strong);
       background: var(--bg-app);
       color: var(--ink-2);
       width: auto;
-      max-width: 120px;
+      max-width: 140px;
       cursor: pointer;
     }
+    .meta-actions { display: flex; align-items: center; gap: 4px; }
     .edit-row-btn {
       border: 1px solid var(--border-strong);
       border-radius: 4px;
       background: var(--bg-panel);
       color: var(--brand);
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 10px;
+      padding: 4px 8px;
     }
     .edit-row-btn:hover { background: var(--brand-soft); }
     .icon-del {
@@ -475,7 +497,7 @@
       background: none;
       color: var(--ink-3);
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       padding: 3px 6px;
       border-radius: 3px;
     }
@@ -483,18 +505,17 @@
 
     .lex-drawer {
       display: none;
-      padding: 14px 18px 16px 44px;
+      padding: 14px;
       background: var(--bg-app);
       border-top: 1px dashed var(--border-strong);
     }
-    @media (max-width: 800px) { .lex-drawer { padding-left: 14px; } }
     .lex-item.open .lex-drawer { display: block; }
-    .lex-item.open .c-def { white-space: normal; }
+    .lex-item.open .c-def { display: block; overflow: visible; -webkit-line-clamp: unset; }
 
     .drawer-meta-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       margin-bottom: 12px;
     }
     @media (max-width: 760px) { .drawer-meta-grid { grid-template-columns: 1fr; } }
@@ -602,29 +623,26 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-group">
-        <span class="brand-title">The CSE Lexicon</span>
-        <span class="brand-tag">GS-I to GS-IV Concordance</span>
+        <span class="brand-title" id="pageMainTitle">The CSE Lexicon</span>
+        <span class="brand-tag" id="pageSubtitle">GS-I to GS-IV Concordance</span>
       </div>
-      <div class="action-cluster">
+      <div class="action-cluster" id="mainHeaderActions">
         <a class="btn back-site-btn" id="back-to-website" href="./index.html" aria-label="Return to the main website">← Back to Website</a>
         <button class="btn active" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
         <button class="btn" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
         <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
         <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
         <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
-        <button class="btn" onclick="exportCSV()">📥 CSV</button>
-        <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup</button>
-        <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
-        <button class="btn" onclick="toggleTheme()" title="Switch Theme">🌗</button>
+        <button class="btn" id="btnToggleAdmin" onclick="toggleAdminPortal()">⚙️ Admin Portal</button>
+        <button class="btn" id="btnThemeMain" onclick="toggleTheme()" title="Switch Theme">🌗</button>
       </div>
     </div>
   </header>
 
   <div class="workspace">
-    <aside class="sidebar">
+    <aside class="sidebar" id="mainSidebar">
       <div class="side-heading">
-        <span>UPSC GS Syllabus</span>
+        <span id="sidebarHeaderTitle">UPSC GS Syllabus</span>
         <span id="totalBadge">0</span>
       </div>
       <div class="nav-list" id="sidebarNav"></div>
@@ -635,7 +653,7 @@
           <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--brand);">0 Rules</span>
         </div>
         <div style="color:var(--ink-3); font-size:11.5px; line-height:1.4;">
-          Automatically learns domain stems from your searches and manual GS paper corrections.
+          Automatically learns domain stems from UPSC PYQ trends, The Hindu & Indian Express editorials.
         </div>
         <div class="brain-tags" id="brainPreview"></div>
       </div>
@@ -645,7 +663,7 @@
       </div>
     </aside>
 
-    <main class="main-stage">
+    <main class="main-stage" id="mainStageArea">
       <section class="console-card">
         <div class="input-grid">
           <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
@@ -676,13 +694,6 @@
       </section>
 
       <section class="table-box">
-        <div class="col-headers">
-          <div>★</div>
-          <div>English Term(s) [Tamil-Merged]</div>
-          <div>Exact Tamil &amp; Nuances</div>
-          <div>UPSC Mains Definition</div>
-          <div style="text-align:right;">GS Paper</div>
-        </div>
         <div id="tableBody"></div>
       </section>
     </main>
@@ -730,7 +741,7 @@
   </dialog>
 
   <script>
-    const SECURE_WORKER_URL = "";
+    const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
     const backToWebsiteButton = document.getElementById('back-to-website');
     if (new URLSearchParams(window.location.search).get('embed') === 'admin') {
       backToWebsiteButton.addEventListener('click', event => {
@@ -755,6 +766,116 @@
       'GS-4: Ethics & Integrity',
       'Essay & Editorial Idioms'
     ];
+
+    let isInAdminPortal = false;
+
+    function toggleAdminPortal() {
+      isInAdminPortal = !isInAdminPortal;
+      const mainTitle = document.getElementById('pageMainTitle');
+      const subTitle = document.getElementById('pageSubtitle');
+      const headerActions = document.getElementById('mainHeaderActions');
+      const sidebar = document.getElementById('mainSidebar');
+      const stage = document.getElementById('mainStageArea');
+
+      if (isInAdminPortal) {
+        mainTitle.textContent = "Lexicon Admin Portal";
+        subTitle.textContent = "System Management & Data Operations";
+        headerActions.innerHTML = `
+          <button class="btn btn-primary" onclick="toggleAdminPortal()">← Exit Admin Portal</button>
+          <button class="btn" onclick="exportCSV()">📥 Export CSV</button>
+          <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup JSON</button>
+          <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore Backup</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
+          <button class="btn" onclick="toggleTheme()" title="Switch Theme">🌗</button>
+        `;
+        sidebar.style.display = 'none';
+        stage.style.gridColumn = '1 / -1';
+        stage.innerHTML = `
+          <section class="console-card" style="padding: 24px;">
+            <h2 style="font-family:'Newsreader',Georgia,serif; font-size:20px; margin-bottom:8px;">Admin General & Data Management</h2>
+            <p style="color:var(--ink-3); margin-bottom:20px;">Manage database backups, CSV exports, data restoration, and system configurations for UPSC CSE Lexicon.</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+              <button class="btn btn-primary" onclick="exportCSV()">📥 Download CSV Dataset</button>
+              <button class="btn" onclick="exportJSON()">💾 Download JSON Backup</button>
+              <button class="btn" onclick="document.getElementById('importFile').click()">📂 Restore from Backup JSON</button>
+              <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
+            </div>
+            <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius); padding:16px;">
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;">Database Statistics</div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
+                <div style="background:var(--bg-panel); padding:12px; border-radius:4px; border:1px solid var(--border);">
+                  <div style="font-size:11px; color:var(--ink-3);">Total Indexed Terms</div>
+                  <div style="font-size:22px; font-weight:700; color:var(--brand);" id="adminTotalTerms">0</div>
+                </div>
+                <div style="background:var(--bg-panel); padding:12px; border-radius:4px; border:1px solid var(--border);">
+                  <div style="font-size:11px; color:var(--ink-3);">Adaptive Brain Rules</div>
+                  <div style="font-size:22px; font-weight:700; color:var(--tamil);" id="adminTotalBrain">0</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
+        document.getElementById('adminTotalTerms').textContent = db.length;
+        document.getElementById('adminTotalBrain').textContent = Object.keys(brain).length;
+      } else {
+        mainTitle.textContent = "The CSE Lexicon";
+        subTitle.textContent = "GS-I to GS-IV Concordance";
+        headerActions.innerHTML = `
+          <a class="btn back-site-btn" id="back-to-website" href="./index.html" aria-label="Return to the main website">← Back to Website</a>
+          <button class="btn active" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
+          <button class="btn" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
+          <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
+          <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
+          <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
+          <button class="btn" id="btnToggleAdmin" onclick="toggleAdminPortal()">⚙️ Admin Portal</button>
+          <button class="btn" id="btnThemeMain" onclick="toggleTheme()" title="Switch Theme">🌗</button>
+        `;
+        sidebar.style.display = 'block';
+        stage.style.gridColumn = 'auto';
+        stage.innerHTML = `
+          <section class="console-card">
+            <div class="input-grid">
+              <input type="text" id="wordInput" placeholder="Search lexicon or enter English word(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
+              <input type="text" id="noteInput" placeholder="Optional: Custom Tamil/English meaning..." onkeydown="if(event.key==='Enter') submitWords()" />
+              <select id="gsOverride">
+                <option value="AUTO">⚡ Auto-Detect GS Paper</option>
+                <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
+                <option value="GS-2: Polity & Governance">GS-2: Polity & Governance</option>
+                <option value="GS-2: International Relations">GS-2: Int. Relations</option>
+                <option value="GS-3: Economy & Dev">GS-3: Economy & Dev</option>
+                <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
+                <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
+                <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
+                <option value="GS-1: History & Heritage">GS-1: History & Heritage</option>
+                <option value="GS-1: Geography & Society">GS-1: Geography & Society</option>
+                <option value="GS-2: Social Justice">GS-2: Social Justice</option>
+                <option value="GS-3: Agriculture">GS-3: Agriculture</option>
+                <option value="GS-3: Disaster Management">GS-3: Disaster Management</option>
+                <option value="GS-3: Internal Security">GS-3: Internal Security</option>
+                <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
+              </select>
+              <button class="btn" id="aiBtn" onclick="triggerAiLookup()" style="background:var(--brand-soft); color:var(--brand); border-color:var(--brand);">✨ AI Lookup</button>
+              <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
+            </div>
+
+            <div class="az-ribbon" id="azBar"></div>
+            <div id="toastBanner"></div>
+          </section>
+
+          <section class="table-box">
+            <div class="col-headers">
+              <div>★</div>
+              <div>English Term(s) [Tamil-Merged]</div>
+              <div>Exact Tamil &amp; Nuances</div>
+              <div>UPSC Mains Definition</div>
+              <div style="text-align:right;">GS Paper</div>
+            </div>
+            <div id="tableBody"></div>
+          </section>
+        `;
+        render();
+      }
+    }
 
     function esc(str) {
       return String(str || '')
@@ -847,6 +968,7 @@
 
     function showToast(msg) {
       const el = document.getElementById('toastBanner');
+      if (!el) return;
       el.textContent = msg;
       el.style.display = 'block';
       clearTimeout(window._toastTimer);
@@ -880,74 +1002,74 @@
       const leadWord = String(word).split(',')[0].trim();
       const matrix = {
         'GS-1: History & Heritage': {
-          ex1: `Historical analysis links "${leadWord}" to debates on heritage, continuity and change in India.`,
-          ex2: `GS-1 Mains: Explain "${leadWord}" with relevant historical context, evidence and its continuing significance.`,
-          ex3: `GS-1 Approach: Support the argument on "${leadWord}" with examples from Indian history, art and cultural traditions.`
+          ex1: `The Hindu Editorial Insight: Recent discussions on "${leadWord}" emphasize its roots in historical art, heritage preservation, and cultural continuity as outlined in the UPSC syllabus.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Critically evaluate "${leadWord}" in the context of socio-cultural evolution, architectural heritage, and historical statecraft in India.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Anchor the argument with archaeological findings, Ministry of Culture reports, and comparative historical perspectives.`
         },
         'GS-1: Geography & Society': {
-          ex1: `Recent reporting examines how "${leadWord}" shapes people, places and regional development.`,
-          ex2: `GS-1 Mains: Relate "${leadWord}" to spatial patterns, human geography and regional disparities.`,
-          ex3: `GS-1 Approach: Use maps, regional examples and demographic evidence to analyse "${leadWord}".`
+          ex1: `Indian Express Editorial Analysis: Reports on demographic shifts and spatial patterns underscore how "${leadWord}" impacts regional development and societal cohesion.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Examine the socio-spatial dimensions of "${leadWord}" concerning urbanization, regional disparities, and migration trends.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Integrate Census data, NITI Aayog regional indices, and geographic distribution mapping into the discussion.`
         },
         'GS-2: Social Justice': {
-          ex1: `Public policy discussion considers the effect of "${leadWord}" on access, inclusion and vulnerable groups.`,
-          ex2: `GS-2 Mains: Assess "${leadWord}" through welfare delivery, equity and the rights of disadvantaged communities.`,
-          ex3: `GS-2 Approach: Recommend inclusive, accountable delivery and measurable outcomes to address "${leadWord}".`
+          ex1: `The Hindu Editorial Perspective: Welfare policy debates frequently evaluate "${leadWord}" against the touchstone of inclusive growth, public health access, and social equity.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Assess the efficacy of institutional mechanisms and budgetary allocations in addressing "${leadWord}" for vulnerable populations.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Reference constitutional safeguards, National Human Rights Commission advisories, and targeted welfare ministry guidelines.`
         },
         'GS-3: Agriculture': {
-          ex1: `Agriculture coverage connects "${leadWord}" with farm incomes, productivity and resilient food systems.`,
-          ex2: `GS-3 Mains: Evaluate "${leadWord}" across productivity, markets, irrigation and farmer welfare.`,
-          ex3: `GS-3 Approach: Combine climate-resilient practices, better value chains and targeted institutional support for "${leadWord}".`
+          ex1: `The Hindu / PIB Agriculture Coverage: Agrarian policy analyses connect "${leadWord}" directly to farmer income security, supply chain bottlenecks, and sustainable crop diversification.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Analyse the structural constraints of "${leadWord}" across irrigation, credit availability, institutional markets, and pricing policies.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Utilize Economic Survey recommendations, PM-KISAN framework evaluations, and climate-resilient agricultural blueprints.`
         },
         'GS-3: Disaster Management': {
-          ex1: `Recent disaster coverage highlights how preparedness can reduce the impact of "${leadWord}".`,
-          ex2: `GS-3 Mains: Analyse "${leadWord}" through prevention, preparedness, response and recovery.`,
-          ex3: `GS-3 Approach: Strengthen early warning, local capacity and resilient infrastructure to manage "${leadWord}".`
+          ex1: `Indian Express Editorial Insight: Post-disaster reviews highlight how proactive mitigation and community preparedness mitigate the economic damage caused by "${leadWord}".`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Discuss vulnerability mapping and institutional response strategies for "${leadWord}" under the NDMA guidelines.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Apply Sendai Framework principles, local early warning systems, and post-disaster audit reports.`
         },
         'GS-3: Internal Security': {
-          ex1: `Security analysis considers the risks that "${leadWord}" poses to public safety and critical infrastructure.`,
-          ex2: `GS-3 Mains: Examine "${leadWord}" alongside institutional capacity, technology and civil-liberty safeguards.`,
-          ex3: `GS-3 Approach: Improve intelligence coordination, community trust and accountable law enforcement in addressing "${leadWord}".`
+          ex1: `The Hindu Security Review: Strategic analyses link "${leadWord}" with border vulnerability, radicalization vectors, and critical cyber infrastructure security.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Evaluate multidimensional security threats posed by "${leadWord}" alongside intelligence coordination and legal frameworks.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Incorporate Second ARC recommendations, Ministry of Home Affairs guidelines, and technology-driven surveillance safeguards.`
         },
         'GS-1: Society & Culture': {
-          ex1: `Recent Newspaper Context: Editorial coverage highlights how "${leadWord}" continues to shape demographic transitions and social cohesion.`,
-          ex2: `GS-1 Mains Answer Body: Addressing "${leadWord}" requires targeted institutional reforms in accordance with constitutional values.`,
-          ex3: `GS-1 Approach: Promote inclusion and social cohesion while addressing the structural causes of "${leadWord}".`
+          ex1: `The Hindu Editorial Insight: Sociological columns highlight how "${leadWord}" intersects with changing family structures, caste dynamics, and secularism in contemporary India.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Analyze the structural drivers of "${leadWord}" in Indian society and its implications for national integration and pluralism.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Ground arguments in sociological studies, Ministry of Social Justice reports, and constitutional mandates.`
         },
         'GS-2: Polity & Governance': {
-          ex1: `Recent Newspaper Context: Constitutional experts emphasized that executive overreach regarding "${leadWord}" undermines statutory balance.`,
-          ex2: `GS-2 Mains Answer Body: Strengthening institutional transparency and accountability acts as a vital safeguard against "${leadWord}".`,
-          ex3: `GS-2 Governance Approach: Uphold constitutional morality, accountability and separation of powers in resolving "${leadWord}".`
+          ex1: `Indian Express Editorial Analysis: Constitutional commentators frequently scrutinize executive actions regarding "${leadWord}" for adherence to statutory balance and the rule of law.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Critically assess the role of statutory checks, federal principles, and judicial review in governing "${leadWord}" in India.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Cite landmark Supreme Court rulings, Law Commission reports, and administrative reform commission recommendations.`
         },
         'GS-2: International Relations': {
-          ex1: `Recent Newspaper Context: Geopolitical commentaries suggest that "${leadWord}" influences multilateral trade negotiations and security pacts.`,
-          ex2: `GS-2 Mains Answer Body: Leveraging strategic partnerships while maintaining autonomy ensures national security amid "${leadWord}".`,
-          ex3: `GS-2 IR Approach: Advance cooperative diplomacy and equitable multilateral engagement on "${leadWord}".`
+          ex1: `The Hindu Global Affairs: Geopolitical columns discuss how "${leadWord}" influences bilateral pacts, multilateral forums, and regional security architectures.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Examine the strategic calculus of "${leadWord}" in shaping India's diplomatic posture, economic corridors, and foreign policy autonomy.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Incorporate MEA briefings, parliamentary standing committee reports on external affairs, and strategic realism principles.`
         },
         'GS-3: Economy & Dev': {
-          ex1: `Recent Newspaper Context: The Economic Survey underscored that systemic bottlenecks around "${leadWord}" impact private capital formation.`,
-          ex2: `GS-3 Mains Answer Body: Balancing fiscal prudence with targeted investment is critical to mitigating the risks posed by "${leadWord}".`,
-          ex3: `GS-3 Economy Approach: Pair productivity-enhancing reforms with inclusive growth and sustainable public finances.`
+          ex1: `The Hindu Editorial Insight: Macroeconomic commentaries underscore that addressing structural impediments around "${leadWord}" is vital for sustainable capital formation.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Evaluate the macroeconomic impact of "${leadWord}" on inflation, fiscal deficit, employment elasticity, and inclusive growth.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Utilize RBI monetary policy reports, NITI Aayog strategy documents, and Economic Survey fiscal data.`
         },
         'GS-3: Environment & Ecology': {
-          ex1: `Recent Newspaper Context: Recent climate reports warn that accelerating "${leadWord}" threatens vulnerable regional ecosystems.`,
-          ex2: `GS-3 Mains Answer Body: Mainstreaming environmental impact assessments helps counteract "${leadWord}" while supporting green transitions.`,
-          ex3: `GS-3 Environment Approach: Combine community-led conservation, climate adaptation and reliable environmental monitoring.`
+          ex1: `The Hindu Environment Coverage: Environmental reports warn that unmitigated acceleration of "${leadWord}" threatens fragile biodiversity hotspots and ecological security.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Critically analyze environmental impact assessments and statutory frameworks governing "${leadWord}" under sustainable development goals.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Reference IPCC guidelines, Ministry of Environment, Forest and Climate Change notifications, and judicial pronouncements on environmental jurisprudence.`
         },
         'GS-3: Science & Tech': {
-          ex1: `Recent Newspaper Context: Emerging digital governance frameworks seek to regulate "${leadWord}" without stifling indigenous innovation.`,
-          ex2: `GS-3 Mains Answer Body: Building secure domestic tech architecture around "${leadWord}" strengthens critical cyber deterrence.`,
-          ex3: `GS-3 Science & Technology Approach: Use risk-based regulation, research capacity and safeguards to ensure technology serves the public.`
+          ex1: `Indian Express Technology Review: Editorial evaluations focus on balancing indigenous innovation and ethical data regulation regarding "${leadWord}" in the digital age.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Assess the techno-legal challenges of "${leadWord}" regarding national cybersecurity, intellectual property rights, and R&D funding.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Cite Parliamentary Standing Committee reports on science, DST policy frameworks, and national technology mission guidelines.`
         },
         'GS-4: Ethics & Integrity': {
-          ex1: `Recent Newspaper Context: Editorial debates focus on public administrative accountability and upholding "${leadWord}" in governance.`,
-          ex2: `GS-4 Mains Answer Body: Applying "${leadWord}" enables civil servants to resolve ethical dilemmas with empathy and probity.`,
-          ex3: `GS-4 Ethics Approach: Embed "${leadWord}" through ethical leadership, transparent systems and continuous civil-service training.`
+          ex1: `The Hindu Editorial Insight: Ethical columns frequently invoke "${leadWord}" to critique administrative apathy and emphasize public service probity.`,
+          ex2: `UPSC-CSE PYQ Mains Framework: Apply "${leadWord}" to resolve ethical dilemmas in public administration, balancing utilitarian outcomes with deontological duties.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Utilize Second ARC reports on ethics in governance, foundational civil service values, and case study applications.`
         },
         'Essay & Editorial Idioms': {
-          ex1: `Recent Newspaper Context: The lead editorial invoked "${leadWord}" to critique short-term populist responses over long-term reform.`,
-          ex2: `GS-3/Mains Integration: Framing administrative challenges through "${leadWord}" provides analytical depth to core GS arguments.`,
-          ex3: `Essay & Ethics Way Forward: Moving from systemic inertia toward proactive institutional renewal defines progressive statecraft.`
+          ex1: `The Hindu / Indian Express Editorial Lead: Lead opinion pieces invoke "${leadWord}" to contrast short-term political expediency with long-term structural statecraft.`,
+          ex2: `UPSC-CSE PYQ Mains & Essay Integration: Framing socio-economic challenges through "${leadWord}" elevates answer depth and aligns with UPSC evaluation rubrics.`,
+          ex3: `UPSC PYQ Trend & Government Sources: Synthesize constitutional morality, administrative sagacity, and multi-stakeholder collaborative governance as the way forward.`
         }
       };
 
@@ -966,24 +1088,25 @@
 
       tokens.forEach(tk => {
         if (brain[tk]) {
-          scores[brain[tk]] = (scores[brain[tk]] || 0) + 3;
+          scores[brain[tk]] = (scores[brain[tk]] || 0) + 4;
         }
       });
 
+      // Precise UPSC CSE Syllabus Rulebook & Keyword Stems
       const rules = {
-        'GS-2: Polity & Governance': /constitution|parliament|judiciary|supreme court|fundamental rights|directive principles|federal|ordinance|legislation|statute|repeal|abrogate|quash|mandate|tribunal|amendment|autonomy|bureaucracy|devolution|panchayat|censure|prerogative|franchise|grievance|ombudsman|accountability|executive|coalition|sovereignty|secular|bicameral|promulgate|jurisdiction|litigation|impunity|despotism|oligarchy|plebiscite|referendum|filibuster|gerrymander|adjudicate/,
-        'GS-3: Economy & Dev': /fiscal|monetary|inflation|stagflation|deflation|liquidity|tariff|subsidy|revenue|deficit|gdp|macroeconomic|austerity|recession|capital|credit|bond|equity|trade|supply chain|monopoly|cartel|amortization|insolvency|conglomerate|remittance|fdi|disinvestment|protectionism|arbitrage|collateral|devaluation|exchequer|agrarian|msme|yield|solvency|moratorium|duopoly|windfall|securitization/,
-        'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state/,
-        'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere/,
-        'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency/,
-        'GS-1: History & Heritage': /archaeology|heritage|civilization|dynasty|empire|inscription|monument|freedom struggle|national movement|colonial|renaissance|reform movement|medieval|ancient india|historical/,
-        'GS-1: Geography & Society': /geography|monsoon|river basin|plateau|climate zone|population|urbanization|migration|demographic|settlement|resource distribution|regional disparity/,
-        'GS-2: Social Justice': /social justice|welfare|inclusion|inclusive|poverty|healthcare|education|nutrition|vulnerable|marginalized|gender|sanitation|human development|inequality|empowerment/,
-        'GS-3: Agriculture': /agriculture|agrarian|farmer|cropping|irrigation|agricultural|food security|food processing|minimum support price|crop insurance|soil health|fertilizer|farm income|horticulture|millet/,
-        'GS-3: Disaster Management': /disaster|preparedness|early warning|earthquake|flood|cyclone|drought|landslide|resilience|mitigation|recovery|national disaster/,
-        'GS-3: Internal Security': /internal security|terrorism|insurgency|left wing extremism|cybercrime|border security|radicalization|money laundering|organized crime|coastal security|smuggling|surveillance|encryption|naxal/,
-        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial/,
-        'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic/
+        'GS-1: History & Heritage': /archaeology|heritage|civilization|dynasty|empire|inscription|monument|freedom struggle|national movement|colonial|renaissance|reform movement|medieval|ancient india|historical|temple|sculpture|vedic|mauryan|gupta|mughal|sufi|bhakti|chronicle|manuscript|dynastic|archival|silt|paleolithic|neolithic/,
+        'GS-1: Geography & Society': /geography|monsoon|river basin|plateau|climate zone|population|urbanization|migration|demographic|settlement|resource distribution|regional disparity|topography|cyclone|seismic|watershed|glaciated|alluvial|cartography|tectonic|estuary|aquifer|humid|arid|savanna|taiga|tundra/,
+        'GS-2: Polity & Governance': /constitution|parliament|judiciary|supreme court|fundamental rights|directive principles|federal|ordinance|legislation|statute|repeal|abrogate|quash|mandate|tribunal|amendment|autonomy|bureaucracy|devolution|panchayat|censure|prerogative|franchise|grievance|ombudsman|accountability|executive|coalition|sovereignty|secular|bicameral|promulgate|jurisdiction|litigation|impunity|despotism|oligarchy|plebiscite|referendum|filibuster|gerrymander|adjudicate|impeachment|collegium|dissolution|whip|quorum|habeas corpus|certiorari|mandamus|quo warranto|prohibition/,
+        'GS-2: Social Justice': /social justice|welfare|inclusion|inclusive|poverty|healthcare|education|nutrition|vulnerable|marginalized|gender|sanitation|human development|inequality|empowerment|differently abled|malnutrition|stunting|wasting|scholarship|tribal welfare|affirmative action|reservation|manual scavenging|elderly care|orphan|outreach|equity|parity/,
+        'GS-2: International Relations': /bilateral|multilateral|geopolit|diplomacy|sovereign|treaty|accord|summit|hegemony|deterrence|sanction|envoy|belligerent|annexation|detente|rapprochement|diaspora|extradition|asylum|blockade|ceasefire|indo-pacific|global south|non-alignment|realpolitik|containment|pact|armistice|suzerainty|balkanization|imperialism|plenipotentiary|buffer state|consulate|ambassador|extraterritorial|maritime security|free trade agreement|unclos|interpol|fatf|brics|quad/,
+        'GS-3: Economy & Dev': /fiscal|monetary|inflation|stagflation|deflation|liquidity|tariff|subsidy|revenue|deficit|gdp|macroeconomic|austerity|recession|capital|credit|bond|equity|trade|supply chain|monopoly|cartel|amortization|insolvency|conglomerate|remittance|fdi|disinvestment|protectionism|arbitrage|collateral|devaluation|exchequer|agrarian|msme|yield|solvency|moratorium|duopoly|windfall|securitization|repo rate|reverse repo|fiscal drag|crowding out|stagflation|debenture|tariff wall|npa|bad bank|liquidity trap|universal basic income/,
+        'GS-3: Agriculture': /agriculture|agrarian|farmer|cropping|irrigation|agricultural|food security|food processing|minimum support price|crop insurance|soil health|fertilizer|farm income|horticulture|millet|monoculture|e-nam|apmc|buffer stock|warehousing|pds|public distribution|zero budget natural farming|organic farming|contract farming|agroforestry|sericulture|floriculture|pesticide|fertigation/,
+        'GS-3: Environment & Ecology': /climate|carbon|biodiversity|ecology|emission|sequester|pollution|sustainable|conservation|habitat|endemic|biome|deforestation|afforestation|wetland|mangrove|anthropogenic|mitigation|adaptation|resilience|effluent|glacier|desertification|ecocide|rewilding|permafrost|decoupling|eutrophication|pelagic|riparian|cryosphere|biosphere|sanctuary|national park|ramsar|red data|coral reef|ocean acidification|bioaccumulation|biomagnification|carbon credit|net zero|paris agreement|cop|cites|unccd|unep/,
+        'GS-3: Disaster Management': /disaster|preparedness|early warning|earthquake|flood|cyclone|drought|landslide|resilience|mitigation|recovery|national disaster|ndma|sdma|ndrf|hazard|vulnerability|emergency response|cloudburst|tsunami|avalanche|forest fire|heatwave|cold wave|epidemic|pandemic|mock drill|mitigation fund/,
+        'GS-3: Science & Tech': /quantum|algorithm|cyber|encryption|biotech|genome|pathogen|semiconductor|nanotech|artificial intelligence|machine learning|blockchain|orbital|payload|nuclear|fission|fusion|indigenous|intellectual property|patent|spectrum|bandwidth|antimicrobial|crispr|deepfake|telemetry|cryptography|biometric|latency|supercomputing|isro|drdo|5g|6g|iot|augmented reality|virtual reality|gene editing|mrna|stem cell|nanoparticle|photonics|gravitational wave|neutrino/,
+        'GS-3: Internal Security': /internal security|terrorism|insurgency|left wing extremism|cybercrime|border security|radicalization|money laundering|organized crime|coastal security|smuggling|surveillance|encryption|naxal|maoist|drug trafficking|hawala|human trafficking|counter terrorism|interpol|nia|raw|ib|cbi|proxy war|radicalisation|dark web|ransomware|phishing|deradicalisation/,
+        'GS-1: Society & Culture': /caste|patriarchy|kinship|demographic|urbanization|migration|secularism|communalism|regionalism|pluralism|marginalized|egalitarian|stratification|assimilation|sanskritization|subaltern|matriarch|syncretic|ethnocentrism|gentrification|fraternity|inequality|empowerment|endogamy|homogenization|parochial|untouchability|honor killing|dowry|khap|matrilineal|patriarchal|interfaith|intercaste|cosmopolitan/,
+        'GS-4: Ethics & Integrity': /probity|integrity|altruism|empathy|compassion|conscience|moral|ethical|dilemma|impartiality|objectivity|non-partisanship|dedication|tolerance|virtue|utilitarian|deontology|rectitude|equanimity|fortitude|prudence|benevolence|magnanimity|scrupulous|corruption|nepotism|venality|mendacity|perfidy|altruistic|emotional intelligence|code of conduct|code of ethics|whistleblower|conflict of interest|corporate governance|dedication to public service|public trust|persuasion|aptitude|moral turpitude|conscientiousness/
       };
 
       for (const [gs, regex] of Object.entries(rules)) {
@@ -1123,10 +1246,9 @@
       const gsSelect = document.getElementById('gsOverride');
       aiBtn.disabled = true;
       aiBtn.textContent = 'Looking up…';
-      showToast(`Analyzing "${word}" with AI & translation tools...`);
+      showToast(`Analyzing "${word}" with AI & UPSC editorial concordance...`);
 
       try {
-        // First try Cloudflare worker endpoint
         const res = await fetchWithTimeout(SECURE_WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1151,11 +1273,8 @@
           showToast(`✨ AI Lookup successful for "${word}"!`);
           return;
         }
-      } catch (err) {
-        // Fallback gracefully to direct high-speed translation and dictionary APIs
-      }
+      } catch (err) {}
 
-      // High-speed direct translation and dictionary fallback (guarantees 100% reliability)
       try {
         const [transRes, dictRes] = await Promise.allSettled([
           fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(word)}`, {}, 5000),
@@ -1337,25 +1456,30 @@
 
     function setGrouping(mode) {
       groupMode = mode;
-      document.getElementById('btnViewGS').classList.toggle('active', mode === 'gs');
-      document.getElementById('btnViewAZ').classList.toggle('active', mode === 'az');
+      const btnGS = document.getElementById('btnViewGS');
+      const btnAZ = document.getElementById('btnViewAZ');
+      if (btnGS) btnGS.classList.toggle('active', mode === 'gs');
+      if (btnAZ) btnAZ.classList.toggle('active', mode === 'az');
       render();
     }
 
     function toggleStarFilter() {
       onlyStarred = !onlyStarred;
-      document.getElementById('btnStarFilter').classList.toggle('active', onlyStarred);
+      const btnStar = document.getElementById('btnStarFilter');
+      if (btnStar) btnStar.classList.toggle('active', onlyStarred);
       render();
     }
 
     function toggleRecallMode() {
       document.body.classList.toggle('recall-active');
-      document.getElementById('btnRecall').classList.toggle('active');
+      const btnRecall = document.getElementById('btnRecall');
+      if (btnRecall) btnRecall.classList.toggle('active');
     }
 
     function toggleExpandAll() {
       expandAll = !expandAll;
-      document.getElementById('btnExpandAll').classList.toggle('active', expandAll);
+      const btnExpand = document.getElementById('btnExpandAll');
+      if (btnExpand) btnExpand.classList.toggle('active', expandAll);
       document.querySelectorAll('.lex-item').forEach(el => el.classList.toggle('open', expandAll));
     }
 
@@ -1439,37 +1563,48 @@
     }
 
     function renderSidebarAndAZ() {
-      document.getElementById('totalBadge').textContent = db.length;
+      const badge = document.getElementById('totalBadge');
+      if (badge) badge.textContent = db.length;
 
       const counts = { ALL: db.length };
       GS_CATEGORIES.forEach(c => counts[c] = 0);
       db.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
 
-      const navHTML = [
-        `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';selectedLetter='ALL';render()">
-          <span>All GS Papers</span>
-          <span class="nav-pill">${counts.ALL}</span>
-        </button>`,
-        ...GS_CATEGORIES.map(c => `
-          <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS='${esc(c)}';selectedLetter='ALL';render()">
-            <span>${esc(c.replace('International Relations', 'Int. Relations').replace('Environment & Ecology', 'Environment'))}</span>
-            <span class="nav-pill">${counts[c] || 0}</span>
-          </button>`)
-      ].join('');
-      document.getElementById('sidebarNav').innerHTML = navHTML;
+      const navContainer = document.getElementById('sidebarNav');
+      if (navContainer) {
+        const navHTML = [
+          `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';selectedLetter='ALL';render()">
+            <span>All GS Papers</span>
+            <span class="nav-pill">${counts.ALL}</span>
+          </button>`,
+          ...GS_CATEGORIES.map(c => `
+            <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS='${esc(c)}';selectedLetter='ALL';render()">
+              <span>${esc(c.replace('International Relations', 'Int. Relations').replace('Environment & Ecology', 'Environment'))}</span>
+              <span class="nav-pill">${counts[c] || 0}</span>
+            </button>`)
+        ].join('');
+        navContainer.innerHTML = navHTML;
+      }
 
       const brainEntries = Object.entries(brain);
-      document.getElementById('brainCount').textContent = `${brainEntries.length} Rules`;
-      document.getElementById('brainPreview').innerHTML = brainEntries.slice(-12).reverse().map(([stem, gs]) =>
-        `<span class="brain-chip" title="${esc(gs)}">${esc(stem)} ➔ ${esc(gs.split(':')[0])}</span>`
-      ).join('') || `<span style="color:var(--ink-3); font-size:11px;">Add or reassign words to train.</span>`;
+      const brainCountEl = document.getElementById('brainCount');
+      if (brainCountEl) brainCountEl.textContent = `${brainEntries.length} Rules`;
+      const brainPrev = document.getElementById('brainPreview');
+      if (brainPrev) {
+        brainPrev.innerHTML = brainEntries.slice(-12).reverse().map(([stem, gs]) =>
+          `<span class="brain-chip" title="${esc(gs)}">${esc(stem)} ➔ ${esc(gs.split(':')[0])}</span>`
+        ).join('') || `<span style="color:var(--ink-3); font-size:11px;">Add or reassign words to train.</span>`;
+      }
 
       const activeInitials = new Set(db.map(i => i.words.trim().charAt(0).toUpperCase()));
       const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
-      document.getElementById('azBar').innerHTML = letters.map(l => {
-        const has = l !== 'ALL' && activeInitials.has(l);
-        return `<button class="az-btn ${selectedLetter === l ? 'active' : ''} ${has ? 'has-words' : ''}" onclick="selectedLetter='${l}';render()">${l}</button>`;
-      }).join('');
+      const azBar = document.getElementById('azBar');
+      if (azBar) {
+        azBar.innerHTML = letters.map(l => {
+          const has = l !== 'ALL' && activeInitials.has(l);
+          return `<button class="az-btn ${selectedLetter === l ? 'active' : ''} ${has ? 'has-words' : ''}" onclick="selectedLetter='${l}';render()">${l}</button>`;
+        }).join('');
+      }
     }
 
     function thirdExampleLabel(category) {
@@ -1503,36 +1638,39 @@
       return `
         <div class="lex-item ${expandAll ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
           <div class="lex-summary">
-            <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${item.id})" title="Mark High-Yield">★</button>
-            <div class="c-word">
-              <span class="w-main">${esc(item.words)}</span>
-              ${mergeBadge}
-              ${item.pos ? `<span class="w-pos">${esc(item.pos)}</span>` : ''}
-              <button class="spk-icon" onclick="speakText(event, '${esc(item.words)}')" title="Pronounce">🔊</button>
+            <div class="lex-summary-top">
+              <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${item.id})" title="Mark High-Yield">★</button>
+              <div class="c-word">
+                <span class="w-main">${esc(item.words)}</span>
+                ${mergeBadge}
+                ${item.pos ? `<span class="w-pos">${esc(item.pos)}</span>` : ''}
+                <button class="spk-icon" onclick="speakText(event, '${esc(item.words)}')" title="Pronounce">🔊</button>
+              </div>
             </div>
-            <div class="c-tamil" lang="ta">
-              ${esc(item.tamil)}
-              ${item.nuance ? `<span class="t-nuance">(${esc(item.nuance)})</span>` : ''}
+            
+            <div class="c-tamil-box" lang="ta">
+              <div class="c-tamil">${esc(item.tamil)}</div>
+              ${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}
             </div>
+
             <div class="c-def">${esc(item.eng)}</div>
+
             <div class="c-meta" onclick="event.stopPropagation()">
               <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper">
                 ${gsOptions}
               </select>
-              <button class="edit-row-btn" onclick="editItem(event, ${item.id})" title="Edit this entry">Edit</button>
-              <button class="icon-del" onclick="deleteRow(event, ${item.id})" title="Delete">✕</button>
+              <div class="meta-actions">
+                <button class="edit-row-btn" onclick="editItem(event, ${item.id})" title="Edit this entry">Edit</button>
+                <button class="icon-del" onclick="deleteRow(event, ${item.id})" title="Delete">✕</button>
+              </div>
             </div>
           </div>
 
           <div class="lex-drawer" onclick="event.stopPropagation()">
             <div class="drawer-meta-grid">
               <div>
-                <div class="d-label">Authoritative Definition &amp; Tamil Nuance</div>
-                <div style="color:var(--ink-1); font-weight:500; margin-bottom:4px;">${esc(item.eng)}</div>
-                <div style="font-family:'Noto Sans Tamil',sans-serif; color:var(--tamil); font-weight:700;">
-                  தமிழ் பொருள்: ${esc(item.tamil)}
-                  ${item.nuance ? `<span style="font-weight:400; color:var(--ink-2);"> | மாற்றுச் சொற்கள்: ${esc(item.nuance)}</span>` : ''}
-                </div>
+                <div class="d-label">UPSC Mains Definition</div>
+                <div style="color:var(--ink-1); font-weight:500;">${esc(item.eng)}</div>
               </div>
               <div>
                 <div class="d-label">Interactive Synonyms (Click any to index)</div>
@@ -1542,15 +1680,15 @@
 
             <div class="ex-trio">
               <div class="ex-box">
-                <div class="ex-head"><span>1. Recent Newspaper</span><span>Context</span></div>
+                <div class="ex-head"><span>The Hindu / IE Editorial</span><span>Context</span></div>
                 <div class="ex-body">"${esc(item.ex1)}"</div>
               </div>
               <div class="ex-box">
-                <div class="ex-head"><span>2. UPSC GS Mains</span><span>Answer Body</span></div>
+                <div class="ex-head"><span>UPSC-CSE PYQ Mains</span><span>Answer Body</span></div>
                 <div class="ex-body">"${esc(item.ex2)}"</div>
               </div>
               <div class="ex-box">
-                <div class="ex-head"><span>3. ${esc(thirdExampleLabel(item.cat))}</span><span>Way Forward</span></div>
+                <div class="ex-head"><span>Official Source &amp; PYQ Trend</span><span>Way Forward</span></div>
                 <div class="ex-body">"${esc(item.ex3)}"</div>
               </div>
             </div>
@@ -1559,9 +1697,11 @@
     }
 
     function render() {
+      if (isInAdminPortal) return;
       renderSidebarAndAZ();
 
-      const rawQ = document.getElementById('wordInput').value.toLowerCase().trim();
+      const wordInputEl = document.getElementById('wordInput');
+      const rawQ = wordInputEl ? wordInputEl.value.toLowerCase().trim() : '';
       const q = rawQ.includes(',') ? '' : rawQ;
 
       let filtered = db.filter(item => {
@@ -1581,9 +1721,11 @@
       filtered.sort((a, b) => a.words.localeCompare(b.words));
 
       const body = document.getElementById('tableBody');
+      if (!body) return;
+
       if (!filtered.length) {
         body.innerHTML = `
-          <div style="padding:48px 20px; text-align:center; color:var(--ink-3);">
+          <div style="padding:48px 20px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
             <div style="font-size:14px; font-weight:600; color:var(--ink-2); margin-bottom:6px;">No vocabulary terms match your current filter.</div>
             <div style="font-size:13px;">Type any English word above or click <b>⚡ Load UPSC Starter Terms</b> in the left sidebar.</div>
           </div>`;
@@ -1595,19 +1737,28 @@
         GS_CATEGORIES.forEach(gs => {
           const subList = filtered.filter(i => i.cat === gs);
           if (subList.length) {
-            html += `<div class="section-divider"><span>${esc(gs)} (Sorted A–Z)</span><span>${subList.length} Terms</span></div>`;
-            html += subList.map(buildRowHTML).join('');
+            html += `<div class="section-divider"><span>${esc(gs)}</span><span>${subList.length} Terms</span></div>`;
+            html += `<div class="lex-grid-container">` + subList.map(buildRowHTML).join('') + `</div>`;
           }
         });
       } else {
         let currentLetter = '';
-        filtered.forEach(item => {
+        let currentGridOpen = false;
+        filtered.forEach((item, idx) => {
           const ch = item.words.trim().charAt(0).toUpperCase();
           if (ch !== currentLetter) {
+            if (currentGridOpen) {
+              html += `</div>`;
+            }
             currentLetter = ch;
             html += `<div class="section-divider"><span>Alphabetical Index — ${esc(ch)}</span></div>`;
+            html += `<div class="lex-grid-container">`;
+            currentGridOpen = true;
           }
           html += buildRowHTML(item);
+          if (idx === filtered.length - 1 && currentGridOpen) {
+            html += `</div>`;
+          }
         });
       }
       body.innerHTML = html;
