@@ -550,6 +550,87 @@
     /* Make summary text interactive for highlighting/copying without triggering drawer close */
     .c-word, .c-tamil, .c-def, .drawer-meta-grid, .ex-box { cursor: text; }
     .clickable-row-toggle { cursor: pointer; }
+
+    /* Roomier, high-visibility lexicon workspace */
+    .topbar-inner, .workspace { max-width: 1800px; }
+    .topbar-inner { padding: 16px 28px; }
+    .workspace { grid-template-columns: 320px minmax(0, 1fr); gap: 26px; padding: 28px 28px 72px; }
+    .brand-title { font-size: 29px; }
+    .brand-tag { font-size: 11px; padding: 4px 9px; }
+    .action-cluster { gap: 8px; }
+    .btn { min-height: 40px; padding: 8px 14px; font-size: 13px; }
+    .btn-primary { padding: 9px 18px; font-size: 14px; }
+    .sidebar, .console-card { padding: 20px; }
+    .side-heading { font-size: 12px; margin: 8px 0 10px 4px; }
+    .nav-list { gap: 5px; }
+    .nav-item { min-height: 42px; padding: 9px 12px; font-size: 13.5px; }
+    .brain-box { margin-top: 20px; padding: 15px; font-size: 13px; }
+    .main-stage { gap: 20px; }
+    .input-grid { grid-template-columns: minmax(220px, 1.5fr) minmax(210px, 1.2fr) 210px auto auto; gap: 12px; }
+    input, select { min-height: 46px; padding: 11px 14px; font-size: 14px; }
+    .az-ribbon { gap: 5px; margin-top: 16px; padding-top: 14px; }
+    .az-btn { min-width: 34px; height: 32px; font-size: 13px; }
+    .col-headers, .lex-summary { grid-template-columns: 38px minmax(170px, 1.4fr) minmax(180px, 1.3fr) minmax(240px, 1.9fr) 170px; gap: 16px; }
+    .col-headers { padding: 14px 18px; font-size: 11px; }
+    .lex-summary { padding: 17px 18px; align-items: center; }
+    .w-main, .c-tamil { font-size: 16px; }
+    .c-def { font-size: 14px; line-height: 1.65; }
+    .c-meta { gap: 9px; }
+    .gs-mini-select { min-height: 36px; max-width: 145px; font-size: 11px; }
+    .icon-del, .edit-row-btn { min-height: 36px; padding: 7px 10px; }
+    .edit-row-btn { border: 1px solid var(--border-strong); border-radius: 4px; background: var(--bg-panel); color: var(--brand); cursor: pointer; font-size: 12px; font-weight: 700; }
+    .edit-row-btn:hover { background: var(--brand-soft); }
+    .section-divider { padding: 12px 18px; font-size: 12px; }
+    .lex-drawer { padding: 20px 24px 22px 56px; }
+    .drawer-meta-grid { gap: 22px; margin-bottom: 18px; }
+    .d-label { font-size: 11px; margin-bottom: 7px; }
+    .ex-trio { gap: 16px; margin-top: 14px; }
+    .ex-box { padding: 14px 16px; }
+    .ex-body { font-size: 15px; line-height: 1.65; }
+    .edit-modal { width: min(720px, calc(100% - 28px)); max-height: min(90vh, 900px); padding: 0; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--bg-panel); color: var(--ink-1); box-shadow: 0 24px 80px rgba(15, 23, 42, .3); }
+    .edit-modal::backdrop { background: rgba(15, 23, 42, .58); backdrop-filter: blur(3px); }
+    .edit-modal-inner { padding: 24px; }
+    .edit-modal h2 { margin-bottom: 6px; font-size: 22px; }
+    .edit-modal p { margin-bottom: 18px; color: var(--ink-3); }
+    .edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .edit-form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ink-2); }
+    .edit-form-grid .wide { grid-column: 1 / -1; }
+    .edit-form-grid textarea { width: 100%; min-height: 100px; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: 5px; background: var(--bg-app); color: var(--ink-1); font: inherit; line-height: 1.55; resize: vertical; }
+    .edit-form-grid textarea:focus { border-color: var(--brand); background: var(--bg-panel); outline: none; }
+    .edit-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .admin-link { text-decoration: none; }
+    @media (max-width: 1150px) {
+      .input-grid { grid-template-columns: 1fr 1fr; }
+      .input-grid input { grid-column: auto; }
+      .input-grid select, .input-grid button { min-height: 44px; }
+      .col-headers { display: none; }
+      .lex-summary { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; }
+      .c-def, .c-tamil { grid-column: 2 / span 2; }
+      .c-meta { grid-column: 2 / span 2; justify-content: flex-start; }
+    }
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: 1fr; gap: 16px; padding: 18px 14px 70px; }
+      .sidebar { position: static; }
+      .topbar-inner { padding: 12px 16px; }
+    }
+    @media (max-width: 600px) {
+      .brand-title { font-size: 23px; }
+      .brand-group { flex-wrap: wrap; gap: 5px 9px; }
+      .action-cluster { width: 100%; }
+      .action-cluster .btn { flex: 1 1 auto; justify-content: center; }
+      .workspace { padding: 12px 10px 64px; }
+      .console-card, .sidebar { padding: 14px; }
+      .input-grid { grid-template-columns: 1fr; }
+      .input-grid input, .input-grid select, .input-grid button { grid-column: auto; }
+      .lex-summary { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 14px 12px; }
+      .c-word { grid-column: 2; }
+      .c-tamil, .c-def, .c-meta { grid-column: 2; }
+      .c-meta { flex-wrap: wrap; }
+      .lex-drawer { padding: 16px 12px; }
+      .edit-modal-inner { padding: 18px; }
+      .edit-form-grid { grid-template-columns: 1fr; }
+      .edit-form-grid .wide { grid-column: auto; }
+    }
   </style>
 </head>
 <body>
@@ -567,6 +648,7 @@
         <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
         <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
         <button class="btn" onclick="exportCSV()">📥 CSV</button>
+        <a class="btn admin-link" href="./index.html#admin-dashboard" title="Return to the website admin portal">⚙️ Website Admin</a>
         <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup</button>
         <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
@@ -635,6 +717,41 @@
       </section>
     </main>
   </div>
+
+  <dialog class="edit-modal" id="editModal" aria-labelledby="editModalTitle">
+    <form class="edit-modal-inner" id="editForm" onsubmit="saveEditedItem(event)">
+      <h2 id="editModalTitle">Edit lexicon entry</h2>
+      <p>Changes are saved to this browser’s lexicon database.</p>
+      <input type="hidden" id="editItemId" />
+      <div class="edit-form-grid">
+        <label>English term(s)<input id="editWords" required /></label>
+        <label>Part of speech<input id="editPos" /></label>
+        <label>Tamil meaning<input id="editTamil" /></label>
+        <label>Tamil nuances<input id="editNuance" /></label>
+        <label>GS category
+          <select id="editCategory" required>
+            <option value="GS-1: Society &amp; Culture">GS-1: Society &amp; Culture</option>
+            <option value="GS-2: Polity &amp; Governance">GS-2: Polity &amp; Governance</option>
+            <option value="GS-2: International Relations">GS-2: International Relations</option>
+            <option value="GS-3: Economy &amp; Dev">GS-3: Economy &amp; Dev</option>
+            <option value="GS-3: Environment &amp; Ecology">GS-3: Environment &amp; Ecology</option>
+            <option value="GS-3: Science &amp; Tech">GS-3: Science &amp; Tech</option>
+            <option value="GS-4: Ethics &amp; Integrity">GS-4: Ethics &amp; Integrity</option>
+            <option value="Essay &amp; Editorial Idioms">Essay &amp; Editorial Idioms</option>
+          </select>
+        </label>
+        <label>Synonyms<input id="editSynonyms" /></label>
+        <label class="wide">Definition<textarea id="editDefinition"></textarea></label>
+        <label class="wide">Newspaper / editorial example<textarea id="editExample1"></textarea></label>
+        <label class="wide">GS mains example<textarea id="editExample2"></textarea></label>
+        <label class="wide">Essay / way-forward example<textarea id="editExample3"></textarea></label>
+      </div>
+      <div class="edit-modal-actions">
+        <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
 
   <script>
     const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
@@ -1080,6 +1197,52 @@
       render();
     }
 
+    function editItem(e, id) {
+      e.stopPropagation();
+      const item = db.find(entry => String(entry.id) === String(id));
+      if (!item) return;
+
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('editWords').value = item.words || '';
+      document.getElementById('editPos').value = item.pos || '';
+      document.getElementById('editTamil').value = item.tamil || '';
+      document.getElementById('editNuance').value = item.nuance || '';
+      document.getElementById('editCategory').value = item.cat || 'Essay & Editorial Idioms';
+      document.getElementById('editSynonyms').value = item.syn || '';
+      document.getElementById('editDefinition').value = item.eng || '';
+      document.getElementById('editExample1').value = item.ex1 || '';
+      document.getElementById('editExample2').value = item.ex2 || '';
+      document.getElementById('editExample3').value = item.ex3 || '';
+      document.getElementById('editModal').showModal();
+    }
+
+    function saveEditedItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('editItemId').value;
+      const item = db.find(entry => String(entry.id) === id);
+      if (!item) return;
+
+      const oldCategory = item.cat;
+      item.words = document.getElementById('editWords').value.trim() || item.words;
+      item.pos = document.getElementById('editPos').value.trim();
+      item.tamil = normalizeTamil(document.getElementById('editTamil').value) || '—';
+      item.nuance = document.getElementById('editNuance').value.trim();
+      item.cat = document.getElementById('editCategory').value;
+      item.syn = document.getElementById('editSynonyms').value.trim() || '—';
+      item.eng = document.getElementById('editDefinition').value.trim();
+      item.ex1 = document.getElementById('editExample1').value.trim();
+      item.ex2 = document.getElementById('editExample2').value.trim();
+      item.ex3 = document.getElementById('editExample3').value.trim();
+
+      if (oldCategory !== item.cat) {
+        learnFromContext(item.words, item.eng, item.syn, item.cat);
+      }
+      saveAll();
+      document.getElementById('editModal').close();
+      showToast(`Saved changes to "${item.words}".`);
+      render();
+    }
+
     function changeGS(e, id, newGS) {
       e.stopPropagation();
       const target = db.find(i => i.id === id);
@@ -1298,6 +1461,7 @@
               <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper">
                 ${gsOptions}
               </select>
+              <button class="edit-row-btn" onclick="editItem(event, ${item.id})" title="Edit this entry">Edit</button>
               <button class="icon-del" onclick="deleteRow(event, ${item.id})" title="Delete">✕</button>
             </div>
           </div>
