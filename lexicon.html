@@ -652,7 +652,265 @@
     }
     .edit-form-grid textarea:focus { border-color: var(--brand); background: var(--bg-panel); outline: none; }
     .edit-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* Calm, native-feeling reading workspace */
+    :root {
+      color-scheme: light;
+      --bg-app: #f5f5f7;
+      --bg-panel: #ffffff;
+      --bg-subtle: #f5f5f7;
+      --bg-hover: #f0f0f2;
+      --ink-1: #1d1d1f;
+      --ink-2: #424245;
+      --ink-3: #76767b;
+      --border: #e5e5ea;
+      --border-strong: #d2d2d7;
+      --brand: #0877e8;
+      --brand-soft: #e8f2ff;
+      --tamil: #176b53;
+      --tamil-soft: #edf6f2;
+      --gold: #9a6700;
+      --gold-soft: #fff6df;
+      --danger: #c9342d;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.035);
+      --radius: 12px;
+      --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg-app: #000000;
+      --bg-panel: #1c1c1e;
+      --bg-subtle: #2c2c2e;
+      --bg-hover: #303033;
+      --ink-1: #f5f5f7;
+      --ink-2: #d1d1d6;
+      --ink-3: #98989d;
+      --border: #38383a;
+      --border-strong: #48484a;
+      --brand: #64a8ff;
+      --brand-soft: rgba(10, 132, 255, 0.18);
+      --tamil: #8fd3b8;
+      --tamil-soft: rgba(52, 199, 149, 0.12);
+      --gold: #ffd166;
+      --gold-soft: rgba(255, 209, 102, 0.12);
+      --danger: #ff6961;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+    }
+
+    html { min-height: 100%; background: var(--bg-app); scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      background: var(--bg-app);
+      color: var(--ink-1);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Noto Sans Tamil", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      letter-spacing: -0.012em;
+      transition: background-color 240ms var(--ease-fluid), color 240ms var(--ease-fluid);
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 55%, transparent); outline-offset: 2px; }
+    ::selection { background: color-mix(in srgb, var(--brand) 22%, transparent); }
+
+    .topbar {
+      background: color-mix(in srgb, var(--bg-panel) 88%, transparent);
+      border-bottom-color: color-mix(in srgb, var(--border) 82%, transparent);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.025);
+      -webkit-backdrop-filter: blur(22px) saturate(170%);
+      backdrop-filter: blur(22px) saturate(170%);
+      transition: background-color 240ms var(--ease-fluid), border-color 240ms var(--ease-fluid);
+    }
+    .topbar-inner { max-width: 1680px; padding: 13px clamp(16px, 3vw, 36px); gap: 14px 24px; }
+    .brand-group { align-items: center; gap: 10px; }
+    .brand-title { font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif; font-size: 21px; font-weight: 650; letter-spacing: -0.045em; }
+    .brand-tag { border-radius: 999px; padding: 4px 9px; font-family: inherit; font-size: 10px; letter-spacing: 0.02em; text-transform: none; }
+    .action-cluster { gap: 7px; }
+    .btn {
+      min-height: 36px;
+      padding: 7px 11px;
+      border-color: var(--border);
+      border-radius: 9px;
+      background: var(--bg-panel);
+      color: var(--ink-2);
+      font-size: 12px;
+      font-weight: 550;
+      transition: color 140ms var(--ease-fluid), background-color 140ms var(--ease-fluid), border-color 140ms var(--ease-fluid), transform 120ms var(--ease-fluid), box-shadow 140ms var(--ease-fluid);
+    }
+    .btn:hover { border-color: var(--border-strong); background: var(--bg-subtle); color: var(--ink-1); }
+    .btn:active { transform: scale(0.97); }
+    .btn.active { background: var(--brand-soft); border-color: transparent; color: var(--brand); }
+    .btn-primary, .btn-primary.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .btn-primary:hover { background: color-mix(in srgb, var(--brand) 90%, black); color: #fff; }
+    .btn:disabled { opacity: 0.52; cursor: not-allowed; transform: none; }
+
+    .workspace {
+      max-width: 1680px;
+      padding: 24px clamp(16px, 3vw, 36px) 60px;
+      grid-template-columns: minmax(220px, 258px) minmax(0, 1fr);
+      gap: clamp(16px, 2vw, 26px);
+    }
+    .sidebar {
+      top: 76px;
+      max-height: calc(100dvh - 96px);
+      overflow: auto;
+      padding: 14px 11px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--bg-panel);
+      box-shadow: none;
+      scrollbar-width: thin;
+    }
+    .side-heading { margin: 5px 8px 10px; font-family: inherit; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; }
+    .nav-list { gap: 3px; }
+    .nav-item { min-height: 36px; padding: 7px 10px; border-radius: 9px; font-size: 13px; transition: background-color 140ms var(--ease-fluid), color 140ms var(--ease-fluid); }
+    .nav-item.active { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+    .nav-pill { font-family: inherit; font-size: 11px; }
+    .brain-box { margin-top: 14px; padding: 12px; border-color: var(--border); border-radius: 11px; background: var(--bg-app); }
+    .brain-title { font-size: 12px; }
+    .brain-chip { border-radius: 6px; font-family: inherit; }
+    .main-stage { gap: 12px; }
+    .console-card {
+      position: sticky;
+      top: 74px;
+      z-index: 30;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.035);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      backdrop-filter: blur(18px) saturate(160%);
+    }
+    .input-grid { grid-template-columns: minmax(0, 1fr) minmax(190px, 240px) auto !important; gap: 9px; }
+    input, select, .edit-form-grid textarea {
+      min-height: 40px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-app);
+      font-size: 13px;
+      transition: border-color 140ms var(--ease-fluid), background-color 140ms var(--ease-fluid), box-shadow 140ms var(--ease-fluid);
+    }
+    input:focus, select:focus, .edit-form-grid textarea:focus {
+      border-color: var(--brand);
+      background: var(--bg-panel);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
+    }
+    #wordInput { min-height: 42px; background: var(--bg-panel); }
+    #wordInput::placeholder { color: var(--ink-3); }
+    .az-ribbon { margin-top: 10px; padding-top: 8px; }
+    .az-btn { min-width: 29px; height: 29px; border-radius: 7px; transition: background-color 130ms var(--ease-fluid), color 130ms var(--ease-fluid); }
+    .az-btn.active { background: var(--brand); color: white; }
+
+    .section-divider {
+      margin: 18px 0 8px;
+      padding: 9px 2px;
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 0.035em;
+      color: var(--ink-3);
+    }
+    .lex-grid-container { grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 10px; }
+    .lex-item {
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      transition: background-color 140ms var(--ease-fluid);
+    }
+    .lex-item:hover { border-color: var(--border); background: color-mix(in srgb, var(--bg-panel) 58%, transparent); transform: none; }
+    .lex-summary { gap: 5px; padding: 13px 14px; }
+    .lex-summary-top { align-items: center; }
+    .w-main { font-size: 18px; font-weight: 650; letter-spacing: -0.035em; }
+    .w-pos { font-family: inherit; font-size: 12px; }
+    .c-tamil-box { padding: 0; border: 0; border-radius: 0; background: transparent; }
+    .c-tamil { font-size: 16px; line-height: 1.75; font-weight: 600; }
+    .t-nuance { color: var(--ink-3); font-size: 12px; }
+    .c-def { color: var(--ink-2); font-size: 14px; line-height: 1.65; }
+    .lex-summary > .c-def { display: block; }
+    .c-meta { padding-top: 8px; border-color: var(--border); }
+    .lex-item:not(.open) .c-meta { display: none; }
+    .lex-drawer {
+      padding: 15px 16px 18px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-app);
+      animation: drawer-enter 220ms var(--ease-fluid) both;
+    }
+    @keyframes drawer-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .d-label { font-family: inherit; font-size: 11px; letter-spacing: 0.035em; font-weight: 650; }
+    .ex-trio { gap: 9px; }
+    .ex-box { border: 1px solid var(--border); border-left: 2px solid var(--brand); border-radius: 10px; background: var(--bg-panel); padding: 12px 14px; }
+    .ex-box:nth-child(2) { border-left-color: var(--tamil); }
+    .ex-box:nth-child(3) { border-left-color: var(--gold); }
+    .ex-head { font-family: inherit; font-size: 10px; letter-spacing: 0.04em; }
+    .ex-body { font-family: inherit; font-size: 14px; line-height: 1.7; }
+    .syn-clickable { padding: 5px 10px; border-radius: 999px; font-size: 12px; }
+    .edit-row-btn { border-radius: 7px; }
+    .gs-mini-select { border-radius: 7px; }
+    #searchResults .search-result-heading { border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; font-family: inherit; }
+    #searchResults .lex-item { border: 1px solid var(--brand); border-radius: 12px; }
+    #toastBanner { border-radius: 9px; }
+
+    .edit-modal {
+      border-color: var(--border);
+      border-radius: 18px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+      transition: background-color 220ms var(--ease-fluid), color 220ms var(--ease-fluid);
+    }
+    .edit-modal-inner { padding: clamp(18px, 4vw, 28px); }
+    .edit-modal h2 { font-size: 24px; letter-spacing: -0.04em; }
+    .edit-form-grid { gap: 13px; }
+    .edit-form-grid label { font-size: 12px; font-weight: 600; }
+    .edit-form-grid textarea { min-height: 110px; }
+
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px 16px 40px; }
+      .sidebar { position: sticky; top: 0; z-index: 40; max-height: none; padding: 9px; border-radius: 12px; }
+      .side-heading { margin: 2px 5px 7px; }
+      .nav-list { gap: 5px; padding-bottom: 1px; }
+      .nav-item { min-height: 36px; padding-inline: 11px; background: var(--bg-app); }
+      .brain-box, .sidebar > div[style*="margin-top:12px"] { display: none; }
+      .console-card { top: 88px; }
+      .lex-grid-container { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .topbar-inner { padding: 10px 13px; gap: 9px; }
+      .brand-group { width: 100%; justify-content: space-between; }
+      .brand-title { font-size: 19px; }
+      .brand-tag { font-size: 9px; }
+      .action-cluster { width: 100%; flex-wrap: nowrap; overflow-x: auto; padding: 1px 0 3px; scrollbar-width: none; }
+      .action-cluster::-webkit-scrollbar { display: none; }
+      .action-cluster .btn { flex: 0 0 auto; }
+      .workspace { padding: 9px 10px 28px; }
+      .sidebar { top: 0; padding: 8px; }
+      .side-heading { font-size: 10px; }
+      .nav-item { padding: 7px 9px; font-size: 12px; }
+      .console-card { top: 82px; padding: 10px; }
+      .input-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 8px; }
+      .input-grid button { min-height: 40px; }
+      .az-ribbon { gap: 2px; }
+      .az-btn { min-width: 27px; }
+      .lex-summary { padding: 12px 9px; }
+      .w-main { font-size: 17px; }
+      .c-tamil { font-size: 16px; }
+      .c-def { font-size: 14px; }
+      .lex-drawer { padding: 13px 10px 15px; }
+      .edit-form-grid { grid-template-columns: 1fr; }
+      .edit-form-grid .wide { grid-column: auto; }
+      .edit-modal-actions { position: sticky; bottom: -1px; padding-top: 12px; background: var(--bg-panel); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
   </style>
+  <link rel="stylesheet" href="./lexicon-ui.css">
 </head>
 <body>
 
@@ -741,7 +999,7 @@
   <dialog class="edit-modal" id="editModal" aria-labelledby="editModalTitle">
     <form class="edit-modal-inner" id="editForm" onsubmit="saveEditedItem(event)">
       <h2 id="editModalTitle">Edit lexicon entry</h2>
-      <p>Changes are saved to your cloud synced account.</p>
+      <p>Changes are saved in this browser. Cross-device account sync requires a connected cloud data service.</p>
       <input type="hidden" id="editItemId" />
       <div class="edit-form-grid">
         <label>English term(s)<input id="editWords" required /></label>
@@ -888,6 +1146,7 @@
           <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
           <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
           <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
+          <button class="btn" id="btnTheme" onclick="toggleTheme()" aria-label="Toggle light and dark appearance" title="Toggle appearance">◐ Appearance</button>
         `;
         sidebar.style.display = 'block';
         stage.style.gridColumn = 'auto';
@@ -995,7 +1254,7 @@
             id: item.id || (Date.now() + Math.floor(Math.random() * 10000)),
             words: item.words || 'Unnamed',
             pos: item.pos || '',
-            tamil: normalizeTamil(item.tamil || '—'),
+            tamil: normalizeTamil(item.tamil || item.Tamil || item.tamilMeaning || item.tamil_meaning || item.tamilTranslation || item.tamil_translation || item.meaningTamil || item.meaning_ta || item.translation_ta || item.ta || '—'),
             tamilVerified: item.tamilVerified === false ? false : null,
                     tamilSource: item.tamilSource || '',
         definitionSource: item.definitionSource || 'English dictionary',
@@ -1032,16 +1291,37 @@
     let onlyStarred = false;
     let expandAll = false;
 
-    if (localStorage.getItem('cse_theme') === 'dark') {
+    const savedTheme = localStorage.getItem('cse_theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia?.('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
     }
 
     function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('cse_theme', next);
+      const preference = localStorage.getItem('cse_theme') || 'system';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const nextPreference = preference === 'system' ? (isDark ? 'light' : 'dark') : preference === 'light' ? 'dark' : 'system';
+      if (nextPreference === 'system') localStorage.removeItem('cse_theme');
+      else localStorage.setItem('cse_theme', nextPreference);
+      const useDark = nextPreference === 'dark' || (nextPreference === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', useDark ? 'dark' : 'light');
     }
+
+    window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', event => {
+      if (!localStorage.getItem('cse_theme')) {
+        document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+      }
+    });
+
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        const search = document.getElementById('wordInput');
+        search?.focus();
+        search?.select();
+      }
+    });
 
     function showToast(msg) {
       const el = document.getElementById('toastBanner');
