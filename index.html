@@ -47,41 +47,42 @@
     }
     #admin-lexicon-panel[hidden] { display: none !important; }
     #admin-lexicon-panel:not([hidden]) { display: flex !important; flex-direction: column; }
-    .admin-lexicon-toolbar {
-      display: flex;
-      flex: 0 0 54px;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 8px clamp(12px, 2vw, 28px);
-      border-bottom: 1px solid #d9e0ea;
-      background: #fff;
-      color: #17243a;
-      font: 600 14px/1.4 Inter, sans-serif;
-    }
-    .admin-lexicon-toolbar button {
-      min-height: 36px;
-      padding: 6px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: #fff;
-      color: #1e3a8a;
-      font: inherit;
-      cursor: pointer;
-    }
-    #admin-lexicon-frame {
+    #admin-lexicon-frame,
+    #main-lexicon-frame {
       display: block;
-      flex: 1 1 auto;
+      flex: 1 1 100%;
       width: 100%;
       min-width: 0;
-      height: calc(100% - 54px);
+      height: 100%;
+      min-height: 0;
       border: 0;
       background: #f4f4f0;
     }
-    @media (max-width: 600px) {
-      .admin-lexicon-toolbar { flex-basis: 50px; }
-      #admin-lexicon-frame { height: calc(100% - 50px); }
+    #main-lexicon-panel #lexicon-frame {
+      display: block !important;
+      flex: 1 1 100%;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
     }
+    #main-lexicon-panel {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 210 !important;
+      display: none;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      border: 0 !important;
+      background: #f4f4f0 !important;
+    }
+    #main-lexicon-panel:not([hidden]) { display: flex !important; flex-direction: column; }
+    #main-lexicon-panel[hidden] { display: none !important; }
     #analysis-container .insight-card {
       display: flex;
       align-items: flex-start;
@@ -111,73 +112,101 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      document.addEventListener('click', function (event) {
-        const link = event.target.closest('header a, header button');
-        if (!link || !/\blexicon\b/i.test(link.textContent)) return;
-        event.preventDefault();
-        event.stopPropagation();
-        window.location.assign(new URL('./lexicon.html', document.baseURI).href);
-      }, true);
+      const publicFrame = document.getElementById('lexicon-frame');
+      if (publicFrame && !document.getElementById('main-lexicon-panel')) {
+        const framePlaceholder = document.createComment('Main Lexicon iframe position');
+        publicFrame.parentNode.insertBefore(framePlaceholder, publicFrame);
+        publicFrame.src = './lexicon.html?embed=main';
+
+        const publicPanel = document.createElement('section');
+        publicPanel.id = 'main-lexicon-panel';
+        publicPanel.setAttribute('role', 'dialog');
+        publicPanel.setAttribute('aria-modal', 'true');
+        publicPanel.setAttribute('aria-label', 'CSE Lexicon');
+        publicPanel.hidden = true;
+        document.body.appendChild(publicPanel);
+
+        function closeMainLexicon() {
+          if (publicPanel.hidden) return;
+          publicPanel.hidden = true;
+          if (framePlaceholder.parentNode) framePlaceholder.parentNode.insertBefore(publicFrame, framePlaceholder);
+          document.body.style.overflow = '';
+          document.querySelector('#main-nav a[data-view="lexicon-view"]')?.focus();
+        }
+        function openMainLexicon() {
+          publicPanel.appendChild(publicFrame);
+          publicPanel.hidden = false;
+          document.body.style.overflow = 'hidden';
+          requestAnimationFrame(() => publicFrame.focus());
+        }
+
+        document.addEventListener('click', event => {
+          const link = event.target.closest('a.nav-link[data-view="lexicon-view"]');
+          if (!link) return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          openMainLexicon();
+        }, true);
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && !publicPanel.hidden) closeMainLexicon();
+        });
+        window.addEventListener('message', event => {
+          if (event.origin === window.location.origin && event.source === publicFrame.contentWindow && event.data?.type === 'tracker-lexicon-main-close') {
+            closeMainLexicon();
+          }
+        });
+      }
 
       const dashboard = document.getElementById('admin-dashboard');
-      const tabs = dashboard?.querySelector(':scope > .flex.justify-center.border-b');
-      if (!dashboard || !tabs || document.getElementById('admin-lexicon-tab')) return;
+      if (!dashboard) return;
 
-      const lexiconTab = document.createElement('button');
-      lexiconTab.type = 'button';
-      lexiconTab.id = 'admin-lexicon-tab';
-      lexiconTab.className = 'admin-tab-btn';
-      lexiconTab.textContent = '📚 Lexicon';
-      lexiconTab.setAttribute('aria-controls', 'admin-lexicon-panel');
-      tabs.appendChild(lexiconTab);
+      const adminTabBar = dashboard.querySelector(':scope > .flex.justify-center.border-b');
+      const generalTab = Array.from(adminTabBar?.querySelectorAll('.admin-tab-btn') || [])
+        .find(tab => /\bgeneral\b/i.test(tab.textContent || ''));
+      const generalName = generalTab?.dataset.tab || '';
+      const generalPane = (generalName ? document.getElementById(generalName) : null)
+        || Array.from(dashboard.querySelectorAll(':scope > .admin-tab-content')).find(pane =>
+          /general/i.test(pane.id) || /\bgeneral\b/i.test(pane.querySelector('h1,h2,h3,h4')?.textContent || '')
+        );
 
-      const panel = document.createElement('section');
-      panel.id = 'admin-lexicon-panel';
-      panel.setAttribute('aria-label', 'Lexicon editor');
-      panel.hidden = true;
-      panel.innerHTML = '<div class="admin-lexicon-toolbar"><span>📚 CSE Lexicon · Full-screen editor</span><button type="button" id="admin-lexicon-back">← Back to Admin Portal</button></div><iframe id="admin-lexicon-frame" title="CSE Lexicon editor" src="./lexicon.html?embed=admin"></iframe>';
-      document.body.appendChild(panel);
+      if (generalPane && !generalPane.querySelector('[data-lexicon-backup-controls]')) {
+        const controls = document.createElement('section');
+        controls.dataset.lexiconBackupControls = '';
+        controls.className = 'mb-6 rounded-xl border border-themed bg-card p-4';
+        controls.innerHTML = `
+          <h3 class="mb-2 text-lg font-semibold text-header">Lexicon data backup</h3>
+          <p class="mb-4 text-sm text-body">Download a CSV or JSON backup of your Lexicon, or restore a saved JSON backup.</p>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" class="btn-hover rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white" data-lexicon-backup="csv">Download Lexicon CSV</button>
+            <button type="button" class="btn-hover rounded-lg border border-themed bg-card px-4 py-2 font-semibold text-body" data-lexicon-backup="json">Download Lexicon JSON</button>
+            <button type="button" class="btn-hover rounded-lg border border-themed bg-card px-4 py-2 font-semibold text-body" data-lexicon-backup="restore">Restore Lexicon JSON</button>
+          </div>`;
+        generalPane.prepend(controls);
 
-      let previousPaneStyles = [];
-      let previousTabStates = [];
-      let previousBodyOverflow = '';
-
-      function closeLexicon() {
-        if (panel.hidden) return;
-        panel.hidden = true;
-        previousPaneStyles.forEach(([pane, display]) => { pane.style.display = display; });
-        previousTabStates.forEach(([tab, active]) => tab.classList.toggle('active', active));
-        document.body.style.overflow = previousBodyOverflow;
+        controls.addEventListener('click', event => {
+          const action = event.target.closest('[data-lexicon-backup]')?.dataset.lexiconBackup;
+          if (!action) return;
+          const frame = document.getElementById('lexicon-frame');
+          try {
+            const lexiconWindow = frame?.contentWindow;
+            if (!lexiconWindow || !frame.contentDocument?.readyState) {
+              alert('Open the main Lexicon tab once, then try this backup action again.');
+              return;
+            }
+            if (action === 'csv' && typeof lexiconWindow.exportCSV === 'function') lexiconWindow.exportCSV();
+            else if (action === 'json' && typeof lexiconWindow.exportJSON === 'function') lexiconWindow.exportJSON();
+            else if (action === 'restore') {
+              const fileInput = frame.contentDocument.getElementById('importFile');
+              if (fileInput) fileInput.click();
+              else alert('The Lexicon restore control is not available yet. Open the main Lexicon tab and try again.');
+            } else {
+              alert('Lexicon backup is still loading. Please try again in a moment.');
+            }
+          } catch (error) {
+            alert('Lexicon backup is unavailable. Open the main Lexicon tab and try again.');
+          }
+        });
       }
-
-      function openLexicon() {
-        const panes = Array.from(dashboard.querySelectorAll(':scope > .admin-tab-content'));
-        const buttons = Array.from(tabs.querySelectorAll('.admin-tab-btn'));
-        previousPaneStyles = panes.map(pane => [pane, pane.style.display]);
-        previousTabStates = buttons.map(tab => [tab, tab.classList.contains('active')]);
-        panes.forEach(pane => { pane.style.display = 'none'; });
-        buttons.forEach(tab => tab.classList.toggle('active', tab === lexiconTab));
-        previousBodyOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        panel.hidden = false;
-      }
-
-      lexiconTab.addEventListener('click', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        openLexicon();
-      });
-      panel.querySelector('#admin-lexicon-back').addEventListener('click', closeLexicon);
-      window.addEventListener('message', function (event) {
-        const frame = document.getElementById('admin-lexicon-frame');
-        if (event.origin === window.location.origin && event.source === frame?.contentWindow && event.data?.type === 'tracker-lexicon-close') {
-          closeLexicon();
-        }
-      });
-      tabs.addEventListener('click', function (event) {
-        if (panel.hidden || event.target.closest('#admin-lexicon-tab')) return;
-        closeLexicon();
-      }, true);
     });
   </script>
     <style>
@@ -731,7 +760,12 @@
             padding: 1rem;
             background: var(--card-bg-color);
         }
-        #mark-trend-chart { min-height: 280px; }
+        #analysis-container .insight-card { padding: 0.8rem 0.9rem; gap: 0.7rem; border-radius: 0.8rem; }
+        #analysis-container .insight-icon { width: 32px; height: 32px; flex-basis: 32px; border-radius: 10px; }
+        #analysis-container .insight-card h3 { font-size: 0.88rem; }
+        #analysis-container .insight-card p { font-size: 0.8rem; line-height: 1.45; }
+        #mark-trend-chart { min-height: 180px; max-height: 220px; }
+        #mark-trend-chart canvas { max-height: 220px !important; }
         @media (max-width: 640px) {
             #pomodoro-timer-display { font-size: 5rem; }
         }
@@ -2499,6 +2533,29 @@
             .account-card { max-height: calc(100dvh - 1rem); }
             .account-card.reset-mode { width: min(100%, 440px); }
         }
+        #mark-trend-chart { min-height: 0 !important; max-height: 100% !important; height: 100% !important; }
+
+        /* Quiet academic styling: clear reading surfaces with a restrained UPSC accent. */
+        :root { --study-accent: #b7791f; }
+        #home-view > section:first-child > .card-block {
+            border-top: 3px solid color-mix(in srgb, var(--study-accent) 72%, var(--primary-color-500));
+            background: radial-gradient(ellipse at 88% 12%, rgba(var(--primary-color-500-rgb), 0.12), transparent 38%), linear-gradient(135deg, var(--card-bg-color), color-mix(in srgb, var(--card-bg-color) 93%, #e8eef8));
+        }
+        #greeting-display { line-height: 1.12; }
+        #quote-display {
+            padding: 0.9rem 1.25rem;
+            border-left: 3px solid var(--study-accent);
+            border-radius: 0.25rem 0.85rem 0.85rem 0.25rem;
+            background: color-mix(in srgb, var(--card-bg-color) 82%, var(--bg-color-100));
+        }
+        .section-title::after { background: linear-gradient(90deg, var(--primary-color-600), color-mix(in srgb, var(--study-accent) 72%, #fff)); }
+        .analyser-intro, #target-consistency-dashboard {
+            border-color: color-mix(in srgb, var(--primary-color-500) 16%, var(--border-color));
+        }
+        body[data-theme='graphite'] #quote-display { background: color-mix(in srgb, var(--card-bg-color) 84%, var(--bg-color-200)); }
+        @media (max-width: 640px) {
+            #quote-display { padding: 0.75rem 0.9rem; font-size: 0.95rem; }
+        }
     </style>
 </head>
 <body data-theme="royal">
@@ -2819,10 +2876,18 @@
                     <div><label for="analyser-test-type-filter" class="block text-sm font-medium text-body">Test Type</label><select id="analyser-test-type-filter" class="mt-1 block w-full p-2 rounded-lg chart-filter input-themed"></select></div>
                     <div><label for="analyser-subject-filter" class="block text-sm font-medium text-body">Subject</label><select id="analyser-subject-filter" class="mt-1 block w-full p-2 rounded-lg chart-filter input-themed"></select></div>
                 </div>
-                <div class="analyser-stat-card mb-6">
-                    <h3 class="font-semibold text-header mb-1">Score trend</h3>
-                    <p class="text-xs text-muted mb-3">The graph and table use the same scores and filters. Same-subject scores on one date are averaged into one point; the table compares the overall average with the previous test date.</p>
-                    <div class="relative h-72 md:h-80"><canvas id="mark-trend-chart"></canvas></div>
+                                    <div class="analyser-stat-card mb-6">
+                    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="font-semibold text-header">Score trend</h3>
+                        <label class="flex items-center gap-2 text-xs text-muted" for="mark-trend-chart-type">Chart
+                            <select id="mark-trend-chart-type" class="input-themed" style="min-height:2rem;padding:0.25rem 0.5rem;">
+                                <option value="bar">Compact bars</option>
+                                <option value="line">Line</option>
+                            </select>
+                        </label>
+                    </div>
+                    <p class="text-xs text-muted mb-3">Scores are percentages. Same-subject scores on one date are averaged into one point.</p>
+                    <div class="relative h-56"><canvas id="mark-trend-chart" aria-label="Mark score trend chart"></canvas></div>
                 </div>
                 <div id="subject-mark-summary" class="overflow-x-auto"></div>
             </div>
@@ -2954,7 +3019,24 @@
                     <div><label for="admin-mark-subject-category" class="block text-sm font-medium text-body">Exam Category</label><select id="admin-mark-subject-category" class="mt-1 w-full p-2 rounded-lg input-themed"><option value="Prelims">Prelims</option><option value="Mains">Mains</option></select></div>
                     <button id="admin-mark-subject-submit" type="submit" class="text-white font-bold py-2 px-4 rounded-lg h-10 shadow-md btn-hover" style="background-color: var(--success-color-600);">Add Marks Subject</button>
                 </form>
-                <div id="admin-mark-subjects-container" class="overflow-x-auto mb-8"></div>
+                <div id="admin-mark-subjects-container" class="overflow-x-auto mb-5"></div>
+                <section id="mark-subject-merge-tool" class="mb-8 rounded-xl border border-themed p-4">
+                    <h3 class="font-semibold text-header">Merge duplicate marks subjects</h3>
+                    <p class="mt-1 mb-3 text-sm text-muted">Preview remapping first. Nothing is saved until you review the preview and explicitly confirm.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="text-sm font-medium text-body">Subjects to merge (select one or more)
+                            <select id="merge-source-subjects" class="input-themed mt-1 w-full" multiple size="4"></select>
+                        </label>
+                        <label class="text-sm font-medium text-body">Keep as the destination subject
+                            <select id="merge-target-subject" class="input-themed mt-1 w-full"></select>
+                        </label>
+                    </div>
+                    <div class="mt-3 flex flex-wrap items-center gap-3">
+                        <button id="preview-subject-merge-btn" type="button" class="rounded-lg px-4 py-2 text-sm font-semibold text-white" style="background:var(--primary-color-600);">Preview merge</button>
+                        <button id="confirm-subject-merge-btn" type="button" class="hidden rounded-lg px-4 py-2 text-sm font-semibold text-white" style="background:var(--error-color-600);">Review and confirm merge</button>
+                        <div id="subject-merge-preview" class="text-sm text-body" role="status" aria-live="polite"></div>
+                    </div>
+                </section>
                 <h2 class="section-title mb-6">Existing Marks</h2>
                 <input type="text" id="admin-marks-filter" class="w-full p-2 rounded-lg mb-4 input-themed" placeholder="Filter by subject or test type...">
                 <div id="admin-marks-table-container" class="overflow-x-auto"></div>
@@ -3164,7 +3246,7 @@
             button.disabled = true;
             button.textContent = 'Sending…';
             try {
-                const data = await resetApi('/api/send-otp', { email: "gnaneshwaran2020@gmail.com" });
+                const data = await resetApi('/api/send-otp', { email });
                 if (generation !== resetGeneration) return;
                 // A signed token containing the OTP does not prove access to the email.
                 if (data.token || typeof data.requestId !== 'string' || !data.requestId) {
@@ -3354,6 +3436,7 @@
             let currentMarkEntryMode = 'simple';
             let currentAdminTab = 'admin-settings-tab';
             let confirmCallback = null;
+            let subjectMergePreview = null;
             let pomodoroTimer = null, pomodoroState = { isRunning: false, mode: 'work', timeLeft: 1500, cycle: 0 };
             let pomodoroSettings = {};
             let dynamicIslandTimeout, dynamicIslandExpandTimeout;
@@ -3631,7 +3714,7 @@
                 toast.classList.remove('expanded');
                 dynamicIslandTimeout = setTimeout(() => toast.classList.remove('show'), 420);
             };
-            const showView = (viewId) => { document.querySelectorAll('.view').forEach(v=>v.style.display='none');const a=document.getElementById(viewId);if(a){a.style.display='block';a.classList.add('animate-fadeInUp')}if(viewId==='home-view'){switchTab('mark-entry-tab');}else if(viewId==='admin-dashboard'){switchAdminTab(currentAdminTab);} refreshAdminButtonsVisibility(); };
+            const showView = (viewId) => { document.querySelectorAll('.view').forEach(v=>v.style.display='none');const a=document.getElementById(viewId);if(a){a.style.display='block';a.classList.add('animate-fadeInUp')}if(viewId==='home-view'){switchTab('mark-entry-tab');}else if(viewId==='admin-dashboard'){switchAdminTab(currentAdminTab);}if(viewId==='analyser-view'){calculateAndRenderAnalysis();} refreshAdminButtonsVisibility(); };
             const switchTab = (tabId) => { document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); const content = document.getElementById(tabId); const button = document.querySelector(`.tab-btn[data-tab="${tabId}"]`); if(content) content.style.display='block'; if(button) button.classList.add('active'); };
             const switchAdminTab = (tabId) => { document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none'); document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active')); const content = document.getElementById(tabId); const button = document.querySelector(`.admin-tab-btn[data-tab="${tabId}"]`); if (content) content.style.display = 'block'; if (button) button.classList.add('active'); currentAdminTab = tabId; };
             function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}};
@@ -3742,6 +3825,7 @@
             // Main App Logic
             function calculateAndRenderAnalysis(){
                 const period = document.getElementById('analyser-period-filter').value;
+                const asArray = value => Array.isArray(value) ? value : [];
                 const now = new Date();
                 let startDate;
                 switch(period) {
@@ -3752,26 +3836,27 @@
                 }
                 
                 const filterByDate = (item) => {
+                    if (!item || typeof item !== 'object') return false;
                     if (!startDate) return true;
                     const itemDate = parseLocalDate(item.dateOfExam || item.date);
                     return itemDate && itemDate >= startDate;
                 };
 
-                const pomodoroLogs = (db.get(DB_KEYS.POMODORO_LOGS) || []).filter(filterByDate);
+                const pomodoroLogs = asArray(db.get(DB_KEYS.POMODORO_LOGS)).filter(filterByDate);
                 renderComprehensivePomodoroChart(pomodoroLogs);
 
-                const topics = db.get(DB_KEYS.TOPICS) || [];
-                const recurringTasksConfig = db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || [];
-                allNcertBooks = db.get(DB_KEYS.NCERT) || [];
-                const marks = (db.get(DB_KEYS.MARKS) || []).filter(filterByDate);
+                const topics = asArray(db.get(DB_KEYS.TOPICS)).filter(topic => topic && typeof topic === 'object');
+                const recurringTasksConfig = asArray(db.get(DB_KEYS.RECURRING_TASKS_CONFIG)).filter(task => task && typeof task === 'object');
+                allNcertBooks = asArray(db.get(DB_KEYS.NCERT)).filter(book => book && typeof book === 'object');
+                const marks = asArray(db.get(DB_KEYS.MARKS)).filter(filterByDate);
                 
-                const subjects = (db.get(DB_KEYS.SUBJECTS) || []).map(s => s.name);
+                const subjects = asArray(db.get(DB_KEYS.SUBJECTS)).filter(subject => subject && typeof subject.name === 'string').map(subject => subject.name);
                 let totalProgressPoints = 0, totalMaxPoints = 0;
                 const topicProgress = subjects.reduce((acc, subject) => {
                     const subjectTopics = topics.filter(t => t.subject === subject);
                     if (subjectTopics.length > 0) {
                         const maxPoints = subjectTopics.length * 7;
-                        const earnedPoints = subjectTopics.reduce((sum, t) => sum + (t.progress ? t.progress.filter(p => p).length : 0), 0);
+                        const earnedPoints = subjectTopics.reduce((sum, topic) => sum + (Array.isArray(topic.progress) ? topic.progress.filter(Boolean).length : 0), 0);
                         totalMaxPoints += maxPoints;
                         totalProgressPoints += earnedPoints;
                         acc[subject] = maxPoints > 0 ? (earnedPoints / maxPoints) : 0;
@@ -3784,9 +3869,9 @@
                     const subjectBooks = allNcertBooks.filter(b => b.subject === subject);
                     let maxPoints = 0, earnedPoints = 0;
                     subjectBooks.forEach(book => {
-                        if (book.chapters && book.chapters.length > 0) {
+                        if (Array.isArray(book.chapters) && book.chapters.length > 0) {
                             maxPoints += book.chapters.length * 7;
-                            earnedPoints += book.chapters.reduce((sum, ch) => sum + (ch.progress ? ch.progress.filter(p => p).length : 0), 0);
+                            earnedPoints += book.chapters.reduce((sum, chapter) => sum + (chapter && Array.isArray(chapter.progress) ? chapter.progress.filter(Boolean).length : 0), 0);
                         } else {
                             maxPoints += 5;
                             earnedPoints += book.progress ? book.progress.filter(p => p).length : 0;
@@ -3974,6 +4059,62 @@
                 chartInstances['overall-progress-gauge'] = new Chart(gaugeCtx, { type: 'doughnut', data: { datasets: [{ data: [percentage, 100 - percentage], backgroundColor: [ themePrimary, themeBg ], borderColor: [ themePrimary, themeBg ], borderWidth: 1, circumference: 180, rotation: 270 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { tooltip: { enabled: false } } } });
             }
 
+            let aiRecommendationRequestVersion = 0;
+
+            // The local analyzer remains the fallback; only sanitized metrics are sent to AI.
+            async function fetchAIRecommendations(metrics, container) {
+                const endpoint = window.TRACKER_AI_RECOMMENDATIONS_URL;
+                if (typeof endpoint !== 'string' || !endpoint.trim() || !container) return;
+
+                const requestVersion = ++aiRecommendationRequestVersion;
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
+                let recommendation = 'Review your performance metrics and target low-scoring topics.';
+                let source = 'fallback';
+
+                try {
+                    const url = new URL(endpoint, window.location.href);
+                    if (url.protocol !== 'https:' && url.origin !== window.location.origin) {
+                        throw new Error('AI recommendation endpoint must use HTTPS.');
+                    }
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: url.origin === window.location.origin ? 'same-origin' : 'omit',
+                        body: JSON.stringify({ summary: metrics && typeof metrics === 'object' ? metrics : {} }),
+                        signal: controller.signal
+                    });
+                    if (!response.ok) throw new Error(`AI service returned ${response.status}.`);
+
+                    const result = await response.json();
+                    if (typeof result?.recommendation !== 'string' || !result.recommendation.trim()) {
+                        throw new Error('Malformed AI response format.');
+                    }
+                    recommendation = result.recommendation.trim().slice(0, 1200);
+                    source = 'ai';
+                } catch (error) {
+                    console.warn('AI fallback triggered:', error.message || error);
+                } finally {
+                    clearTimeout(timeout);
+                }
+
+                if (requestVersion !== aiRecommendationRequestVersion || !container.isConnected) return;
+                const card = document.createElement('article');
+                card.className = 'insight-card insight-primary';
+                const icon = document.createElement('div');
+                icon.className = 'insight-icon';
+                icon.innerHTML = '<i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>';
+                const content = document.createElement('div');
+                content.className = 'min-w-0';
+                const heading = document.createElement('h3');
+                heading.textContent = source === 'ai' ? 'AI study suggestion' : 'Suggested next step';
+                const detail = document.createElement('p');
+                detail.textContent = recommendation;
+                content.append(heading, detail);
+                card.append(icon, content);
+                container.prepend(card);
+            }
+
             function generateAnalysisText(subjectProgress, ncertProgress, marks, pomodoroLogs) {
                 const analysisContainer = document.getElementById('analysis-container');
                 if (!analysisContainer) return;
@@ -3986,7 +4127,7 @@
                     .sort((a, b) => a.progress - b.progress);
                 const trackedNcert = Object.entries(ncertProgress || {}).sort((a, b) => a[1] - b[1]);
                 const scoresBySubject = {};
-                (marks || []).forEach(mark => (mark.breakdown || []).forEach(item => {
+                (Array.isArray(marks) ? marks : []).filter(mark => mark && Array.isArray(mark.breakdown)).forEach(mark => mark.breakdown.filter(item => item && typeof item === 'object').forEach(item => {
                     const maximum = Number(item.maximum);
                     const obtained = Number(item.obtained);
                     if (!item.subject || !Number.isFinite(maximum) || maximum <= 0 || !Number.isFinite(obtained)) return;
@@ -3998,16 +4139,16 @@
                     .sort((a, b) => a.average - b.average);
                 const focusSessions = Array.isArray(pomodoroLogs) ? pomodoroLogs.length : 0;
                 const focusMinutes = (pomodoroLogs || []).reduce((sum, log) => sum + (Number(log.duration) || 0), 0);
-                const targets = db.get(DB_KEYS.TARGETS) || [];
+                const targets = (Array.isArray(db.get(DB_KEYS.TARGETS)) ? db.get(DB_KEYS.TARGETS) : []).filter(target => target && typeof target === 'object');
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const pendingTargets = targets.filter(target => {
                     const dueDate = parseLocalDate(target.assignedDate);
                     return !target.completed && dueDate && dueDate <= today;
                 }).length;
-                const notesCount = (db.get(DB_KEYS.NOTES) || []).filter(note => !note.archived).length;
+                const notesCount = (Array.isArray(db.get(DB_KEYS.NOTES)) ? db.get(DB_KEYS.NOTES) : []).filter(note => note && !note.archived).length;
                 const todayKey = localDateKey();
-                const recurringTasks = db.get(DB_KEYS.RECURRING_TASKS_CONFIG) || [];
+                const recurringTasks = (Array.isArray(db.get(DB_KEYS.RECURRING_TASKS_CONFIG)) ? db.get(DB_KEYS.RECURRING_TASKS_CONFIG) : []).filter(task => task && typeof task === 'object');
                 const recurringDoneToday = recurringTasks.filter(task => Array.isArray(task.completionDates)
                     ? task.completionDates.includes(todayKey)
                     : Boolean(task.completed)).length;
@@ -4049,10 +4190,22 @@
                     addInsight('Keep today’s routine consistent', `${recurringDoneToday} of ${recurringTasks.length} recurring tasks are marked complete today. Pick the next routine task and check it off when finished.`, 'fa-calendar-check', 'primary');
                 }
 
-                analysisContainer.innerHTML = recommendations.map(rec => `<article class="insight-card insight-${rec.tone}"><div class="insight-icon"><i class="fas ${rec.icon}" aria-hidden="true"></i></div><div class="min-w-0"><h3>${rec.title}</h3><p>${rec.detail}</p></div></article>`).join('') + `<p class="insight-disclaimer md:col-span-2 lg:col-span-3">Evidence uses your saved marks, syllabus and NCERT progress, targets, routine checks, and Pomodoro logs${notesCount ? `; ${notesCount} active note${notesCount === 1 ? '' : 's'} are available for revision` : ''}. These are transparent, on-device rules—not an external AI model. No study data is sent to an AI service.</p>`;
+                analysisContainer.innerHTML = recommendations.map(rec => `<article class="insight-card insight-${rec.tone}"><div class="insight-icon"><i class="fas ${rec.icon}" aria-hidden="true"></i></div><div class="min-w-0"><h3>${rec.title}</h3><p>${rec.detail}</p></div></article>`).join('') + `<p class="insight-disclaimer md:col-span-2 lg:col-span-3">Evidence uses saved marks, syllabus and NCERT progress, targets, routine checks, and Pomodoro logs${notesCount ? `; ${notesCount} active note${notesCount === 1 ? '' : 's'} are available for revision` : ''}. Local rules provide recommendations if an optional AI service is unavailable. Only summary metrics—not note contents—are sent to a configured service.</p>`;
+
+                const safeMetrics = {
+                    period: document.getElementById('analyser-period-filter')?.value || 'all',
+                    marks: subjectScores.slice(0, 8).map(item => ({ subject: item.subject.slice(0, 80), averagePercent: Number(item.average.toFixed(1)), sampleCount: item.tests })),
+                    syllabus: trackedSyllabus.slice(0, 12).map(item => ({ subject: item.subject.slice(0, 80), completionPercent: Math.round(item.progress * 100), records: item.count })),
+                    ncert: trackedNcert.slice(0, 12).map(([subject, progress]) => ({ subject: String(subject).slice(0, 80), completionPercent: Math.round(progress * 100) })),
+                    targets: { dueOrOverdue: pendingTargets, total: targets.length, completed: targets.filter(target => target.completed).length },
+                    focus: { sessions: focusSessions, minutes: focusMinutes },
+                    activeNotes: notesCount
+                };
+                fetchAIRecommendations(safeMetrics, analysisContainer);
             }
 
             function renderAllCharts(subjectProgress, ncertProgress, marks) {
+                marks = Array.isArray(marks) ? marks.filter(mark => mark && Array.isArray(mark.breakdown)) : [];
                 const appleColors = ['#ef2665', '#9ef50c', '#02e4d6', '#ffc600', '#7a7a7a', '#007aff', '#ff9500', '#ff2d55', '#5856d6', '#ff3b30'];
                 const textColor = getComputedStyle(document.body).getPropertyValue('--text-color-700');
                 Chart.defaults.color = textColor;
@@ -4066,8 +4219,15 @@
                 renderCircularCharts('ncert-progress-chart-container', ncertChartLabels, ncertChartData, appleColors);
                 
                 const subjectAvgs = {};
-                (db.get(DB_KEYS.MARK_SUBJECTS) || []).forEach(subject => { subjectAvgs[subject.name] = { scores: [] }; });
-                (marks || []).forEach(mark => { if (mark.breakdown) { mark.breakdown.forEach(item => { subjectAvgs[item.subject] = subjectAvgs[item.subject] || { scores: [] }; if (Number(item.maximum) > 0) { subjectAvgs[item.subject].scores.push((Number(item.obtained) / Number(item.maximum)) * 100); } }); } });
+                (Array.isArray(db.get(DB_KEYS.MARK_SUBJECTS)) ? db.get(DB_KEYS.MARK_SUBJECTS) : []).filter(subject => subject && typeof subject.name === 'string').forEach(subject => { subjectAvgs[subject.name] = { scores: [] }; });
+                marks.forEach(mark => mark.breakdown.forEach(item => {
+                    if (!item || typeof item.subject !== 'string') return;
+                    subjectAvgs[item.subject] = subjectAvgs[item.subject] || { scores: [] };
+                    const maximum = Number(item.maximum), obtained = Number(item.obtained);
+                    if (Number.isFinite(maximum) && maximum > 0 && Number.isFinite(obtained) && obtained >= 0) {
+                        subjectAvgs[item.subject].scores.push(Math.min(100, (obtained / maximum) * 100));
+                    }
+                }));
                 const markChartLabels = Object.keys(subjectAvgs);
                 const markChartData = markChartLabels.map(subject => {
                     const scores = subjectAvgs[subject].scores;
@@ -4078,14 +4238,16 @@
                 const testTypeFilter = document.getElementById('analyser-test-type-filter').value;
                 const subjectFilter = document.getElementById('analyser-subject-filter').value;
                 const subjectPerformances = [];
-                (marks || []).forEach(mark => {
-                    (mark.breakdown || []).forEach(item => {
-                        if (Number(item.maximum) > 0) {
+                marks.forEach(mark => {
+                    mark.breakdown.forEach(item => {
+                        const maximum = Number(item?.maximum), obtained = Number(item?.obtained);
+                        if (item && typeof item.subject === 'string' && Number.isFinite(maximum) && maximum > 0
+                            && Number.isFinite(obtained) && obtained >= 0 && obtained <= maximum) {
                             subjectPerformances.push({
                                 date: mark.dateOfExam,
                                 subject: item.subject,
                                 testType: mark.testType,
-                                score: (Number(item.obtained) / Number(item.maximum)) * 100
+                                score: (obtained / maximum) * 100
                             });
                         }
                     });
@@ -4149,22 +4311,49 @@
 
             function renderMarkTrendChart(entries) {
                 const canvas = document.getElementById('mark-trend-chart');
-                if (!canvas) return;
-                if (chartInstances.markTrendChart) chartInstances.markTrendChart.destroy();
+                if (!canvas || typeof Chart === 'undefined') return;
+                if (chartInstances.markTrendChart) {
+                    chartInstances.markTrendChart.destroy();
+                    delete chartInstances.markTrendChart;
+                }
+                const parent = canvas.parentElement;
+                let emptyState = parent?.querySelector('.mark-trend-empty');
+                const safeEntries = (Array.isArray(entries) ? entries : []).filter(entry =>
+                    entry && typeof entry.subject === 'string' && entry.subject.trim()
+                    && /^\d{4}-\d{2}-\d{2}$/.test(entry.date || '')
+                    && Number.isFinite(Number(entry.score))
+                    && Number(entry.score) >= 0 && Number(entry.score) <= 100
+                );
+                if (!safeEntries.length) {
+                    canvas.style.display = 'none';
+                    if (parent && !emptyState) {
+                        emptyState = document.createElement('p');
+                        emptyState.className = 'mark-trend-empty text-sm text-muted grid h-full place-items-center text-center';
+                        emptyState.textContent = 'No valid scores match these filters yet.';
+                        parent.appendChild(emptyState);
+                    }
+                    return;
+                }
+                canvas.style.display = '';
+                emptyState?.remove();
 
-                // Use the active analyser filters; combine multiple same-subject scores from one day.
-                const dates = [...new Set(entries.map(entry => entry.date).filter(Boolean))].sort();
-                const subjects = [...new Set(entries.map(entry => entry.subject))].sort();
+                const dates = [...new Set(safeEntries.map(entry => entry.date))].sort();
+                const subjects = [...new Set(safeEntries.map(entry => entry.subject))].sort();
                 const colors = ['#2563eb', '#008767', '#f59e0b', '#ef4444', '#6366f1', '#0891b2', '#db2777'];
                 const scoresBySubject = {};
-                entries.forEach(entry => {
+                safeEntries.forEach(entry => {
                     if (!scoresBySubject[entry.subject]) scoresBySubject[entry.subject] = {};
                     const day = scoresBySubject[entry.subject][entry.date] || { total: 0, count: 0 };
-                    day.total += entry.score;
+                    day.total += Number(entry.score);
                     day.count += 1;
                     scoresBySubject[entry.subject][entry.date] = day;
                 });
-
+                const graphRegistry = {
+                    bar: { type: 'bar', dataset: { borderWidth: 0, borderRadius: 4, maxBarThickness: 28 } },
+                    line: { type: 'line', dataset: { pointRadius: 3, pointHoverRadius: 5, borderWidth: 2, tension: 0.25, fill: false, spanGaps: false } }
+                };
+                const selectedType = document.getElementById('mark-trend-chart-type')?.value;
+                const graph = graphRegistry[selectedType] || graphRegistry.bar;
                 const datasets = subjects.map((subject, index) => ({
                     label: subject.split(': ').pop(),
                     data: dates.map(date => {
@@ -4172,17 +4361,12 @@
                         return day ? day.total / day.count : null;
                     }),
                     borderColor: colors[index % colors.length],
-                    backgroundColor: colors[index % colors.length],
-                    pointRadius: 3,
-                    pointHoverRadius: 5,
-                    borderWidth: 2,
-                    tension: 0.25,
-                    fill: false,
-                    spanGaps: false
+                    backgroundColor: graph.type === 'bar' ? `${colors[index % colors.length]}b8` : colors[index % colors.length],
+                    ...graph.dataset
                 }));
 
                 chartInstances.markTrendChart = new Chart(canvas, {
-                    type: 'line',
+                    type: graph.type,
                     data: {
                         labels: dates.map(date => `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(2, 4)}`),
                         datasets
@@ -4191,31 +4375,26 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         interaction: { mode: 'index', intersect: false },
-                        layout: { padding: { top: 8, right: 8 } },
+                        layout: { padding: { top: 4, right: 6 } },
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 16 }
-                            },
+                            legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 7, padding: 10 } },
                             tooltip: {
                                 callbacks: {
                                     title: items => items[0]?.label || '',
-                                    label: context => `${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)}%`
+                                    label: context => Number.isFinite(Number(context.parsed.y)) ? `${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)}%` : ''
                                 }
                             }
                         },
                         scales: {
                             y: {
-                                min: 0,
-                                max: 100,
-                                ticks: { stepSize: 20, callback: value => `${value}%`, padding: 8 },
+                                min: 0, max: 100,
+                                ticks: { stepSize: 20, callback: value => `${value}%`, padding: 5 },
                                 grid: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), drawTicks: false },
                                 border: { display: false }
                             },
                             x: {
-                                ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8, padding: 8 },
-                                grid: { display: false },
-                                border: { display: false }
+                                ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8, padding: 5 },
+                                grid: { display: false }, border: { display: false }
                             }
                         }
                     }
@@ -5267,6 +5446,11 @@
                 document.getElementById('admin-consistency-form').addEventListener('submit', handleTargetConsistencyFormSubmit);
                 document.getElementById('admin-links-form').addEventListener('submit', handleAdminLinkFormSubmit);
                 document.getElementById('admin-pomodoro-form').addEventListener('submit', handleAdminPomodoroFormSubmit);
+                document.getElementById('mark-trend-chart-type').addEventListener('change', () => refreshData());
+                document.getElementById('preview-subject-merge-btn').addEventListener('click', previewMarkSubjectMerge);
+                document.getElementById('confirm-subject-merge-btn').addEventListener('click', confirmMarkSubjectMerge);
+                document.getElementById('merge-source-subjects').addEventListener('change', () => clearMarkSubjectMergePreview());
+                document.getElementById('merge-target-subject').addEventListener('change', () => clearMarkSubjectMergePreview());
                 document.getElementById('admin-topics-filter').addEventListener('input', (e) => { const filterText = e.target.value.toLowerCase(); document.querySelectorAll('#admin-topics-table-container tbody tr').forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filterText) ? '' : 'none'; }); });
                 document.getElementById('auto-classify-topic-btn').addEventListener('click', autoSortTopicsFromSyllabus);
                 document.getElementById('notes-search').addEventListener('input', () => renderPublicNotes(db.get(DB_KEYS.NOTES) || []));
@@ -5675,14 +5859,97 @@
                 });
             }
             function renderAdminRecurringTasksTable(tasks) { const c=document.getElementById('admin-recurring-tasks-table-container');if(!c)return;let t=`<table class="w-full text-left"><thead><tr class="border-b border-themed"><th class="p-2">Task Name</th><th class="p-2">Frequency</th><th class="p-2">Actions</th></tr></thead><tbody>`;t+=(tasks||[]).map(i=>`<tr class="hover:bg-bg-color-200"><td class="p-2 border-b border-themed text-body">${escapeHtml(i.name)}</td><td class="p-2 border-b border-themed text-body capitalize">${escapeHtml(i.frequency)}</td><td class="p-2 border-b border-themed"><button data-id="${escapeHtml(i.id)}" class="edit-recurring-task-btn mr-2" style="color:var(--primary-color-500);">Edit</button><button data-id="${escapeHtml(i.id)}" class="delete-recurring-task-btn" style="color:#ef4444;">Delete</button></td></tr>`).join('');c.innerHTML=(tasks||[]).length?t+'</tbody></table>':'<p class="text-body italic p-4 text-center">No recurring tasks added.</p>';}
+            function clearMarkSubjectMergePreview(message = '') {
+                subjectMergePreview = null;
+                const preview = document.getElementById('subject-merge-preview');
+                const confirmButton = document.getElementById('confirm-subject-merge-btn');
+                if (preview) preview.textContent = message;
+                confirmButton?.classList.add('hidden');
+            }
+
+            function previewMarkSubjectMerge() {
+                const preview = document.getElementById('subject-merge-preview');
+                const sourceSelect = document.getElementById('merge-source-subjects');
+                const targetId = document.getElementById('merge-target-subject')?.value;
+                const sourceIds = [...(sourceSelect?.selectedOptions || [])].map(option => option.value);
+                const subjects = db.get(DB_KEYS.MARK_SUBJECTS) || [];
+                const target = subjects.find(subject => subject.id === targetId);
+                const sources = subjects.filter(subject => sourceIds.includes(subject.id) && subject.id !== targetId);
+                const confirmButton = document.getElementById('confirm-subject-merge-btn');
+                subjectMergePreview = null;
+                confirmButton?.classList.add('hidden');
+                if (!isAdminLoggedIn || !target || !sources.length) {
+                    if (preview) preview.textContent = 'Choose at least one source and a different destination subject.';
+                    return;
+                }
+
+                const clone = value => typeof structuredClone === 'function'
+                    ? structuredClone(value)
+                    : JSON.parse(JSON.stringify(value));
+                const originalMarks = db.get(DB_KEYS.MARKS) || [];
+                const originalSubjects = subjects;
+                const nextMarks = clone(originalMarks);
+                const sourceNames = new Set(sources.map(subject => subject.name));
+                let affectedEntries = 0;
+                nextMarks.forEach(mark => {
+                    if (!mark || !Array.isArray(mark.breakdown)) return;
+                    mark.breakdown.forEach(item => {
+                        if (item && sourceNames.has(item.subject)) {
+                            item.subject = target.name;
+                            affectedEntries++;
+                        }
+                    });
+                });
+                subjectMergePreview = {
+                    marks: nextMarks,
+                    subjects: clone(originalSubjects.filter(subject => !sources.some(source => source.id === subject.id))),
+                    originalMarks: JSON.stringify(originalMarks),
+                    originalSubjects: JSON.stringify(originalSubjects),
+                    sourceIds: sources.map(subject => subject.id),
+                    sourceNames: sources.map(subject => subject.name),
+                    targetName: target.name,
+                    affectedEntries
+                };
+                if (preview) preview.textContent = `Preview only: ${sources.map(subject => subject.name).join(', ')} → ${target.name}. ${affectedEntries} saved mark breakdown entr${affectedEntries === 1 ? 'y' : 'ies'} will be reassigned; original scores and maximums are preserved. No data has been changed.`;
+                confirmButton?.classList.remove('hidden');
+            }
+
+            function confirmMarkSubjectMerge() {
+                if (!subjectMergePreview || !isAdminLoggedIn) return;
+                const pending = subjectMergePreview;
+                showConfirmationModal(`Merge ${pending.sourceNames.join(', ')} into ${pending.targetName}? This will update ${pending.affectedEntries} mark breakdown entries and remove the source subject records. This cannot be automatically undone.`, () => {
+                    const currentMarks = db.get(DB_KEYS.MARKS) || [];
+                    const currentSubjects = db.get(DB_KEYS.MARK_SUBJECTS) || [];
+                    if (JSON.stringify(currentMarks) !== pending.originalMarks || JSON.stringify(currentSubjects) !== pending.originalSubjects) {
+                        clearMarkSubjectMergePreview('Your data changed after the preview. Create a fresh preview before confirming.');
+                        showToast('Merge cancelled because the saved data changed. Review a new preview.', true);
+                        return;
+                    }
+                    db.set(DB_KEYS.MARKS, pending.marks);
+                    db.set(DB_KEYS.MARK_SUBJECTS, pending.subjects);
+                    clearMarkSubjectMergePreview('Merge complete.');
+                    showToast('Marks subjects merged. Scores and maximums were preserved.');
+                    refreshData();
+                });
+            }
+
             function renderAdminMarkSubjectsTable(subjects) {
                 const container = document.getElementById('admin-mark-subjects-container');
                 if (!container) return;
                 const categories = ['Prelims', 'Mains'];
+                const items = Array.isArray(subjects) ? subjects : [];
                 container.innerHTML = categories.map(category => {
-                    const items = subjects.filter(subject => subject.category === category);
-                    return `<section class="mb-4"><h3 class="font-semibold text-header mb-2">${escapeHtml(category)} marks subjects</h3>${items.length ? `<ul class="flex flex-wrap gap-2">${items.map(subject => { const name = escapeHtml(subject.name); const id = escapeHtml(subject.id); return `<li class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-body">${name}<button type="button" class="edit-mark-subject-btn text-blue-600" data-id="${id}" aria-label="Edit ${name}" title="Edit marks subject"><i class="fas fa-pen"></i></button><button type="button" class="delete-mark-subject-btn text-red-500" data-id="${id}" aria-label="Delete ${name}" title="Remove marks subject"><i class="fas fa-trash"></i></button></li>`; }).join('')}</ul>` : '<p class="text-sm text-muted">No marks subjects yet.</p>'}</section>`;
+                    const grouped = items.filter(subject => subject.category === category);
+                    return `<section class="mb-3"><h3 class="font-semibold text-header mb-2">${escapeHtml(category)} marks subjects</h3>${grouped.length ? `<ul class="flex flex-wrap gap-2">${grouped.map(subject => { const name = escapeHtml(subject.name); const id = escapeHtml(subject.id); return `<li class="flex items-center gap-2 rounded-lg border border-themed px-3 py-2 text-body">${name}<button type="button" class="edit-mark-subject-btn text-blue-600" data-id="${id}" aria-label="Edit ${name}" title="Edit marks subject"><i class="fas fa-pen"></i></button><button type="button" class="delete-mark-subject-btn text-red-500" data-id="${id}" aria-label="Remove ${name}" title="Remove marks subject"><i class="fas fa-trash"></i></button></li>`; }).join('')}</ul>` : '<p class="text-sm text-muted">No marks subjects yet.</p>'}</section>`;
                 }).join('');
+                const optionMarkup = items.map(subject => `<option value="${escapeHtml(subject.id)}">${escapeHtml(subject.name)} · ${escapeHtml(subject.category || 'Mains')}</option>`).join('');
+                const sourceSelect = document.getElementById('merge-source-subjects');
+                const targetSelect = document.getElementById('merge-target-subject');
+                if (sourceSelect && targetSelect) {
+                    sourceSelect.innerHTML = optionMarkup;
+                    targetSelect.innerHTML = `<option value="">Choose destination…</option>${optionMarkup}`;
+                    clearMarkSubjectMergePreview();
+                }
             }
 
             function renderAdminMarksTable(marks) { const c=document.getElementById('admin-marks-table-container');if(!c)return;const h=['Date','Exam Type','Test Type','Subjects','Total Score','Actions'];let t=`<table class="w-full text-left text-sm"><thead><tr class="border-b border-themed">${h.map(h=>`<th class="p-3 text-header">${h}</th>`).join('')}</tr></thead><tbody>`;if(!marks||marks.length===0){c.innerHTML='<p class="text-body italic p-4 text-center">No marks found.</p>';return}t+=marks.map(m=>{const s=(m.breakdown||[]).map(b=>escapeHtml(String(b.subject || '').split(': ').pop())).join(', ');const o=`${escapeHtml(m.totalObtainedMark)} / ${escapeHtml(m.totalMaximumMark)}`;const id=escapeHtml(m.id);return`<tr class="border-b border-themed hover:bg-bg-color-200"><td class="p-3 text-body">${formatCustomDate(parseLocalDate(m.dateOfExam))}</td><td class="p-3 text-body">${escapeHtml(m.examType || 'Mains')}</td><td class="p-3 text-body">${escapeHtml(m.testType)}</td><td class="p-3 text-body">${s}</td><td class="p-3 text-body">${o}</td><td class="p-3"><button data-id="${id}" class="edit-mark-btn mr-3" style="color:var(--primary-color-500);"><i class="fas fa-edit"></i></button><button data-id="${id}" class="delete-mark-btn" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td></tr>`}).join('');c.innerHTML=t+'</tbody></table>'}
