@@ -476,6 +476,13 @@
       overflow: hidden;
     }
 
+    /* Keep the dictionary's three essential lines visible in every entry. */
+    .lex-summary > .c-def {
+      display: block;
+      overflow: visible;
+      -webkit-line-clamp: unset;
+    }
+
     .c-meta {
       display: flex;
       align-items: center;
@@ -662,8 +669,6 @@
         <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
         <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
         <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
-        <button class="btn" id="btnToggleAdmin" onclick="toggleAdminPortal()">⚙️ Admin Portal</button>
-        <button class="btn" id="btnThemeMain" onclick="toggleTheme()" title="Switch Theme">🌗</button>
       </div>
     </div>
   </header>
@@ -773,16 +778,43 @@
       </div>
     </form>
   </dialog>
+  <input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)" />
 
   <script>
     const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
-    const backToWebsiteButton = document.getElementById('back-to-website');
-    if (new URLSearchParams(window.location.search).get('embed') === 'admin') {
+    function bindBackToWebsiteLink() {
+      const mode = new URLSearchParams(window.location.search).get('embed');
+      const backToWebsiteButton = document.getElementById('back-to-website');
+      if (!backToWebsiteButton || !['admin', 'main'].includes(mode)) return;
+
+      const isAdmin = mode === 'admin';
+      backToWebsiteButton.textContent = isAdmin ? '← Back to Admin Portal' : '←';
+      backToWebsiteButton.setAttribute('aria-label', isAdmin ? 'Return to the admin portal' : 'Return to the main website');
+      backToWebsiteButton.title = isAdmin ? 'Back to Admin Portal' : 'Back to main website';
+      backToWebsiteButton.href = '#';
       backToWebsiteButton.addEventListener('click', event => {
         event.preventDefault();
-        window.parent.postMessage({ type: 'tracker-lexicon-close' }, window.location.origin);
+        window.parent.postMessage(
+          { type: isAdmin ? 'tracker-lexicon-close' : 'tracker-lexicon-main-close' },
+          window.location.origin
+        );
       });
+
+      if (isAdmin) {
+        const dataActions = document.createElement('span');
+        dataActions.className = 'embed-data-actions';
+        dataActions.style.cssText = 'display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;';
+        dataActions.innerHTML = '<button class="btn" type="button" data-lexicon-action="csv">📥 Download CSV</button><button class="btn" type="button" data-lexicon-action="json">💾 Download JSON</button><button class="btn" type="button" data-lexicon-action="import">📂 Restore JSON</button>';
+        backToWebsiteButton.insertAdjacentElement('afterend', dataActions);
+        dataActions.addEventListener('click', event => {
+          const action = event.target.closest('[data-lexicon-action]')?.dataset.lexiconAction;
+          if (action === 'csv') exportCSV();
+          if (action === 'json') exportJSON();
+          if (action === 'import') document.getElementById('importFile')?.click();
+        });
+      }
     }
+    bindBackToWebsiteLink();
 
     const GS_CATEGORIES = [
       'GS-1: Society & Culture',
@@ -816,11 +848,6 @@
         subTitle.textContent = "System Management & Data Operations";
         headerActions.innerHTML = `
           <button class="btn btn-primary" onclick="toggleAdminPortal()">← Exit Admin Portal</button>
-          <button class="btn" onclick="exportCSV()">📥 Export CSV</button>
-          <button class="btn" onclick="exportJSON()" title="Backup Database & Learned Rules">💾 Backup JSON</button>
-          <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore JSON Backup">📂 Restore Backup</button>
-          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)" />
-          <button class="btn" onclick="toggleTheme()" title="Switch Theme">🌗</button>
         `;
         sidebar.style.display = 'none';
         stage.style.gridColumn = '1 / -1';
@@ -861,15 +888,14 @@
           <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
           <button class="btn" id="btnRecall" onclick="toggleRecallMode()">🎯 Active Recall</button>
           <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()">↕️ Expand All</button>
-          <button class="btn" id="btnToggleAdmin" onclick="toggleAdminPortal()">⚙️ Admin Portal</button>
-          <button class="btn" id="btnThemeMain" onclick="toggleTheme()" title="Switch Theme">🌗</button>
         `;
         sidebar.style.display = 'block';
         stage.style.gridColumn = 'auto';
         stage.innerHTML = `
           <section class="console-card">
             <div class="input-grid" style="grid-template-columns: minmax(0, 1.8fr) minmax(190px, 1fr) minmax(110px, auto);">
-              <input type="text" id="wordInput" placeholder="Search previously found words or enter new term(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" />
+              <input type="text" id="wordInput" placeholder="Search previously found words or enter new term(s)..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" list="lookupHistoryList" />
+              <datalist id="lookupHistoryList"></datalist>
               <select id="gsOverride">
                 <option value="AUTO">⚡ Auto-Detect GS Paper</option>
                 <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
@@ -890,14 +916,22 @@
               <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
             </div>
 
+            <div id="lookupHistoryContainer" style="margin-top: 10px; display: none; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-3);">Previously Found Words:</span>
+              <div id="lookupHistoryChips" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+            </div>
+
             <div class="az-ribbon" id="azBar"></div>
             <div id="toastBanner"></div>
           </section>
 
           <section class="table-box">
+            <div id="searchResults" aria-live="polite"></div>
             <div id="tableBody"></div>
           </section>
         `;
+        bindBackToWebsiteLink();
+        updateLookupHistoryUI();
         render();
       }
     }
@@ -921,6 +955,10 @@
     function isLegacyGeneratedStudyText(value) {
       const text = String(value || '').toLowerCase();
       return /^(the hindu|the indian express|pib|economic survey|editorial focus|gs-\d|essay & ethics way forward|gs-\d+\/mains integration)/i.test(text)
+        || text.startsWith('use the term to')
+        || /:\s*use (?:it|the term) to /i.test(text)
+        || text.startsWith('link it with pyqs')
+        || text.startsWith('pyq syllabus linkage')
         || text.includes('recent reporting examines')
         || text.includes('coverage connects')
         || text.includes('public policy discussion considers')
@@ -958,8 +996,11 @@
             words: item.words || 'Unnamed',
             pos: item.pos || '',
             tamil: normalizeTamil(item.tamil || '—'),
-            nuance: item.nuance || '',
-            eng: item.eng || '',
+            tamilVerified: item.tamilVerified === false ? false : null,
+                    tamilSource: item.tamilSource || '',
+        definitionSource: item.definitionSource || 'English dictionary',
+        nuance: item.nuance || '',
+        eng: item.eng || '',
             syn: item.syn || '—',
             cat: cat,
             starred: Boolean(item.starred),
@@ -973,8 +1014,9 @@
       }
     }
 
-    let db = loadDatabase();
-    let brain = {};
+    // `var` exposes these values on window so the Firebase module can sync them.
+    var db = loadDatabase();
+    var brain = {};
     try {
       brain = JSON.parse(localStorage.getItem('cse_brain_v5') || localStorage.getItem('cse_learned_brain') || '{}') || {};
     } catch (e) { brain = {}; }
@@ -1091,10 +1133,12 @@
       };
       const theme = themes[gsPaper] || themes['Essay & Editorial Idioms'];
       const suppliedContext = String(newspaperContext || '').trim();
+      const definitionText = String(def || '').trim();
+      const conciseDefinition = definitionText.length > 180 ? `${definitionText.slice(0, 177).trimEnd()}...` : definitionText;
       return {
-        ex1: suppliedContext || 'No newspaper-specific context has been added for this term. Use Edit to paste a dated headline, article point or editorial extract; this field will not invent a newspaper reference.',
-        ex2: `${word}: ${theme.relevance}`,
-        ex3: `PYQ syllabus linkage (theme guidance, not a verbatim UPSC question): ${theme.pyq}`
+        ex1: suppliedContext || 'Current-affairs context not supplied. Add a dated, verifiable source in Edit; no newspaper event is inferred.',
+        ex2: `Mains use (${gsPaper}): Use “${word}” only if the question concerns its meaning${conciseDefinition ? ` — ${conciseDefinition}` : ''}. Support it with a verified Indian example, policy, constitutional provision or data; avoid decorative jargon.`,
+        ex3: `PYQ check: Search official UPSC papers for ${gsPaper}. No specific PYQ link is asserted for this term.`
       };
     }
 
@@ -1169,109 +1213,187 @@
       }
     }
 
+    async function getTamilTranslation(word, definition) {
+      const isTamil = value => /[\u0B80-\u0BFF]/.test(String(value || ''));
+
+      const textToTranslate = String(definition || word).trim();
+      const googleUrls = [
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(textToTranslate)}`,
+        `https://translate.google.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(textToTranslate)}`
+      ];
+      for (const url of googleUrls) {
+        try {
+          const response = await fetchWithTimeout(url, {}, 5000);
+          if (!response.ok) continue;
+          const data = await response.json();
+          const translated = normalizeTamil((data?.[0] || []).map(part => part?.[0] || '').join(''));
+          if (isTamil(translated)) return { text: translated, source: 'Google Translate (machine translation)' };
+        } catch (error) {}
+      }
+
+      // The worker keeps any Gemini credentials server-side. Its output is only
+      // treated as a translation candidate, never as independent verification.
+      try {
+        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task: 'translate_en_ta', word, definition, sourceLanguage: 'en', targetLanguage: 'ta' })
+        }, 7000);
+        if (response.ok) {
+          const data = await response.json();
+          const candidate = normalizeTamil(data?.tamil || data?.translation || data?.translatedText || data?.result || '');
+          if (isTamil(candidate)) return { text: candidate, source: 'AI-assisted translation (unverified)' };
+        }
+      } catch (error) {}
+
+      return { text: '', source: '' };
+    }
+
+    function extractDictionaryApiEntry(entries, requestedWord) {
+      if (!Array.isArray(entries)) return null;
+      for (const entry of entries) {
+        for (const meaning of entry.meanings || []) {
+          const definition = meaning.definitions?.find(item => typeof item.definition === 'string' && item.definition.trim());
+          if (definition) {
+            return {
+              word: entry.word || requestedWord,
+              pos: meaning.partOfSpeech || '',
+              definition: definition.definition.trim(),
+              synonyms: [...new Set([...(meaning.synonyms || []), ...(meaning.definitions || []).flatMap(item => item.synonyms || [])])],
+              source: 'Dictionary API'
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    async function lookupDatamuseDefinition(word) {
+      const response = await fetchWithTimeout(
+        `https://api.datamuse.com/words?sp=${encodeURIComponent(word)}&md=d&max=8`, {}, 6000
+      );
+      if (!response.ok) return null;
+      const matches = await response.json();
+      if (!Array.isArray(matches)) return null;
+      const exactMatch = matches.find(item => String(item.word || '').toLowerCase() === word.toLowerCase());
+      const rawDefinition = exactMatch?.defs?.find(value => typeof value === 'string' && value.trim());
+      if (!rawDefinition) return null;
+      const [partOfSpeech, ...definitionParts] = rawDefinition.split('\t');
+      const definition = (definitionParts.length ? definitionParts.join(' ') : partOfSpeech).trim();
+      if (!definition) return null;
+      return {
+        word: exactMatch.word,
+        pos: definitionParts.length ? partOfSpeech : '',
+        definition,
+        synonyms: [],
+        source: 'Datamuse'
+      };
+    }
+
+    function extractWorkerDefinition(data, requestedWord) {
+      const candidates = [
+        data?.definition, data?.meaning, data?.eng, data?.text, data?.answer, data?.output_text,
+        data?.result?.definition, data?.result?.meaning, data?.result?.text, data?.result,
+        data?.response, data?.candidates?.[0]?.content?.parts?.map(part => part?.text || '').join(' ')
+      ];
+      for (const candidate of candidates) {
+        if (typeof candidate !== 'string') continue;
+        let text = candidate.trim().replace(/^```(?:json)?\s*|\s*```$/gi, '');
+        try {
+          const parsed = JSON.parse(text);
+          text = parsed.definition || parsed.meaning || parsed.eng || '';
+        } catch (_) { }
+        if (text && text.length <= 600 && !/^\s*(?:error|not found)\b/i.test(text)) {
+          return { word: requestedWord, pos: data?.partOfSpeech || data?.pos || '', definition: text, synonyms: Array.isArray(data?.synonyms) ? data.synonyms : [], source: 'AI-generated · review before use' };
+        }
+      }
+      return null;
+    }
+
+    async function lookupEnglishDefinition(word) {
+      let servicesResponded = false;
+      try {
+        const response = await fetchWithTimeout(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {}, 7000
+        );
+        servicesResponded = true;
+        if (response.ok) {
+          const parsed = extractDictionaryApiEntry(await response.json(), word);
+          if (parsed) return { entry: { ...parsed, source: 'English dictionary' }, servicesResponded: true };
+        }
+      } catch (_) { }
+
+      try {
+        const parsed = await lookupDatamuseDefinition(word);
+        servicesResponded = true;
+        if (parsed) return { entry: parsed, servicesResponded: true };
+      } catch (_) { }
+
+      // The Worker may use Gemini server-side; no API key is exposed in this page.
+      try {
+        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task: 'dictionary_definition', word, language: 'en', responseFormat: 'json' })
+        }, 12000);
+        servicesResponded = true;
+        if (response.ok) {
+          const parsed = extractWorkerDefinition(await response.json(), word);
+          if (parsed) return { entry: parsed, servicesResponded: true };
+        }
+      } catch (_) { }
+
+      return { entry: null, servicesResponded };
+    }
+
     async function processSingleTerm(rawTerm, customNote, overrideGS) {
       const cleanWord = String(rawTerm || '').trim().replace(/\s+/g, ' ');
       if (!cleanWord) return null;
 
-      let dictionaryEntries = [];
-      let dictionaryResponse = null;
+      const lookup = await lookupEnglishDefinition(cleanWord);
+      let entry = lookup.entry || null;
+      let servicesResponded = Boolean(lookup.servicesResponded);
+      let suggestions = [];
 
-      // Use a real English dictionary entry. Never invent a definition.
-      try {
-        dictionaryResponse = await fetchWithTimeout(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`,
-          {}, 7000
-        );
-      } catch (error) {
-        showToast('Dictionary lookup failed. Please check your connection and try again.');
-        return { status: 'ERROR' };
-      }
-
-      if (!dictionaryResponse.ok) {
-        // Suggest likely spellings; do not silently replace the user's word.
-        let suggestions = [];
+      if (!entry) {
         try {
           const suggestionResponse = await fetchWithTimeout(
-            `https://api.datamuse.com/words?sp=${encodeURIComponent(cleanWord)}&max=5`,
-            {}, 5000
+            `https://api.datamuse.com/words?sp=${encodeURIComponent(cleanWord)}&max=5`, {}, 5000
           );
+          servicesResponded = servicesResponded || suggestionResponse.ok;
           if (suggestionResponse.ok) {
             const data = await suggestionResponse.json();
-            suggestions = Array.isArray(data)
-              ? data.map(item => item.word).filter(Boolean).slice(0, 5)
-              : [];
+            suggestions = Array.isArray(data) ? data.map(item => item.word).filter(Boolean).slice(0, 5) : [];
           }
-        } catch (error) {}
+        } catch (_) { }
 
+        if (!servicesResponded) {
+          showToast('Definition services could not be reached. Check the browser console or network restrictions; your connection may still be online.');
+          return { status: 'ERROR' };
+        }
         showToast(suggestions.length
-          ? `“${cleanWord}” was not found. Did you mean: ${suggestions.join(', ')}?`
-          : `“${cleanWord}” was not found in the English dictionary. Check the spelling.`);
+          ? `No exact definition was found for “${cleanWord}”. Check spelling or try: ${suggestions.join(', ')}.`
+          : `No reliable definition source returned “${cleanWord}”. Try a single English word or verify its spelling.`);
         return { status: 'NOT_FOUND', suggestions };
       }
 
-      try {
-        const data = await dictionaryResponse.json();
-        if (Array.isArray(data)) dictionaryEntries = data;
-      } catch (error) {
-        showToast('The dictionary returned an unreadable result. No entry was added.');
-        return { status: 'ERROR' };
-      }
+      const dictionaryWord = entry.word || cleanWord;
+      const standardDefinition = String(entry.definition || '').trim();
+      const partOfSpeech = entry.pos || '';
+      const synonyms = Array.isArray(entry.synonyms) ? entry.synonyms : [];
 
-      if (!dictionaryEntries.length) {
-        showToast('No dictionary definition is available for this term. No entry was added.');
-        return { status: 'NOT_FOUND' };
-      }
-
-      const dictionaryWord = dictionaryEntries[0].word || cleanWord;
-      const definitions = [];
-      const partsOfSpeech = [];
-      const synonyms = [];
-      let realExample = '';
-
-      dictionaryEntries.forEach(entry => {
-        (entry.meanings || []).forEach(meaning => {
-          if (meaning.partOfSpeech && !partsOfSpeech.includes(meaning.partOfSpeech)) {
-            partsOfSpeech.push(meaning.partOfSpeech);
-          }
-          (meaning.definitions || []).forEach(definition => {
-            if (definition.definition && !definitions.includes(definition.definition)) {
-              definitions.push(definition.definition);
-            }
-            if (!realExample && definition.example) realExample = definition.example;
-            [...(meaning.synonyms || []), ...(definition.synonyms || [])].forEach(word => {
-              if (word && !synonyms.includes(word)) synonyms.push(word);
-            });
-          });
-        });
-      });
-
-      if (!definitions.length) {
+      if (!standardDefinition) {
         showToast(`No definition is available for “${dictionaryWord}”. No entry was added.`);
         return { status: 'NO_DEFINITION' };
       }
 
-      // Translate the dictionary headword. This is machine translation, not a
-      // certified dictionary equivalent; if unavailable, do not fabricate one.
-      let tamilMeaning = '';
-      try {
-        const translationResponse = await fetchWithTimeout(
-          `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(dictionaryWord)}`,
-          {}, 7000
-        );
-        if (translationResponse.ok) {
-          const translationData = await translationResponse.json();
-          tamilMeaning = normalizeTamil(
-            (translationData?.[0] || []).map(part => part?.[0] || '').join('')
-          );
-        }
-      } catch (error) {}
+      const translation = await getTamilTranslation(dictionaryWord, standardDefinition);
+      const tamilAvailable = Boolean(translation.text);
+      const tamilMeaning = tamilAvailable
+        ? translation.text
+        : 'தமிழ் மொழிபெயர்ப்பு கிடைக்கவில்லை — கைமுறையாகச் சரிபார்க்கவும்';
 
-      if (!tamilMeaning) {
-        showToast(`English dictionary definition found for “${dictionaryWord}”, but Tamil translation is unavailable. No incomplete entry was added.`);
-        return { status: 'NO_TAMIL' };
-      }
-
-      const definitionText = definitions.join(' ');
+      const definitionText = standardDefinition;
       const synonymText = synonyms.slice(0, 8).join(', ');
       const detectedGS = (overrideGS && overrideGS !== 'AUTO')
         ? overrideGS
@@ -1287,8 +1409,11 @@
       const newItem = {
         id: Date.now() + Math.floor(Math.random() * 10000),
         words: dictionaryWord,
-        pos: partsOfSpeech.join(', ') || '',
+        pos: partOfSpeech,
         tamil: tamilMeaning,
+        tamilVerified: false,
+        tamilSource: translation.source || '',
+        definitionSource: entry.source || 'English dictionary',
         nuance: '',
         eng: definitionText,
         syn: synonymText || '—',
@@ -1301,8 +1426,12 @@
       db.push(newItem);
       learnFromContext(dictionaryWord, definitionText, synonymText, detectedGS);
       saveAll();
-      showToast(`Dictionary entry added: “${dictionaryWord}”.`);
-      return { status: 'ADDED', item: newItem };
+      if (tamilAvailable) {
+        showToast(`Added “${dictionaryWord}” with a Tamil translation candidate. Please verify it before study use.`);
+      } else {
+        showToast(`Added the dictionary definition for “${dictionaryWord}”; Tamil is unavailable and marked for manual verification.`);
+      }
+      return { status: tamilAvailable ? 'ADDED' : 'ADDED_PARTIAL', item: newItem };
     }
 
     async function submitWords() {
@@ -1321,26 +1450,36 @@
       }
 
       let lastResult = null;
+      const results = [];
       for (const w of list) {
         if (!lookupHistory.includes(w)) {
           lookupHistory.unshift(w);
         }
         lastResult = await processSingleTerm(w, nInput ? nInput.value.trim() : '', gsSelect ? gsSelect.value : 'AUTO');
+        results.push(lastResult);
         saveAll();
       }
       updateLookupHistoryUI();
 
       if (list.length > 1) {
-        showToast(`Indexed ${list.length} terms into UPSC GS Syllabus categories.`);
+        const added = results.filter(result => result?.status === 'ADDED' || result?.status === 'ADDED_PARTIAL').length;
+        const partial = results.filter(result => result?.status === 'ADDED_PARTIAL').length;
+        const existing = results.filter(result => result?.status === 'EXISTS').length;
+        const notAdded = results.length - added - existing;
+        showToast(`Batch complete: ${added} added (${partial} need Tamil verification), ${existing} already indexed, ${notAdded} not added.`);
       } else if (lastResult?.status === 'MERGED') {
         showToast(`Identical Tamil meaning ("${lastResult.item.tamil}") — Merged side-by-side: ${lastResult.item.words}`);
       } else if (lastResult?.status === 'EXISTS') {
         showToast(`"${lastResult.item.words}" is already indexed under ${lastResult.item.cat}.`);
       } else if (lastResult?.status === 'ADDED') {
-        showToast(`Indexed "${lastResult.item.words}" (${lastResult.item.tamil}) ➔ ${lastResult.item.cat}`);
+        showToast(`Indexed “${lastResult.item.words}” with an unverified Tamil translation candidate under ${lastResult.item.cat}.`);
+      } else if (lastResult?.status === 'ADDED_PARTIAL') {
+        showToast(`Indexed "${lastResult.item.words}" with its English definition. Add a verified Tamil meaning using Edit.`);
       }
 
-      if (wInput) wInput.value = '';
+      // Keep the submitted term in the search field so the newly found entry
+      // appears immediately instead of returning to the full category listing.
+      if (wInput) wInput.value = list.length === 1 ? list[0] : raw;
       if (nInput) nInput.value = '';
       if (btn) {
         btn.disabled = false;
@@ -1660,11 +1799,11 @@
             </div>
             
             <div class="c-tamil-box" lang="ta">
-              <div class="d-label">Tamil translation</div><div class="c-tamil">${esc(item.tamil)}</div>
+              <div class="d-label">${item.tamilVerified === false ? 'Tamil definition · unverified' : 'Tamil definition'}${item.tamilSource ? ` · ${esc(item.tamilSource)}` : ''}</div><div class="c-tamil">${esc(item.tamil)}</div>
               ${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}
             </div>
 
-            <div class="c-def"><span class="d-label">English dictionary definition</span>${esc(item.eng)}</div>
+            <div class="c-def"><span class="d-label">${esc(item.definitionSource || 'English dictionary')} · one definition</span>${esc(item.eng)}</div>
 
             <div class="c-meta" onclick="event.stopPropagation()">
               <select class="gs-mini-select" onchange="changeGS(event, ${item.id}, this.value)" title="Reassign GS Paper">
@@ -1748,7 +1887,7 @@
           } else {
             searchPanel.innerHTML = `
               <div class="search-result-heading"><span>Search results for “${esc(rawQ)}”</span><span>${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'}</span></div>
-              <div class="lex-grid-container">${filtered.map(item => buildRowHTML(item, true)).join('')}</div>`;
+              <div class="lex-grid-container">${filtered.map(item => buildRowHTML(item)).join('')}</div>`;
           }
         }
         return;
@@ -1905,7 +2044,7 @@
           onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
               const cloudData = docSnap.data();
-              if (Array.isArray(cloudData.db) && cloudData.db.length > 0) {
+              if (Array.isArray(cloudData.db)) {
                 window.db = cloudData.db;
                 if (cloudData.brain) window.brain = { ...window.brain, ...cloudData.brain };
                 localStorage.setItem('cse_lexicon_v5', JSON.stringify(window.db));
