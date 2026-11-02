@@ -4,6 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>if (new URLSearchParams(location.search).get('embed') === 'main') document.documentElement.classList.add('embedded-lexicon');</script>
   <title>LEXICON PRO — UPSC-CSE Editorial & Tamil Concordance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1044,6 +1045,13 @@
       const mode = new URLSearchParams(window.location.search).get('embed');
       const backToWebsiteButton = document.getElementById('back-to-website');
       if (!backToWebsiteButton || !['admin', 'main'].includes(mode)) return;
+
+      if (mode === 'main') {
+        backToWebsiteButton.remove();
+        document.getElementById('pageMainTitle').textContent = 'Glossary Web';
+        document.getElementById('pageSubtitle').textContent = 'UPSC Concordance + GS + Trusted Editorial Stems';
+        return;
+      }
 
       const isAdmin = mode === 'admin';
       backToWebsiteButton.textContent = isAdmin ? '← Back to Admin Portal' : '←';
