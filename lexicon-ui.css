@@ -324,3 +324,212 @@ body {
 @media (max-width: 640px) {
   :root:not([data-theme="dark"]) .lex-item { border-radius: 12px; }
 }
+
+/* Bento workspace: clear, compact panels that adapt to the available iframe width. */
+.topbar-inner {
+  max-width: 1720px;
+  min-width: 0;
+  padding: 10px clamp(12px, 2vw, 28px);
+}
+.brand-group { min-width: 0; flex-wrap: wrap; }
+.action-cluster { min-width: 0; }
+.workspace {
+  width: min(100%, 1720px);
+  grid-template-columns: minmax(220px, 270px) minmax(0, 1fr);
+  gap: clamp(12px, 1.6vw, 22px);
+  padding: clamp(12px, 1.8vw, 24px) clamp(12px, 2vw, 28px) 32px;
+  align-items: start;
+}
+.sidebar {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+}
+.sidebar > .side-heading,
+.sidebar > .nav-list,
+.sidebar > .brain-box,
+.sidebar > div[style*="margin-top:12px"] {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-panel);
+}
+.sidebar > .side-heading { padding-bottom: 8px; border: 0; background: transparent; }
+.nav-list { display: grid; gap: 5px; }
+.nav-item { min-width: 0; }
+.brain-box { min-width: 0; }
+.main-stage { min-width: 0; gap: 14px; }
+.console-card {
+  position: relative;
+  top: auto;
+  z-index: 2;
+  padding: clamp(12px, 1.5vw, 18px);
+  border-radius: 18px;
+}
+.input-grid { gap: 10px; }
+#wordInput { min-width: 0; }
+.az-ribbon { margin-top: 10px; }
+.table-box { min-width: 0; }
+.section-divider {
+  margin-top: 20px;
+  border-radius: 13px;
+  padding: 11px 14px;
+  background: color-mix(in srgb, var(--bg-panel) 84%, var(--brand-soft));
+}
+.lex-grid-container {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+.lex-item, .lex-item + .lex-item { margin: 0; }
+.lex-summary { height: 100%; }
+.lex-item.open .lex-summary { height: auto; }
+.lex-drawer { padding: 14px; }
+.ex-trio { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+#searchResults { min-width: 0; }
+#searchResults .lex-grid-container { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+#searchResults .lex-item.open { grid-column: 1 / -1; }
+
+@media (max-width: 1024px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { position: static; }
+  .sidebar > .nav-list { display: flex; overflow-x: auto; }
+  .nav-item { flex: 0 0 auto; }
+  .sidebar > .brain-box,
+  .sidebar > div[style*="margin-top:12px"] { display: none; }
+  .console-card { position: relative; top: auto; }
+}
+@media (max-width: 640px) {
+  .topbar-inner { padding: 9px 12px; }
+  .brand-group { width: 100%; }
+  .action-cluster { width: 100%; flex-wrap: nowrap; overflow-x: auto; }
+  .workspace { gap: 10px; padding: 10px 10px 24px; }
+  .sidebar { padding: 9px; }
+  .sidebar > .side-heading { padding: 5px 7px; }
+  .sidebar > .nav-list { padding: 7px; }
+  .main-stage { gap: 10px; }
+  .console-card { padding: 10px; }
+  .input-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .lex-grid-container, #searchResults .lex-grid-container { grid-template-columns: minmax(0, 1fr); }
+  #searchResults .lex-item.open { grid-column: auto; }
+  .ex-trio { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lex-item, .lex-item:hover { transform: none !important; }
+}
+
+/* Embedded mode: keep the Lexicon itself in the viewport and give the dictionary the space. */
+html.embedded-lexicon,
+html.embedded-lexicon body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+html.embedded-lexicon body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app) !important;
+}
+html.embedded-lexicon .topbar {
+  position: relative;
+  flex: 0 0 auto;
+}
+html.embedded-lexicon .topbar-inner {
+  width: 100%;
+  padding: 8px clamp(12px, 1.5vw, 24px);
+  gap: 7px 18px;
+}
+html.embedded-lexicon .brand-group { flex-wrap: nowrap; }
+html.embedded-lexicon .brand-title { font-size: 21px; }
+html.embedded-lexicon .action-cluster { gap: 6px; }
+html.embedded-lexicon .action-cluster .btn { min-height: 34px; white-space: nowrap; }
+html.embedded-lexicon .workspace {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  height: 0;
+  padding: 12px clamp(12px, 1.5vw, 24px);
+  grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  overflow: hidden;
+}
+html.embedded-lexicon .sidebar {
+  position: relative;
+  top: auto;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  overflow: auto;
+}
+html.embedded-lexicon .main-stage {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 10px;
+}
+html.embedded-lexicon .console-card {
+  flex: 0 0 auto;
+  padding: 12px;
+}
+html.embedded-lexicon .table-box {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+html.embedded-lexicon .section-divider { margin-top: 10px; }
+html.embedded-lexicon .lex-grid-container { margin-bottom: 10px; }
+html.embedded-lexicon .lex-item { content-visibility: auto; contain-intrinsic-size: 150px; }
+
+@media (max-width: 1024px) {
+  html.embedded-lexicon .topbar-inner { align-items: flex-start; }
+  html.embedded-lexicon .action-cluster {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 1px 0 3px;
+    scrollbar-width: thin;
+  }
+  html.embedded-lexicon .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+  }
+  html.embedded-lexicon .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 24dvh;
+    padding: 8px;
+    overflow: hidden;
+  }
+  html.embedded-lexicon .sidebar > .nav-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 6px;
+  }
+  html.embedded-lexicon .nav-item { flex: 0 0 auto; }
+  html.embedded-lexicon .sidebar > .brain-box,
+  html.embedded-lexicon .sidebar > div[style*="margin-top:12px"] { display: none; }
+  html.embedded-lexicon .main-stage { height: auto; }
+}
+@media (max-width: 640px) {
+  html.embedded-lexicon .brand-group { width: 100%; justify-content: space-between; }
+  html.embedded-lexicon .brand-tag { max-width: 55vw; overflow: hidden; text-overflow: ellipsis; }
+  html.embedded-lexicon .workspace { padding: 8px; }
+  html.embedded-lexicon .sidebar { max-height: 20dvh; }
+  html.embedded-lexicon .console-card { padding: 9px; }
+  html.embedded-lexicon .az-ribbon { margin-top: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.embedded-lexicon *, html.embedded-lexicon *::before, html.embedded-lexicon *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
