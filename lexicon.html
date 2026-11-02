@@ -999,7 +999,7 @@
   <dialog class="edit-modal" id="editModal" aria-labelledby="editModalTitle">
     <form class="edit-modal-inner" id="editForm" onsubmit="saveEditedItem(event)">
       <h2 id="editModalTitle">Edit lexicon entry</h2>
-      <p>Changes are saved in this browser. Cross-device account sync requires a connected cloud data service.</p>
+      <p>Changes are saved automatically and sync with your signed-in account across devices.</p>
       <input type="hidden" id="editItemId" />
       <div class="edit-form-grid">
         <label>English term(s)<input id="editWords" required /></label>
@@ -1206,7 +1206,8 @@
 
     function normalizeTamil(str) {
       return String(str || '')
-        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        // Preserve joiners used by some Tamil sequences; strip only invisible spacing marks.
+        .replace(/[\u200B\uFEFF]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
     }
@@ -1214,6 +1215,8 @@
     function isLegacyGeneratedStudyText(value) {
       const text = String(value || '').toLowerCase();
       return /^(the hindu|the indian express|pib|economic survey|editorial focus|gs-\d|essay & ethics way forward|gs-\d+\/mains integration)/i.test(text)
+        || text.includes('current-affairs context not supplied')
+        || text.includes('no newspaper event is inferred')
         || text.startsWith('use the term to')
         || /:\s*use (?:it|the term) to /i.test(text)
         || text.startsWith('link it with pyqs')
@@ -1255,7 +1258,7 @@
             words: item.words || 'Unnamed',
             pos: item.pos || '',
             tamil: normalizeTamil(item.tamil || item.Tamil || item.tamilMeaning || item.tamil_meaning || item.tamilTranslation || item.tamil_translation || item.meaningTamil || item.meaning_ta || item.translation_ta || item.ta || '—'),
-            tamilVerified: item.tamilVerified === false ? false : null,
+            tamilVerified: typeof item.tamilVerified === 'boolean' ? item.tamilVerified : null,
                     tamilSource: item.tamilSource || '',
         definitionSource: item.definitionSource || 'English dictionary',
         nuance: item.nuance || '',
@@ -1342,6 +1345,16 @@
       }
     }
 
+    window.addEventListener('message', event => {
+      if (event.origin !== window.location.origin || event.source !== window.parent
+          || event.data?.type !== 'tracker-lexicon-cloud-state') return;
+      if (Array.isArray(event.data.lexicon)) db = event.data.lexicon;
+      if (event.data.brain && typeof event.data.brain === 'object' && !Array.isArray(event.data.brain)) brain = event.data.brain;
+      if (Array.isArray(event.data.history)) lookupHistory = event.data.history;
+      render();
+      updateLookupHistoryUI();
+    });
+
     function learnFromContext(word, definition, synonyms, targetGS) {
       const stop = new Set(['about','above','after','again','against','among','because','before','being','below','between','both','could','during','other','ought','shall','should','since','state','their','there','these','thing','those','through','under','until','where','which','while','would','person','action','process','practice','system']);
       const text = `${word} ${definition} ${synonyms}`.toLowerCase().replace(/[^a-z\s]/g, ' ');
@@ -1416,7 +1429,7 @@
       const definitionText = String(def || '').trim();
       const conciseDefinition = definitionText.length > 180 ? `${definitionText.slice(0, 177).trimEnd()}...` : definitionText;
       return {
-        ex1: suppliedContext || 'Current-affairs context not supplied. Add a dated, verifiable source in Edit; no newspaper event is inferred.',
+        ex1: suppliedContext || 'No dated source added yet. Use Edit to add a verifiable current-affairs reference.',
         ex2: `Mains use (${gsPaper}): Use “${word}” only if the question concerns its meaning${conciseDefinition ? ` — ${conciseDefinition}` : ''}. Support it with a verified Indian example, policy, constitutional provision or data; avoid decorative jargon.`,
         ex3: `PYQ check: Search official UPSC papers for ${gsPaper}. No specific PYQ link is asserted for this term.`
       };
