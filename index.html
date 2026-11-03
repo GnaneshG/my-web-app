@@ -3298,7 +3298,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
         import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -3635,11 +3635,19 @@
             button.disabled = true;
             button.textContent = 'Updating…';
             try {
-                await resetApi('/api/verify-reset', { requestId: resetRequestId, otp, newPassword });
+                const data = await resetApi('/api/verify-reset', { requestId: resetRequestId, otp, newPassword });
                 if (generation !== resetGeneration) return;
                 document.getElementById('account-email-input').value = resetEmail;
                 closeReset();
-                setAccountError('Password updated. Sign in with your new password.', true);
+                if (typeof data.customToken === 'string' && data.customToken) {
+                    try {
+                        await signInWithCustomToken(auth, data.customToken);
+                    } catch (signInError) {
+                        setAccountError(`Password updated, but automatic sign-in failed. Sign in with your new password. ${signInError.message || ''}`.trim());
+                    }
+                } else {
+                    setAccountError('Password updated. Sign in with your new password.', true);
+                }
             } catch (error) {
                 if (generation === resetGeneration) setAccountError(error.message || 'Unable to reset your password.');
             } finally {
