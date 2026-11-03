@@ -3162,14 +3162,16 @@
             </div>
             
              <div id="admin-subjects-tab" class="admin-tab-content card-block p-8">
-                <h2 class="section-title mb-6">Add / Modify Subjects</h2>
+                <h2 class="section-title mb-3">Add / Modify Subjects</h2>
+                <p class="mb-6 text-sm text-muted">Subjects are shared with all accounts. Your syllabus completion progress remains private to your account.</p>
                 <form id="admin-subjects-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end mb-8"><input type="hidden" id="subject-id"><div><label for="admin-subject-name" class="text-sm font-medium text-body">Subject Name</label><input type="text" id="admin-subject-name" class="mt-1 w-full p-2 rounded-lg input-themed" required></div><div><label for="admin-subject-category" class="text-sm font-medium text-body">Exam Category</label><select id="admin-subject-category" class="mt-1 w-full p-2 rounded-lg input-themed"><option value="Prelims">Prelims</option><option value="Mains">Mains</option></select></div><button type="submit" class="text-white font-bold py-2 px-4 rounded-lg h-10 shadow-md btn-hover" style="background-color: var(--success-color-600);">Save Subject</button></form>
                 <h3 class="text-xl font-semibold text-header mb-4">Existing Subjects (Grouped by Exam Category; Drag to Reorder)</h3>
                 <div id="admin-subjects-table-container" class="overflow-x-auto"></div>
             </div>
 
             <div id="admin-topics-tab" class="admin-tab-content card-block p-8">
-                <h2 class="section-title mb-6">Add Topics & Microtopics</h2>
+                <h2 class="section-title mb-3">Add Topics & Microtopics</h2>
+                <p class="mb-3 text-sm text-muted">The syllabus topic list is shared with all accounts; each account’s completion progress is private.</p>
                 <p class="text-sm text-muted mb-4">Choose a syllabus subject and add a parent topic by itself, or include microtopics / subtopics now (one per line). You can return to an existing parent topic and add microtopics later. Each microtopic has its own completion progress.</p>
                 <form id="admin-topics-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-8"><input type="hidden" id="topic-id"><div><label for="admin-topic-subject" class="text-sm font-medium text-body">Syllabus Subject</label><select id="admin-topic-subject" class="mt-1 w-full p-2 rounded-lg input-themed" required></select></div><div><label for="admin-topic-parent" class="text-sm font-medium text-body">Parent Topic</label><select id="admin-topic-parent" class="mt-1 w-full p-2 rounded-lg input-themed" required><option value="" disabled selected>Select a subject first...</option></select></div><div id="admin-topic-new-parent-wrap" class="hidden md:col-span-2"><label for="admin-topic-new-parent" class="text-sm font-medium text-body">New Parent Topic</label><input type="text" id="admin-topic-new-parent" class="mt-1 w-full p-2 rounded-lg input-themed" placeholder="e.g., Fundamental Rights"></div>                <div class="md:col-span-2"><div class="mb-1 flex flex-wrap items-center justify-between gap-2"><label for="admin-topic-name" class="text-sm font-medium text-body">Microtopics / Subtopics (one per line)</label><button id="auto-classify-topic-btn" type="button" class="text-sm font-semibold" style="color: var(--primary-color-600);"><i class="fas fa-wand-magic-sparkles mr-1"></i>Auto-sort &amp; save</button></div><textarea id="admin-topic-name" rows="4" class="w-full p-2 rounded-lg input-themed" placeholder="Optional: add microtopics now, one per line&#10;Right to Equality&#10;Right to Freedom&#10;Right against Exploitation"></textarea><p class="mt-1 text-xs text-muted">Uses an offline UPSC keyword guide; review the suggested subject before saving.</p></div><div class="md:col-span-2 flex justify-end"><button type="submit" class="text-white font-bold py-2 px-5 rounded-lg min-h-10 shadow-md btn-hover" style="background-color: var(--primary-color-600);">Save Microtopics</button></div></form>
                 <h3 class="text-xl font-semibold text-header mb-4">Existing Topics & Microtopics (Drag to Reorder)</h3>
@@ -3177,7 +3179,8 @@
                 <div id="admin-topics-table-container" class="overflow-x-auto"></div>
             </div>
              <div id="admin-ncert-tab" class="admin-tab-content card-block p-8">
-                <h2 class="section-title mb-6">Add / Modify NCERT Books</h2>
+                <h2 class="section-title mb-3">Add / Modify NCERT Books</h2>
+                <p class="mb-6 text-sm text-muted">NCERT books and chapter lists are shared with all accounts. Your reading and revision progress stays private to your account.</p>
                 <form id="admin-ncert-form" class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end mb-8"><input type="hidden" id="ncert-book-id"><div><label for="admin-ncert-subject" class="text-sm font-medium text-body">Subject</label><select id="admin-ncert-subject" class="mt-1 w-full p-2 rounded-lg input-themed" required></select></div><div><label for="admin-ncert-book-name" class="text-sm font-medium text-body">Book Name</label><input type="text" id="admin-ncert-book-name" class="mt-1 w-full p-2 rounded-lg input-themed" required></div><div class="md:col-span-3"><label for="admin-ncert-chapters" class="text-sm font-medium text-body">Chapters (one per line)</label><textarea id="admin-ncert-chapters" rows="5" class="mt-1 w-full p-2 rounded-lg input-themed" placeholder="Chapter 1: Introduction..."></textarea></div><div class="md:col-start-3 flex justify-end"><button type="submit" class="text-white font-bold py-2 px-4 rounded-lg h-10 shadow-md btn-hover" style="background-color: var(--success-color-600);">Save NCERT</button></div></form>
                 <h3 class="text-xl font-semibold text-header mb-4">Existing NCERT Books</h3>
                 <div id="admin-ncert-table-container" class="overflow-x-auto"></div>
@@ -3315,12 +3318,16 @@
             'upsc_tracker_pomodoro_settings', 'upsc_tracker_pomodoro_logs',
             'upsc_tracker_custom_theme_color', 'upsc_tracker_pomodoro_sound', 'upsc_tracker_ui_sound',
             'upsc_tracker_lexicon', 'upsc_tracker_lexicon_brain',
-            'cse_lexicon_v5', 'cse_brain_v5', 'cse_lookup_history_v1'
+            'cse_lexicon_v5', 'cse_brain_v5', 'cse_lookup_history_v1',
+            'upsc_tracker_private_progress'
         ];
+        const sharedCatalogKeys = ['upsc_tracker_subjects', 'upsc_tracker_mark_subjects', 'upsc_tracker_topics', 'upsc_tracker_ncert'];
+        const PRIVATE_PROGRESS_KEY = 'upsc_tracker_private_progress';
         const nativeSetItem = Storage.prototype.setItem;
         const nativeRemoveItem = Storage.prototype.removeItem;
-        let auth, firestore, activeUser = null, unsubscribeCloud = null;
-        let cloudReady = false, appStarted = false, appInitialized = false, applyingCloudData = false, saveTimeout = null;
+        let auth, firestore, activeUser = null, unsubscribeCloud = null, unsubscribeShared = null;
+        let cloudReady = false, sharedCatalogReady = false, sharedCatalogExists = false, appStarted = false, appInitialized = false, applyingCloudData = false, saveTimeout = null, sharedSaveTimeout = null;
+        let currentSharedCatalog = null;
         let signupMode = false;
 
         function setAccountError(message = '', isSuccess = false) {
@@ -3340,6 +3347,84 @@
                     catch (_) { return [key, value]; }
                 }));
         }
+        function cleanSharedCatalog(catalog) {
+            const topics = Array.isArray(catalog?.topics) ? catalog.topics : [];
+            const books = Array.isArray(catalog?.ncert) ? catalog.ncert : [];
+            return {
+                subjects: Array.isArray(catalog?.subjects) ? catalog.subjects : [],
+                markSubjects: Array.isArray(catalog?.markSubjects) ? catalog.markSubjects : [],
+                topics: topics.filter(topic => topic && typeof topic === 'object').map(({ progress, ...topic }) => topic),
+                ncert: books.filter(book => book && typeof book === 'object').map(({ progress, chapters, ...book }) => ({
+                    ...book,
+                    chapters: Array.isArray(chapters) ? chapters.filter(chapter => chapter && typeof chapter === 'object')
+                        .map(({ progress: chapterProgress, ...chapter }) => chapter) : []
+                }))
+            };
+        }
+        function getSharedCatalog() {
+            const parse = key => {
+                try { return JSON.parse(localStorage.getItem(key) || '[]'); }
+                catch (_) { return []; }
+            };
+            return cleanSharedCatalog({
+                subjects: parse('upsc_tracker_subjects'),
+                markSubjects: parse('upsc_tracker_mark_subjects'),
+                topics: parse('upsc_tracker_topics'),
+                ncert: parse('upsc_tracker_ncert')
+            });
+        }
+        function getPrivateProgress() {
+            const parse = key => {
+                try { return JSON.parse(localStorage.getItem(key) || '[]'); }
+                catch (_) { return []; }
+            };
+            return {
+                topics: Object.fromEntries(parse('upsc_tracker_topics').filter(item => item?.id).map(item => [item.id, item.progress || []])),
+                ncert: Object.fromEntries(parse('upsc_tracker_ncert').filter(item => item?.id).map(book => [book.id, {
+                    progress: book.progress || [],
+                    chapters: Object.fromEntries((Array.isArray(book.chapters) ? book.chapters : []).filter(chapter => chapter?.id).map(chapter => [chapter.id, chapter.progress || []]))
+                }]))
+            };
+        }
+        function progressFromLegacyState(state) {
+            const topics = Array.isArray(state?.upsc_tracker_topics) ? state.upsc_tracker_topics : [];
+            const books = Array.isArray(state?.upsc_tracker_ncert) ? state.upsc_tracker_ncert : [];
+            return {
+                topics: Object.fromEntries(topics.filter(item => item?.id).map(item => [item.id, item.progress || []])),
+                ncert: Object.fromEntries(books.filter(item => item?.id).map(book => [book.id, {
+                    progress: book.progress || [],
+                    chapters: Object.fromEntries((Array.isArray(book.chapters) ? book.chapters : []).filter(chapter => chapter?.id).map(chapter => [chapter.id, chapter.progress || []]))
+                }]))
+            };
+        }
+        function applySharedCatalog(catalog, progress = getPrivateProgress()) {
+            const topics = Array.isArray(catalog?.topics) ? catalog.topics : [];
+            const books = Array.isArray(catalog?.ncert) ? catalog.ncert : [];
+            const mergedTopics = topics.map(topic => ({ ...topic, progress: progress.topics?.[topic.id] || Array(7).fill(false) }));
+            const mergedBooks = books.map(book => {
+                const privateBook = progress.ncert?.[book.id] || {};
+                return {
+                    ...book,
+                    progress: privateBook.progress || Array(5).fill(false),
+                    chapters: (Array.isArray(book.chapters) ? book.chapters : []).map(chapter => ({
+                        ...chapter,
+                        progress: privateBook.chapters?.[chapter.id] || Array(7).fill(false)
+                    }))
+                };
+            });
+            applyingCloudData = true;
+            nativeSetItem.call(localStorage, 'upsc_tracker_subjects', JSON.stringify(Array.isArray(catalog?.subjects) ? catalog.subjects : []));
+            nativeSetItem.call(localStorage, 'upsc_tracker_mark_subjects', JSON.stringify(Array.isArray(catalog?.markSubjects) ? catalog.markSubjects : []));
+            nativeSetItem.call(localStorage, 'upsc_tracker_topics', JSON.stringify(mergedTopics));
+            nativeSetItem.call(localStorage, 'upsc_tracker_ncert', JSON.stringify(mergedBooks));
+            applyingCloudData = false;
+        }
+        function getAccountCloudState() {
+            const state = getLocalState();
+            sharedCatalogKeys.forEach(key => delete state[key]);
+            state[PRIVATE_PROGRESS_KEY] = getPrivateProgress();
+            return state;
+        }
         function stableStringify(value) {
             if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
             if (value && typeof value === 'object') {
@@ -3354,9 +3439,25 @@
                 if (!activeUser || !cloudReady) return;
                 try {
                     const stateRef = doc(firestore, 'users', activeUser.uid, 'data', 'app');
-                    await setDoc(stateRef, { state: getLocalState(), updatedAt: serverTimestamp() });
+                    await setDoc(stateRef, { state: getAccountCloudState(), updatedAt: serverTimestamp() });
                 } catch (error) {
                     setAccountError(`Cloud save failed: ${error.message || 'Check your Firestore rules and connection.'}`);
+                }
+            }, 500);
+        }
+        function queueSharedCatalogSave() {
+            if (!activeUser || !sharedCatalogReady || applyingCloudData) return;
+            clearTimeout(sharedSaveTimeout);
+            sharedSaveTimeout = setTimeout(async () => {
+                if (!activeUser || !sharedCatalogReady) return;
+                try {
+                    const catalog = getSharedCatalog();
+                    if (stableStringify(catalog) === stableStringify(currentSharedCatalog)) return;
+                    const catalogRef = doc(firestore, 'shared', 'catalog');
+                    await setDoc(catalogRef, { catalog, updatedAt: serverTimestamp() });
+                    currentSharedCatalog = catalog;
+                } catch (error) {
+                    setAccountError(`Shared catalog save failed: ${error.message || 'Check Firestore rules for shared catalog access.'}`);
                 }
             }, 500);
         }
@@ -3382,11 +3483,17 @@
         });
         Storage.prototype.setItem = function(key, value) {
             nativeSetItem.call(this, key, value);
-            if (this === localStorage && cloudKeys.includes(String(key))) queueCloudSave();
+            if (this === localStorage && cloudKeys.includes(String(key))) {
+                queueCloudSave();
+                if (sharedCatalogKeys.includes(String(key))) queueSharedCatalogSave();
+            }
         };
         Storage.prototype.removeItem = function(key) {
             nativeRemoveItem.call(this, key);
-            if (this === localStorage && cloudKeys.includes(String(key))) queueCloudSave();
+            if (this === localStorage && cloudKeys.includes(String(key))) {
+                queueCloudSave();
+                if (sharedCatalogKeys.includes(String(key))) queueSharedCatalogSave();
+            }
         };
 
         function launchAppWhenReady() {
@@ -3609,9 +3716,15 @@
             onAuthStateChanged(auth, user => {
                 const previousUser = activeUser;
                 clearTimeout(saveTimeout);
+                clearTimeout(sharedSaveTimeout);
                 if (unsubscribeCloud) unsubscribeCloud();
+                if (unsubscribeShared) unsubscribeShared();
                 unsubscribeCloud = null;
+                unsubscribeShared = null;
                 cloudReady = false;
+                sharedCatalogReady = false;
+                sharedCatalogExists = false;
+                currentSharedCatalog = null;
                 appStarted = false;
                 activeUser = user;
                 if (!user) {
@@ -3628,43 +3741,77 @@
                 document.getElementById('account-email').textContent = user.email || 'Signed in';
                 setAccountError();
                 const stateRef = doc(firestore, 'users', user.uid, 'data', 'app');
-                let firstSnapshot = true;
-                unsubscribeCloud = onSnapshot(stateRef, snapshot => {
-                    const state = snapshot.exists() && snapshot.data().state && typeof snapshot.data().state === 'object'
-                        ? snapshot.data().state : {};
-                    const changed = snapshot.exists() && cloudKeys.some(key => {
-                        const storedValue = localStorage.getItem(key);
-                        let localValue = null;
-                        if (storedValue !== null) {
-                            try { localValue = JSON.parse(storedValue); }
-                            catch (_) { localValue = storedValue; }
+                const sharedRef = doc(firestore, 'shared', 'catalog');
+                let userSyncStarted = false;
+                const startUserSync = () => {
+                    if (userSyncStarted) return;
+                    userSyncStarted = true;
+                    let firstSnapshot = true;
+                    unsubscribeCloud = onSnapshot(stateRef, snapshot => {
+                        const state = snapshot.exists() && snapshot.data().state && typeof snapshot.data().state === 'object'
+                            ? snapshot.data().state : {};
+                        const changed = snapshot.exists() && stableStringify(getAccountCloudState()) !== stableStringify(state);
+                        if (!sharedCatalogExists) {
+                            const localCatalog = getSharedCatalog();
+                            currentSharedCatalog = cleanSharedCatalog(snapshot.exists() ? {
+                                subjects: Array.isArray(state['upsc_tracker_subjects']) ? state['upsc_tracker_subjects'] : localCatalog.subjects,
+                                markSubjects: Array.isArray(state['upsc_tracker_mark_subjects']) ? state['upsc_tracker_mark_subjects'] : localCatalog.markSubjects,
+                                topics: Array.isArray(state['upsc_tracker_topics']) ? state['upsc_tracker_topics'] : localCatalog.topics,
+                                ncert: Array.isArray(state['upsc_tracker_ncert']) ? state['upsc_tracker_ncert'] : localCatalog.ncert
+                            } : localCatalog);
+                            sharedCatalogExists = true;
+                            applySharedCatalog(currentSharedCatalog, state[PRIVATE_PROGRESS_KEY] || progressFromLegacyState(state));
+                            setDoc(sharedRef, { catalog: currentSharedCatalog, updatedAt: serverTimestamp() })
+                                .catch(error => setAccountError(`Could not initialize the shared catalog: ${error.message || 'Check Firestore rules.'}`));
                         }
-                        const remoteValue = Object.prototype.hasOwnProperty.call(state, key) ? state[key] : null;
-                        return stableStringify(localValue) !== stableStringify(remoteValue);
+                        if (snapshot.exists()) {
+                            const progress = state[PRIVATE_PROGRESS_KEY] && typeof state[PRIVATE_PROGRESS_KEY] === 'object'
+                                ? state[PRIVATE_PROGRESS_KEY] : progressFromLegacyState(state);
+                            applyingCloudData = true;
+                            cloudKeys.forEach(key => {
+                                if (sharedCatalogKeys.includes(key)) return;
+                                if (key === PRIVATE_PROGRESS_KEY) return;
+                                if (Object.prototype.hasOwnProperty.call(state, key)) {
+                                    nativeSetItem.call(localStorage, key, JSON.stringify(state[key]));
+                                } else {
+                                    nativeRemoveItem.call(localStorage, key);
+                                }
+                            });
+                            nativeSetItem.call(localStorage, PRIVATE_PROGRESS_KEY, JSON.stringify(progress));
+                            applyingCloudData = false;
+                            applySharedCatalog(currentSharedCatalog || getSharedCatalog(), progress);
+                        }
+                        cloudReady = true;
+                        notifyLexiconFrame();
+                        if (firstSnapshot) {
+                            firstSnapshot = false;
+                            launchAppWhenReady();
+                            if (!snapshot.exists() || !Object.prototype.hasOwnProperty.call(state, PRIVATE_PROGRESS_KEY)
+                                || sharedCatalogKeys.some(key => Object.prototype.hasOwnProperty.call(state, key))) queueCloudSave();
+                        } else if (changed && appStarted && typeof window.refreshTrackerData === 'function') {
+                            window.refreshTrackerData();
+                        }
+                    }, error => {
+                        cloudReady = false;
+                        setAccountError(`Could not load cloud data: ${error.message || 'Check your Firestore rules.'}`);
                     });
-                    if (snapshot.exists()) {
-                        applyingCloudData = true;
-                        cloudKeys.forEach(key => {
-                            if (Object.prototype.hasOwnProperty.call(state, key)) {
-                                nativeSetItem.call(localStorage, key, JSON.stringify(state[key]));
-                            } else {
-                                nativeRemoveItem.call(localStorage, key);
-                            }
-                        });
-                        applyingCloudData = false;
+                };
+                unsubscribeShared = onSnapshot(sharedRef, snapshot => {
+                    sharedCatalogExists = snapshot.exists();
+                    currentSharedCatalog = sharedCatalogExists && snapshot.data().catalog && typeof snapshot.data().catalog === 'object'
+                        ? cleanSharedCatalog(snapshot.data().catalog) : null;
+                    sharedCatalogReady = true;
+                    if (currentSharedCatalog) {
+                        applySharedCatalog(currentSharedCatalog, getPrivateProgress());
+                        if (appStarted && appInitialized && typeof window.refreshTrackerData === 'function') window.refreshTrackerData();
                     }
-                    cloudReady = true;
-                    notifyLexiconFrame();
-                    if (firstSnapshot) {
-                        firstSnapshot = false;
-                        launchAppWhenReady();
-                        if (!snapshot.exists()) queueCloudSave();
-                    } else if (changed && appStarted && typeof window.refreshTrackerData === 'function') {
-                        window.refreshTrackerData();
-                    }
+                    startUserSync();
                 }, error => {
-                    cloudReady = false;
-                    setAccountError(`Could not load cloud data: ${error.message || 'Check your Firestore rules.'}`);
+                    sharedCatalogReady = true;
+                    sharedCatalogExists = false;
+                    currentSharedCatalog = null;
+                    setAccountError(`Could not load the shared catalog: ${error.message || 'Check Firestore rules for shared catalog access.'}`);
+                    startUserSync();
                 });
             });
         } catch (error) {
