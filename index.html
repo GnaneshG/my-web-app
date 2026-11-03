@@ -3614,7 +3614,12 @@
                 setAccountError('If this email has an account, a code has been sent. Check your inbox and spam folder.', true);
                 document.getElementById('reset-code-input').focus();
             } catch (error) {
-                if (generation === resetGeneration) setAccountError(error.message || 'Unable to send the code.');
+                if (generation === resetGeneration) {
+                    const message = error instanceof TypeError
+                        ? 'Could not reach the password-reset Worker. Check the Worker URL, network connection, and its CORS settings for this website (including OPTIONS preflight and the Content-Type header).'
+                        : error.message || 'Unable to send the code.';
+                    setAccountError(message);
+                }
             } finally {
                 button.disabled = false;
                 button.textContent = 'Send code';
