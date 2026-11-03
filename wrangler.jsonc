@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tracker-reset",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-02",
+  "observability": {
+    "enabled": true
+  }
+}
