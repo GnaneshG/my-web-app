@@ -184,14 +184,35 @@ export default {
           return new Response(JSON.stringify({ success: false, error: "Invalid verification code." }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
+        const newPassword = body.newPassword;
+        if (typeof newPassword !== "string" || newPassword.length < 6) {
+          return new Response(JSON.stringify({ success: false, error: "A new password of at least 6 characters is required." }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
         let targetUid = null;
         if (env.FIREBASE_CLIENT_EMAIL && env.FIREBASE_PRIVATE_KEY) {
           targetUid = await getFirebaseUidByEmail(storedData.email, env.FIREBASE_CLIENT_EMAIL, env.FIREBASE_PRIVATE_KEY);
         }
 
         if (!targetUid) {
-          // Fixed invalid status -1 to valid 404 status code
           return new Response(JSON.stringify({ success: false, error: "User account not found in Firebase Auth." }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        const accessToken = await getGoogleOAuthAccessToken(env.FIREBASE_CLIENT_EMAIL, env.FIREBASE_PRIVATE_KEY);
+        if (!accessToken) {
+          return new Response(JSON.stringify({ success: false, error: "Could not authorize password update with Firebase Auth." }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        const passwordResponse = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ localId: targetUid, password: newPassword, returnSecureToken: false })
+        });
+        if (!passwordResponse.ok) {
+          console.error("Firebase password update failed:", passwordResponse.status, await passwordResponse.text());
+          return new Response(JSON.stringify({ success: false, error: "Firebase Auth could not update the password. Please try again." }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
         const customToken = await createFirebaseCustomToken(env.FIREBASE_CLIENT_EMAIL, env.FIREBASE_PRIVATE_KEY, targetUid);
