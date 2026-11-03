@@ -3644,14 +3644,16 @@
                 const data = await resetApi('/api/verify-reset', { requestId: resetRequestId, otp, newPassword });
                 if (generation !== resetGeneration) return;
                 document.getElementById('account-email-input').value = resetEmail;
-                closeReset();
                 if (typeof data.customToken === 'string' && data.customToken) {
                     try {
                         await signInWithCustomToken(auth, data.customToken);
+                        closeReset();
                     } catch (signInError) {
+                        closeReset();
                         setAccountError(`Password updated, but automatic sign-in failed. Sign in with your new password. ${signInError.message || ''}`.trim());
                     }
                 } else {
+                    closeReset();
                     setAccountError('Password updated. Sign in with your new password.', true);
                 }
             } catch (error) {
