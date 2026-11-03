@@ -3574,7 +3574,14 @@
                 signal: AbortSignal.timeout(30000)
             });
             const data = await response.json();
-            if (!response.ok || data.success !== true) throw new Error(data.error || 'Password recovery failed. Try again.');
+            const accountNotFoundMessage = 'No account found with this email address. Please sign up first or check your spelling.';
+            const workerMessage = typeof data.error === 'string' ? data.error : (typeof data.message === 'string' ? data.message : '');
+            const workerState = String(data.state || data.code || '').toUpperCase();
+            const accountNotFound = /no account found with this email address/i.test(workerMessage)
+                || ['ACCOUNT_NOT_FOUND', 'NO_ACCOUNT', 'USER_NOT_FOUND'].includes(workerState);
+            if (!response.ok || data.success !== true) {
+                throw new Error(accountNotFound ? accountNotFoundMessage : workerMessage || 'Password recovery failed. Try again.');
+            }
             return data;
         }
         document.getElementById('forgot-password-btn').addEventListener('click', openResetEmail);
