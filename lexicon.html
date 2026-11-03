@@ -911,6 +911,8 @@
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
   </style>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script defer src="./pdf-lexicon.js"></script>
   <link rel="stylesheet" href="./lexicon-ui.css">
 </head>
 <body>
@@ -990,6 +992,32 @@
         <div id="toastBanner"></div>
       </section>
 
+      <template id="lexicon-admin-tools-template">
+        <section class="console-card" aria-labelledby="lexicon-engine-heading">
+          <h2 id="lexicon-engine-heading" style="font-size:16px;font-weight:700;margin-bottom:4px;">AI lookup engine</h2>
+          <p style="color:var(--ink-3);margin-bottom:12px;">Set the HTTPS Worker endpoint used for Lexicon term analysis. Keep API secrets on the Worker; never enter them here.</p>
+          <form id="lexicon-engine-form" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <label for="lexicon-engine-url" style="flex:1 1 320px;">Worker endpoint<input id="lexicon-engine-url" type="url" inputmode="url" placeholder="https://your-worker.example.workers.dev/api/ai-lookup" style="margin-top:5px;" required></label>
+            <button class="btn btn-primary" type="submit">Save engine endpoint</button>
+          </form>
+          <p id="lexicon-engine-status" role="status" aria-live="polite" style="color:var(--ink-3);margin-top:8px;"></p>
+        </section>
+        <section class="console-card" data-admin-materials aria-labelledby="pdf-source-heading">
+          <h2 id="pdf-source-heading" style="font-size:16px;font-weight:700;margin-bottom:4px;">Upload trusted study material</h2>
+          <p style="color:var(--ink-3);margin-bottom:12px;">Admin-only tools: extract text from the first five PDF pages in this browser, review the citation, then add a sourced term to the Lexicon.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;align-items:end;">
+            <label for="pdf-upload">Study PDF<input type="file" id="pdf-upload" accept="application/pdf,.pdf" style="margin-top:5px;"></label>
+            <label for="pdf-term">Term from the PDF<input type="text" id="pdf-term" maxlength="120" placeholder="Enter a term to index" style="margin-top:5px;"></label>
+            <label for="pdf-category">GS category<select id="pdf-category" style="margin-top:5px;"><option>GS-1: Society &amp; Culture</option><option>GS-1: History &amp; Heritage</option><option>GS-1: Geography &amp; Society</option><option>GS-2: Polity &amp; Governance</option><option>GS-2: Social Justice</option><option>GS-2: International Relations</option><option>GS-3: Economy &amp; Dev</option><option>GS-3: Agriculture</option><option>GS-3: Environment &amp; Ecology</option><option>GS-3: Disaster Management</option><option>GS-3: Science &amp; Tech</option><option>GS-3: Internal Security</option><option>GS-4: Ethics &amp; Integrity</option><option>Essay &amp; Editorial Idioms</option></select></label>
+          </div>
+          <label for="pdf-excerpt" style="display:block;margin-top:10px;">Source excerpt <textarea id="pdf-excerpt" rows="4" readonly placeholder="Upload a text-based PDF to extract its first five pages." style="width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-app);color:var(--ink-1);font:inherit;resize:vertical;"></textarea></label>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <p id="pdf-source-status" role="status" aria-live="polite" style="color:var(--ink-3);">No PDF selected. Files remain in this browser during extraction.</p>
+            <button type="button" class="btn btn-primary" id="save-pdf-term-btn" disabled>Save sourced term</button>
+          </div>
+        </section>
+      </template>
+
       <section class="table-box">
         <div id="searchResults" aria-live="polite"></div>
         <div id="tableBody"></div>
@@ -1040,7 +1068,7 @@
   <input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)" />
 
   <script>
-    const SECURE_WORKER_URL = "https://tracker.studiz.workers.dev/api/ai-lookup";
+    let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || "https://tracker.studiz.workers.dev/api/ai-lookup";
     function bindBackToWebsiteLink() {
       const mode = new URLSearchParams(window.location.search).get('embed');
       const backToWebsiteButton = document.getElementById('back-to-website');
@@ -1054,6 +1082,7 @@
       }
 
       const isAdmin = mode === 'admin';
+      if (isAdmin) window.lexiconAdminMode = true;
       backToWebsiteButton.textContent = isAdmin ? '← Back to Admin Portal' : '←';
       backToWebsiteButton.setAttribute('aria-label', isAdmin ? 'Return to the admin portal' : 'Return to the main website');
       backToWebsiteButton.title = isAdmin ? 'Back to Admin Portal' : 'Back to main website';
@@ -1082,6 +1111,22 @@
     }
     bindBackToWebsiteLink();
 
+    document.addEventListener('submit', event => {
+      if (event.target.id !== 'lexicon-engine-form') return;
+      event.preventDefault();
+      const input = document.getElementById('lexicon-engine-url');
+      const status = document.getElementById('lexicon-engine-status');
+      try {
+        const endpoint = new URL(input.value.trim());
+        if (endpoint.protocol !== 'https:') throw new Error('Use an HTTPS Worker endpoint.');
+        SECURE_WORKER_URL = endpoint.href;
+        localStorage.setItem('cse_lexicon_engine_url', endpoint.href);
+        status.textContent = 'Engine endpoint saved on this device.';
+      } catch (error) {
+        status.textContent = error.message || 'Enter a valid HTTPS endpoint.';
+      }
+    });
+
     const GS_CATEGORIES = [
       'GS-1: Society & Culture',
       'GS-1: History & Heritage',
@@ -1103,6 +1148,7 @@
 
     function toggleAdminPortal() {
       isInAdminPortal = !isInAdminPortal;
+      window.lexiconAdminMode = isInAdminPortal;
       const mainTitle = document.getElementById('pageMainTitle');
       const subTitle = document.getElementById('pageSubtitle');
       const headerActions = document.getElementById('mainHeaderActions');
@@ -1120,8 +1166,9 @@
         stage.innerHTML = `
           <section class="console-card" style="padding: 24px;">
             <h2 style="font-family:'Newsreader',Georgia,serif; font-size:20px; margin-bottom:8px;">Admin General & Data Management</h2>
-            <p style="color:var(--ink-3); margin-bottom:20px;">Manage database backups, CSV exports, data restoration, and system configurations for UPSC CSE Lexicon.</p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+            <p style="color:var(--ink-3); margin-bottom:20px;">Manage database backups, CSV exports, data restoration, trusted study materials, and system configurations for UPSC CSE Lexicon.</p>
+            ${document.getElementById('lexicon-admin-tools-template')?.innerHTML || ''}
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin:24px 0;">
               <button class="btn btn-primary" onclick="exportCSV()">📥 Download CSV Dataset</button>
               <button class="btn" onclick="exportJSON()">💾 Download JSON Backup</button>
               <button class="btn" onclick="document.getElementById('importFile').click()">📂 Restore from Backup JSON</button>
@@ -1142,6 +1189,8 @@
             </div>
           </section>
         `;
+        const engineUrlInput = document.getElementById('lexicon-engine-url');
+        if (engineUrlInput) engineUrlInput.value = SECURE_WORKER_URL;
         document.getElementById('adminTotalTerms').textContent = db.length;
         document.getElementById('adminTotalBrain').textContent = Object.keys(brain).length;
       } else {
