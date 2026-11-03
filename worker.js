@@ -190,7 +190,8 @@ export default {
         }
 
         if (!targetUid) {
-          return new Response(JSON.stringify({ success: false, error: "User account not found in Firebase Auth." }), { status: -1, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          // Fixed invalid status -1 to valid 404 status code
+          return new Response(JSON.stringify({ success: false, error: "User account not found in Firebase Auth." }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
         const customToken = await createFirebaseCustomToken(env.FIREBASE_CLIENT_EMAIL, env.FIREBASE_PRIVATE_KEY, targetUid);
