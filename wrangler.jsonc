@@ -1,8 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tracker",
+  "name": "tracker-reset",
   "compatibility_date": "2026-11-02",
+  "main": "worker.js",
   "assets": {
     "directory": "."
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "RESET_STORE",
+      "id": "12803972c0834a7fac787c1addc9b900"
+    }
+  ]
 }
