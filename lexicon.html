@@ -1274,6 +1274,9 @@
       return /^(the hindu|the indian express|pib|economic survey|editorial focus|gs-\d|essay & ethics way forward|gs-\d+\/mains integration)/i.test(text)
         || text.includes('current-affairs context not supplied')
         || text.includes('no newspaper event is inferred')
+        || text.startsWith('no dated source added yet')
+        || /^mains use\s*\(/i.test(text)
+        || /^pyq check:/i.test(text)
         || text.startsWith('use the term to')
         || /:\s*use (?:it|the term) to /i.test(text)
         || text.startsWith('link it with pyqs')
@@ -1305,9 +1308,8 @@
           else if (!GS_CATEGORIES.includes(cat)) cat = 'Essay & Editorial Idioms';
 
           const savedNewspaperContext = item.ex1 || item.ex || '';
-          const keepNewspaperContext = savedNewspaperContext && !isLegacyGeneratedStudyText(savedNewspaperContext)
+          const savedNewspaper = savedNewspaperContext && !isLegacyGeneratedStudyText(savedNewspaperContext)
             ? savedNewspaperContext : '';
-          const trio = buildUPSCExamples(item.words || 'Term', item.eng || '', cat, keepNewspaperContext);
           const savedMains = item.ex2 && !isLegacyGeneratedStudyText(item.ex2) ? item.ex2 : '';
           const savedPYQ = item.ex3 && !isLegacyGeneratedStudyText(item.ex3) ? item.ex3 : '';
           return {
@@ -1323,9 +1325,9 @@
             syn: item.syn || '—',
             cat: cat,
             starred: Boolean(item.starred),
-            ex1: trio.ex1,
-            ex2: savedMains || trio.ex2,
-            ex3: savedPYQ || trio.ex3
+            ex1: savedNewspaper,
+            ex2: savedMains,
+            ex3: savedPYQ
           };
         });
       } catch (e) {
@@ -1565,18 +1567,22 @@
 
     async function getTamilTranslation(word, definition) {
       const isTamil = value => /[\u0B80-\u0BFF]/.test(String(value || ''));
+      const term = String(word || '').trim();
+      const cleanCandidate = value => normalizeTamil(String(value || '')
+        .replace(/^\s*(?:tamil\s+(?:translation|meaning)|translation|தமிழ்\s*(?:மொழிபெயர்ப்பு|பொருள்))\s*[:：-]\s*/i, '')
+        .replace(/^["“'‘]+|["”'’]+$/g, ''));
 
-      const textToTranslate = String(definition || word).trim();
+      // Translate the term, not its full definition, which would produce a sentence.
       const googleUrls = [
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(textToTranslate)}`,
-        `https://translate.google.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(textToTranslate)}`
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`,
+        `https://translate.google.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`
       ];
       for (const url of googleUrls) {
         try {
           const response = await fetchWithTimeout(url, {}, 5000);
           if (!response.ok) continue;
           const data = await response.json();
-          const translated = normalizeTamil((data?.[0] || []).map(part => part?.[0] || '').join(''));
+          const translated = cleanCandidate((data?.[0] || []).map(part => part?.[0] || '').join(''));
           if (isTamil(translated)) return { text: translated, source: 'Google Translate (machine translation)' };
         } catch (error) {}
       }
@@ -1587,12 +1593,18 @@
         const response = await fetchWithTimeout(SECURE_WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ task: 'translate_en_ta', word, definition, sourceLanguage: 'en', targetLanguage: 'ta' })
+          body: JSON.stringify({
+            task: 'translate_en_ta', word: term, term, definition,
+            instruction: 'Translate only the English term into a concise Tamil word or phrase. Return only the Tamil translation, with no explanation or sentence.',
+            sourceLanguage: 'en', targetLanguage: 'ta'
+          })
         }, 7000);
         if (response.ok) {
           const data = await response.json();
-          const candidate = normalizeTamil(data?.tamil || data?.translation || data?.translatedText || data?.result || '');
-          if (isTamil(candidate)) return { text: candidate, source: 'AI-assisted translation (unverified)' };
+          const candidate = cleanCandidate(data?.tamil || data?.translation || data?.translatedText || data?.result || '');
+          if (isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
+            return { text: candidate, source: 'AI-assisted translation (unverified)' };
+          }
         }
       } catch (error) {}
 
@@ -1769,8 +1781,9 @@
         syn: synonymText || '—',
         cat: detectedGS,
         starred: false,
-        // Restore all three UPSC study sections without inventing a newspaper citation or verbatim PYQ.
-        ...buildUPSCExamples(dictionaryWord, definitionText, detectedGS)
+        ex1: '',
+        ex2: '',
+        ex3: ''
       };
 
       db.push(newItem);
@@ -1884,8 +1897,6 @@
       if (!item) return;
 
       const oldCategory = item.cat;
-      const oldExample2 = item.ex2;
-      const oldExample3 = item.ex3;
       item.words = document.getElementById('editWords').value.trim() || item.words;
       item.pos = document.getElementById('editPos').value.trim();
       item.tamil = normalizeTamil(document.getElementById('editTamil').value) || '—';
@@ -1898,9 +1909,6 @@
       item.ex3 = document.getElementById('editExample3').value.trim();
 
       if (oldCategory !== item.cat) {
-        const categoryExamples = buildUPSCExamples(item.words, item.eng, item.cat, '');
-        if (item.ex2 === oldExample2) item.ex2 = categoryExamples.ex2;
-        if (item.ex3 === oldExample3) item.ex3 = categoryExamples.ex3;
         learnFromContext(item.words, item.eng, item.syn, item.cat);
       }
       saveAll();
@@ -1917,9 +1925,6 @@
       const target = db.find(i => i.id === id);
       if (target) {
         target.cat = newGS;
-        const updatedEx = buildUPSCExamples(target.words, target.eng, newGS, '');
-        target.ex2 = updatedEx.ex2;
-        target.ex3 = updatedEx.ex3;
         learnFromContext(target.words, target.eng, target.syn, newGS);
         saveAll();
         showToast(`Moved "${target.words}" to ${newGS} — Adaptive GS Brain updated.`);
@@ -2051,8 +2056,7 @@
       seeds.forEach(s => {
         const exists = db.some(i => normalizeTamil(i.tamil) === normalizeTamil(s.tamil) || i.words.toLowerCase().includes(s.words.split(',')[0].toLowerCase()));
         if (!exists) {
-          const ex = buildUPSCExamples(s.words, s.eng, s.cat, '');
-          db.push({ id: Date.now() + Math.random() * 1000, ...s, ...ex });
+          db.push({ id: Date.now() + Math.random() * 1000, ...s, ex1: '', ex2: '', ex3: '' });
           learnFromContext(s.words, s.eng, s.syn, s.cat);
           added++;
         }
@@ -2128,7 +2132,13 @@
 
       const synButtons = synList.length
         ? synList.map(s => `<button class="syn-clickable" onclick="chainSynonym(event, '${esc(s)}', '${esc(item.cat)}')" title="Click to translate & index '${esc(s)}'">+ ${esc(s)}</button>`).join('')
-        : '<span style="color:var(--ink-3)">—</span>';
+        : '';
+      const drawerContent = [
+        synList.length ? `<div class="drawer-meta-grid"><div><div class="d-label">Interactive Synonyms (Click any to index)</div><div>${synButtons}</div></div></div>` : '',
+        item.ex1 ? `<div class="ex-box"><div class="ex-head"><span>Newspaper / Editorial Context</span><span>Current affairs</span></div><div class="ex-body">${esc(item.ex1)}</div></div>` : '',
+        item.ex2 ? `<div class="ex-box"><div class="ex-head"><span>Mains Relevance</span><span>${esc(item.cat || 'GS')}</span></div><div class="ex-body">${esc(item.ex2)}</div></div>` : '',
+        item.ex3 ? `<div class="ex-box"><div class="ex-head"><span>PYQ Linkage</span><span>Theme guidance</span></div><div class="ex-body">${esc(item.ex3)}</div></div>` : ''
+      ].filter(Boolean);
 
       const gsOptions = GS_CATEGORIES.map(c => {
         const short = c.replace(': Society & Culture', ' Society').replace(': History & Heritage', ' History').replace(': Geography & Society', ' Geography').replace(': Polity & Governance', ' Polity').replace(': Social Justice', ' Social Justice').replace(': International Relations', ' IR').replace(': Economy & Dev', ' Economy').replace(': Agriculture', ' Agriculture').replace(': Environment & Ecology', ' Env').replace(': Disaster Management', ' Disaster').replace(': Science & Tech', ' S&T').replace(': Internal Security', ' Security').replace(': Ethics & Integrity', ' Ethics').replace('Essay & Editorial Idioms', 'Essay');
@@ -2166,29 +2176,7 @@
             </div>
           </div>
 
-          <div class="lex-drawer" onclick="event.stopPropagation()">
-            <div class="drawer-meta-grid">
-              <div>
-                <div class="d-label">Interactive Synonyms (Click any to index)</div>
-                <div>${synButtons}</div>
-              </div>
-            </div>
-
-            <div class="ex-trio">
-              <div class="ex-box">
-                <div class="ex-head"><span>Newspaper / Editorial Context</span><span>Current affairs</span></div>
-                <div class="ex-body">${esc(item.ex1 || 'Add a dated newspaper headline or article point using Edit.')}</div>
-              </div>
-              <div class="ex-box">
-                <div class="ex-head"><span>Mains Relevance</span><span>${esc(item.cat || 'GS')}</span></div>
-                <div class="ex-body">${esc(item.ex2 || 'Mains relevance has not been added yet.')}</div>
-              </div>
-              <div class="ex-box">
-                <div class="ex-head"><span>PYQ Linkage</span><span>Theme guidance</span></div>
-                <div class="ex-body">${esc(item.ex3 || 'PYQ linkage has not been added yet. Verify exact questions against official UPSC papers.')}</div>
-              </div>
-            </div>
-          </div>
+          ${drawerContent.length ? `<div class="lex-drawer" onclick="event.stopPropagation()"><div class="ex-trio">${drawerContent.join('')}</div></div>` : ''}
         </div>`;
     }
 
