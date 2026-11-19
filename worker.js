@@ -105,11 +105,10 @@ export default {
       "http://127.0.0.1:3000"
     ];
     
-    const corsOrigin = allowedOrigins.includes(origin) ? origin : "https://tracker.studiz.workers.dev";
-
-    const corsHeaders = { 
-      "Access-Control-Allow-Origin": corsOrigin, 
-      "Access-Control-Allow-Methods": "POST, OPTIONS", 
+        const corsHeaders = {
+      // This endpoint uses no browser credentials; allow the hosted lexicon UI to call it.
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Max-Age": "86400"
     };
@@ -129,6 +128,74 @@ export default {
       }
 
       const body = await request.json().catch(() => ({}));
+
+      // Lexicon translation proxy: Google Translate first, then Gemini when configured.
+      if (url.pathname === "/api/ai-lookup" || url.pathname === "/ai-lookup") {
+        if (body.task !== "translate_en_ta") {
+          return new Response(JSON.stringify({ success: false, error: "Unsupported lookup task." }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        const term = String(body.word || body.term || "").trim().slice(0, 160);
+        if (!term) {
+          return new Response(JSON.stringify({ success: false, error: "An English term is required." }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        const hasTamil = value => /[\\u0B80-\\u0BFF]/.test(String(value || ""));
+        try {
+          const googleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`;
+          const googleResponse = await fetch(googleUrl);
+          if (googleResponse.ok) {
+            const googleData = await googleResponse.json();
+            const tamil = (googleData?.[0] || []).map(part => part?.[0] || "").join("").trim();
+            if (hasTamil(tamil)) {
+              return new Response(JSON.stringify({ success: true, tamil, source: "Google Translate" }), {
+                status: 200,
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+              });
+            }
+          }
+        } catch (error) {
+          console.warn("Google Translate proxy failed:", error);
+        }
+
+        if (env.GEMINI_API_KEY) {
+          try {
+            const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(env.GEMINI_API_KEY)}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: `Translate the English term or short phrase below into concise, natural Tamil. Return only the Tamil translation, with no explanation.\n\nTerm: ${term}` }] }],
+                generationConfig: { temperature: 0.1, maxOutputTokens: 80 }
+              })
+            });
+            if (geminiResponse.ok) {
+              const geminiData = await geminiResponse.json();
+              const tamil = (geminiData?.candidates?.[0]?.content?.parts || []).map(part => part?.text || "").join("").trim();
+              if (hasTamil(tamil) && tamil.length <= 140 && !/[.!?\\n\\r]/.test(tamil)) {
+                return new Response(JSON.stringify({ success: true, tamil, source: "Gemini (unverified)" }), {
+                  status: 200,
+                  headers: { ...corsHeaders, "Content-Type": "application/json" }
+                });
+              }
+            } else {
+              console.warn("Gemini translation request failed:", geminiResponse.status);
+            }
+          } catch (error) {
+            console.warn("Gemini translation proxy failed:", error);
+          }
+        }
+
+        return new Response(JSON.stringify({ success: false, error: "Translation providers returned no Tamil translation." }), {
+          status: 502,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
 
       // ROUTE 1: Send OTP
       if (url.pathname === "/api/send-otp" || url.pathname === "/send-otp") {
