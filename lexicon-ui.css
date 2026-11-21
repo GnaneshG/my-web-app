@@ -1,4 +1,4 @@
-/* Unified Lexicon Workspace & Card Styling */
+/* Unified Lexicon Workspace & Card Styling (lexicon-ui.css) */
 :root:not([data-theme="dark"]) {
   --bg-app: #f5f8ff;
   --bg-panel: #ffffff;
@@ -15,7 +15,10 @@
   --tamil-soft: #e7f7ef;
   --gold: #b96b16;
   --gold-soft: #fff3df;
-  --shadow-sm: 0 10px 26px rgba(49, 72, 135, .09);
+  --danger: #c9342d;
+  --shadow-sm: 0 10px 26px rgba(49, 72, 135, 0.09);
+  --radius: 14px;
+  --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 :root[data-theme="dark"] {
@@ -29,39 +32,102 @@
   --border: #35405b;
   --border-strong: #485575;
   --brand: #aaa5ff;
-  --brand-soft: rgba(132, 125, 255, .18);
+  --brand-soft: rgba(132, 125, 255, 0.18);
   --tamil: #69d4b2;
-  --tamil-soft: rgba(36, 174, 133, .13);
+  --tamil-soft: rgba(36, 174, 133, 0.13);
   --gold: #ffc477;
-  --gold-soft: rgba(255, 175, 75, .12);
-  --shadow-sm: 0 10px 26px rgba(0, 0, 0, .22);
+  --gold-soft: rgba(255, 175, 75, 0.12);
+  --danger: #ff6961;
+  --shadow-sm: 0 10px 26px rgba(0, 0, 0, 0.22);
+  --radius: 14px;
+  --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-html, body { background-color: var(--bg-app); }
+html,
+body {
+  background-color: var(--bg-app);
+  color: var(--ink-1);
+}
+
 :root:not([data-theme="dark"]) body {
-  background-image: radial-gradient(ellipse at 5% 0%, rgba(107, 153, 255, .16), transparent 32%),
-                    radial-gradient(ellipse at 98% 26%, rgba(255, 190, 113, .13), transparent 27%),
-                    linear-gradient(145deg, #fbfcff, #f2f6ff 62%, #fff9f0);
-  background-attachment: fixed;
-}
-:root[data-theme="dark"] body {
-  background-image: radial-gradient(ellipse at 8% 0%, rgba(91, 84, 201, .17), transparent 34%),
-                    radial-gradient(ellipse at 95% 24%, rgba(239, 157, 78, .08), transparent 28%),
-                    linear-gradient(145deg, #111827, #171d2c);
+  background-image:
+    radial-gradient(ellipse at 5% 0%, rgba(107, 153, 255, 0.16), transparent 32%),
+    radial-gradient(ellipse at 98% 26%, rgba(255, 190, 113, 0.13), transparent 27%),
+    linear-gradient(145deg, #fbfcff, #f2f6ff 62%, #fff9f0);
   background-attachment: fixed;
 }
 
+:root[data-theme="dark"] body {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgba(91, 84, 201, 0.17), transparent 34%),
+    radial-gradient(ellipse at 95% 24%, rgba(239, 157, 78, 0.08), transparent 28%),
+    linear-gradient(145deg, #111827, #171d2c);
+  background-attachment: fixed;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand) 68%, #ef9d4e);
+  outline-offset: 2px;
+}
+
+/* Top Navigation Bar */
 .topbar {
   background: color-mix(in srgb, var(--bg-panel) 90%, transparent);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 5px 22px rgba(44, 70, 130, .08);
+  box-shadow: 0 5px 22px rgba(44, 70, 130, 0.08);
 }
-.topbar-inner { max-width: 1720px; min-width: 0; padding: 10px clamp(12px, 2vw, 28px); }
-.brand-group { min-width: 0; flex-wrap: wrap; }
-:root:not([data-theme="dark"]) .brand-title { color: #243778; }
-:root:not([data-theme="dark"]) .brand-tag { background: linear-gradient(120deg, #edf0ff, #f3eaff); color: #5943bc; }
-.action-cluster { min-width: 0; }
 
+.topbar-inner {
+  max-width: 1720px;
+  min-width: 0;
+  padding: 10px clamp(12px, 2vw, 28px);
+}
+
+.brand-group {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+:root:not([data-theme="dark"]) .brand-title {
+  color: #243778;
+}
+
+:root:not([data-theme="dark"]) .brand-tag {
+  background: linear-gradient(120deg, #edf0ff, #f3eaff);
+  color: #5943bc;
+}
+
+.action-cluster {
+  min-width: 0;
+}
+
+/* Buttons & Controls */
+.btn,
+.nav-item,
+.az-btn,
+.syn-clickable,
+.lex-summary {
+  transition-timing-function: var(--ease-fluid);
+}
+
+:root:not([data-theme="dark"]) .btn-primary,
+:root:not([data-theme="dark"]) .btn-primary.active,
+:root:not([data-theme="dark"]) .az-btn.active {
+  background: linear-gradient(115deg, #4359db, #7651d4);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(77, 77, 195, 0.22);
+}
+
+:root[data-theme="dark"] .btn-primary,
+:root[data-theme="dark"] .btn-primary.active,
+:root[data-theme="dark"] .az-btn.active {
+  background: linear-gradient(115deg, #5d57e6, #7a63eb);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+/* Bento Workspace Layout */
 .workspace {
   width: min(100%, 1720px);
   grid-template-columns: minmax(220px, 270px) minmax(0, 1fr);
@@ -75,54 +141,96 @@ html, body { background-color: var(--bg-app); }
   align-content: start;
   gap: 12px;
   padding: 14px;
+  border: 1px solid var(--border);
   border-radius: 18px;
-  border-color: var(--border);
   box-shadow: var(--shadow-sm);
 }
+
 :root:not([data-theme="dark"]) .sidebar {
   border-top: 3px solid #596be0;
-  background: linear-gradient(145deg, #fff, #f8faff);
+  background: linear-gradient(145deg, #ffffff, #f8faff);
 }
+
 .sidebar > .side-heading,
 .sidebar > .nav-list,
 .sidebar > .brain-box,
-.sidebar > .sidebar-starter-wrap {
+.sidebar > .sidebar-starter-wrap,
+.sidebar > div[style*="margin-top:12px"] {
   margin: 0;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: var(--bg-panel);
 }
-.sidebar > .side-heading { padding-bottom: 6px; border: 0; background: transparent; }
-.nav-list { display: grid; gap: 5px; }
-.nav-item { min-width: 0; border-radius: 10px; }
-:root:not([data-theme="dark"]) .nav-item.active { background: linear-gradient(110deg, #edf0ff, #f4edff); color: #4d4bc2; }
-.brain-box { min-width: 0; }
-:root:not([data-theme="dark"]) .brain-box { border-color: #d7e9e4; background: linear-gradient(145deg, #eefaf5, #f7fcff); }
 
-.main-stage { min-width: 0; gap: 14px; }
+.sidebar > .side-heading {
+  padding-bottom: 6px;
+  border: 0;
+  background: transparent;
+}
+
+.nav-list {
+  display: grid;
+  gap: 5px;
+}
+
+.nav-item {
+  min-width: 0;
+  border-radius: 10px;
+}
+
+:root:not([data-theme="dark"]) .nav-item.active {
+  background: linear-gradient(110deg, #edf0ff, #f4edff);
+  color: #4d4bc2;
+}
+
+.brain-box {
+  min-width: 0;
+}
+
+:root:not([data-theme="dark"]) .brain-box {
+  border-color: #d7e9e4;
+  background: linear-gradient(145deg, #eefaf5, #f7fcff);
+}
+
+/* Main Console & Search */
+.main-stage {
+  min-width: 0;
+  gap: 14px;
+}
+
 .console-card {
   position: relative;
   top: auto;
   z-index: 2;
   padding: clamp(12px, 1.5vw, 18px);
-  border-color: var(--border);
+  border: 1px solid var(--border);
   border-radius: 18px;
   background: color-mix(in srgb, var(--bg-panel) 96%, transparent);
   box-shadow: var(--shadow-sm);
 }
-.input-grid { gap: 10px; }
-#wordInput { min-width: 0; }
-.az-ribbon { margin-top: 10px; }
 
-:root:not([data-theme="dark"]) .btn-primary,
-:root:not([data-theme="dark"]) .az-btn.active {
-  background: linear-gradient(115deg, #4359db, #7651d4);
-  border-color: transparent;
-  box-shadow: 0 6px 16px rgba(77, 77, 195, .22);
+:root:not([data-theme="dark"]) .console-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 255, 0.97));
 }
 
-.table-box { min-width: 0; }
+.input-grid {
+  gap: 10px;
+}
+
+#wordInput {
+  min-width: 0;
+}
+
+.az-ribbon {
+  margin-top: 10px;
+}
+
+/* Dictionary Section Headers & Card Grid */
+.table-box {
+  min-width: 0;
+}
+
 .section-divider {
   margin-top: 20px;
   border: 0;
@@ -148,22 +256,50 @@ html, body { background-color: var(--bg-app); }
   border-left: 3px solid color-mix(in srgb, var(--brand) 75%, #5869df);
   border-radius: 14px;
   background: var(--bg-panel);
-  box-shadow: 0 5px 16px rgba(44, 66, 122, .06);
-  transition: border-color 160ms cubic-bezier(.2, .8, .2, 1), background-color 160ms cubic-bezier(.2, .8, .2, 1), box-shadow 160ms cubic-bezier(.2, .8, .2, 1);
+  box-shadow: 0 5px 16px rgba(44, 66, 122, 0.06);
+  transition:
+    border-color 160ms var(--ease-fluid),
+    background-color 160ms var(--ease-fluid),
+    box-shadow 160ms var(--ease-fluid);
 }
-:root:not([data-theme="dark"]) .lex-item { background: linear-gradient(145deg, #fff, #f9faff); }
-.lex-item:nth-child(3n + 2) { border-left-color: #14947d; }
-.lex-item:nth-child(3n) { border-left-color: #e89a42; }
+
+:root:not([data-theme="dark"]) .lex-item {
+  background: linear-gradient(145deg, #ffffff, #f9faff);
+}
+
+.lex-item:nth-child(3n + 2) {
+  border-left-color: #14947d;
+}
+
+.lex-item:nth-child(3n) {
+  border-left-color: #e89a42;
+}
+
 .lex-item:hover {
   border-color: color-mix(in srgb, var(--brand) 48%, var(--border));
-  box-shadow: 0 12px 25px rgba(57, 75, 145, .12);
+  box-shadow: 0 12px 25px rgba(57, 75, 145, 0.12);
 }
 
-.lex-summary { height: 100%; gap: 7px; padding: 15px 17px; }
-.lex-item.open .lex-summary { height: auto; }
-.lex-summary-top { min-height: 28px; align-items: center; }
-.w-main { font-size: 17px; }
+.lex-summary {
+  height: 100%;
+  gap: 7px;
+  padding: 15px 17px;
+}
 
+.lex-item.open .lex-summary {
+  height: auto;
+}
+
+.lex-summary-top {
+  min-height: 28px;
+  align-items: center;
+}
+
+.w-main {
+  font-size: 17px;
+}
+
+/* Tamil Meaning Block */
 .lex-summary .c-tamil-box {
   display: block;
   padding: 8px 11px;
@@ -171,65 +307,35 @@ html, body { background-color: var(--bg-app); }
   border-radius: 9px;
   background: var(--tamil-soft);
 }
+
 :root:not([data-theme="dark"]) .lex-summary .c-tamil-box {
   background: linear-gradient(110deg, #e8f8ef, #f5fcf7);
 }
+
 .lex-summary .c-tamil {
   display: block;
   font-family: "Noto Sans Tamil", "Hind Madurai", sans-serif;
   font-size: 17px;
+  font-weight: 600;
   line-height: 1.85;
   color: var(--tamil);
 }
-.t-nuance { font-family: "Noto Sans Tamil", "Hind Madurai", sans-serif; }
-.lex-summary .c-def { display: block; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; }
-.lex-summary > .c-def .d-label { display: block; margin-bottom: 3px; }
-.c-def-text { line-height: 1.6; }
-.lex-item:not(.open) .c-meta { display: none; }
 
-.lex-drawer {
-  padding: 14px;
-  border-top: 1px solid var(--border);
-  border-radius: 0 0 13px 13px;
-  background: var(--bg-subtle);
+.t-nuance {
+  font-family: "Noto Sans Tamil", "Hind Madurai", sans-serif;
 }
-.drawer-meta-grid { gap: 8px; }
 
-.ex-trio {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: 10px;
-  align-items: stretch;
-}
-.ex-box {
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--brand);
-  border-radius: 11px;
-  background: var(--bg-panel);
-  box-shadow: 0 4px 12px rgba(48, 68, 116, .05);
-}
-.ex-box:nth-child(1) { border-top: 2px solid #596be0; }
-.ex-box:nth-child(2) { border-left-color: #8153d5; border-top: 2px solid #e89a42; }
-.ex-box:nth-child(3) { border-left-color: #26966a; border-top: 2px solid #159271; }
-.ex-head { color: var(--brand); }
-
-.syn-clickable { border-color: var(--border-strong); background: var(--brand-soft); color: var(--brand); }
-.syn-clickable:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
-
-#searchResults { min-width: 0; }
-#searchResults .lex-grid-container { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
-#searchResults .lex-item.open { grid-column: 1 / -1; }
-:root:not([data-theme="dark"]) #searchResults .lex-item { border-color: #8899ec; background: linear-gradient(135deg, #fff, #f3f5ff); }
-:root:not([data-theme="dark"]) #searchResults .search-result-heading { color: #4c55b9; border-left: 3px solid #e89a42; background: linear-gradient(100deg, #f0f2ff, #fff8ed); border-radius: 10px; }
-
-/* Incomplete Tamil translation state */
+/* Incomplete / Missing Tamil Translation State */
 .lex-summary .c-tamil-box.is-empty {
   padding: 8px 11px;
   background: color-mix(in srgb, var(--bg-subtle) 72%, var(--bg-panel));
   border-left-color: var(--border-strong);
 }
-.lex-summary .c-tamil-box.is-empty .d-label { margin-bottom: 3px; }
+
+.lex-summary .c-tamil-box.is-empty .d-label {
+  margin-bottom: 3px;
+}
+
 .tamil-empty-state {
   display: flex;
   align-items: center;
@@ -240,8 +346,19 @@ html, body { background-color: var(--bg-app); }
   font-size: 12px;
   line-height: 1.45;
 }
-.tamil-empty-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; }
-.tamil-translation-status { flex: 1 0 100%; color: var(--danger); font-size: 11.5px; }
+
+.tamil-empty-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tamil-translation-status {
+  flex: 1 0 100%;
+  color: var(--danger);
+  font-size: 11.5px;
+}
+
 .tamil-add-btn {
   flex: 0 0 auto;
   padding: 4px 9px;
@@ -254,88 +371,494 @@ html, body { background-color: var(--bg-app); }
   font-weight: 650;
   cursor: pointer;
 }
-.tamil-add-btn:hover { background: var(--brand-soft); }
-.tamil-add-btn:disabled { opacity: .6; cursor: wait; }
 
-/* PDF Study Upload Panel */
-.study-upload-card h2 { margin-bottom: 4px; font-size: 16px; font-weight: 700; color: var(--ink-1); }
-.study-upload-help { margin-bottom: 12px; color: var(--ink-3); font-size: 12.5px; }
-.study-upload-controls { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
-.study-upload-controls label { flex: 1 1 260px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
-.study-upload-controls input { display: block; margin-top: 5px; }
-.study-upload-controls .btn { justify-content: center; }
-.study-upload-status { margin-top: 9px; color: var(--ink-3); font-size: 12px; }
-.study-excerpt-label { display: block; margin-top: 10px; color: var(--ink-2); font-size: 12px; font-weight: 650; }
-.study-excerpt-label textarea { display: block; width: 100%; min-height: 90px; margin-top: 5px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-app); color: var(--ink-2); font: inherit; font-size: 12px; resize: vertical; }
-.study-upload-results { margin-top: 14px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-panel); color: var(--ink-2); }
-.study-upload-results h3 { margin: 0 0 6px; color: var(--ink-1); font-size: 14px; }
-.study-upload-results h4 { margin: 12px 0 4px; color: var(--brand); font-size: 12px; }
-.study-upload-results p, .study-upload-results li { font-size: 12.5px; line-height: 1.6; }
-.study-upload-results ul { padding-left: 20px; }
-.study-upload-results .ai-draft-note { margin-top: 10px; color: var(--ink-3); font-size: 11px; }
+.tamil-add-btn:hover {
+  background: var(--brand-soft);
+}
+
+.tamil-add-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* English Definition & Drawer Details */
+.lex-summary .c-def {
+  display: block;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.lex-summary > .c-def .d-label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.c-def-text {
+  line-height: 1.6;
+}
+
+.lex-item:not(.open) .c-meta {
+  display: none;
+}
+
+.lex-drawer {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 13px 13px;
+  background: var(--bg-subtle);
+}
+
+:root:not([data-theme="dark"]) .lex-drawer {
+  background: linear-gradient(145deg, #f2f5ff, #f7fbff);
+}
+
+.drawer-meta-grid {
+  gap: 8px;
+}
+
+.ex-trio {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.ex-box {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand);
+  border-radius: 11px;
+  background: var(--bg-panel);
+  box-shadow: 0 4px 12px rgba(48, 68, 116, 0.05);
+}
+
+.ex-box:nth-child(1) {
+  border-top: 2px solid #596be0;
+}
+
+.ex-box:nth-child(2) {
+  border-left-color: #8153d5;
+  border-top: 2px solid #e89a42;
+}
+
+.ex-box:nth-child(3) {
+  border-left-color: #26966a;
+  border-top: 2px solid #159271;
+}
+
+.ex-head {
+  color: var(--brand);
+}
+
+.syn-clickable {
+  border-color: var(--border-strong);
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.syn-clickable:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #ffffff;
+}
+
+/* Focused Search Results */
+#searchResults {
+  min-width: 0;
+}
+
+#searchResults .lex-grid-container {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+
+#searchResults .lex-item.open {
+  grid-column: 1 / -1;
+}
+
+:root:not([data-theme="dark"]) #searchResults .lex-item {
+  border-color: #8899ec;
+  background: linear-gradient(135deg, #ffffff, #f3f5ff);
+}
+
+:root:not([data-theme="dark"]) #searchResults .search-result-heading {
+  color: #4c55b9;
+  border-left: 3px solid #e89a42;
+  border-radius: 10px;
+  background: linear-gradient(100deg, #f0f2ff, #fff8ed);
+}
+
+/* Study PDF Upload & AI Analysis Card */
+.study-upload-card h2 {
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-1);
+}
+
+.study-upload-help {
+  margin-bottom: 12px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+
+.study-upload-controls {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.study-upload-controls label {
+  flex: 1 1 260px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+
+.study-upload-controls input {
+  display: block;
+  margin-top: 5px;
+}
+
+.study-upload-controls .btn {
+  justify-content: center;
+}
+
+.study-upload-status {
+  margin-top: 9px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.study-excerpt-label {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.study-excerpt-label textarea {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-app);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  resize: vertical;
+}
+
+.study-upload-results {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-panel);
+  color: var(--ink-2);
+}
+
+.study-upload-results h3 {
+  margin: 0 0 6px;
+  color: var(--ink-1);
+  font-size: 14px;
+}
+
+.study-upload-results h4 {
+  margin: 12px 0 4px;
+  color: var(--brand);
+  font-size: 12px;
+}
+
+.study-upload-results p,
+.study-upload-results li {
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.study-upload-results ul {
+  padding-left: 20px;
+}
+
+.study-upload-results .ai-draft-note {
+  margin-top: 10px;
+  color: var(--ink-3);
+  font-size: 11px;
+}
 
 /* Embedded Iframe Mode */
 html.embedded-lexicon,
-html.embedded-lexicon body { width: 100%; height: 100%; min-height: 0; overflow: hidden; }
-html.embedded-lexicon body { display: flex; flex-direction: column; background: var(--bg-app) !important; background-image: none !important; }
-html.embedded-lexicon .topbar { position: relative; flex: 0 0 auto; }
-html.embedded-lexicon .topbar-inner { width: 100%; padding: 8px clamp(12px, 1.5vw, 24px); gap: 7px 18px; }
-html.embedded-lexicon .brand-group { flex-wrap: nowrap; }
-html.embedded-lexicon .action-cluster { gap: 6px; }
-html.embedded-lexicon .action-cluster .btn { min-height: 34px; white-space: nowrap; }
+html.embedded-lexicon body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.embedded-lexicon body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app) !important;
+  background-image: none !important;
+}
+
+html.embedded-lexicon .topbar {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+html.embedded-lexicon .topbar-inner {
+  width: 100%;
+  padding: 8px clamp(12px, 1.5vw, 24px);
+  gap: 7px 18px;
+}
+
+html.embedded-lexicon .brand-group {
+  flex-wrap: nowrap;
+}
+
+html.embedded-lexicon .action-cluster {
+  gap: 6px;
+}
+
+html.embedded-lexicon .action-cluster .btn {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
 html.embedded-lexicon .workspace {
-  flex: 1 1 auto; width: 100%; max-width: none; min-height: 0; height: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  height: 0;
   padding: 12px clamp(12px, 1.5vw, 24px);
   grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
-  gap: 14px; align-items: stretch; overflow: hidden;
+  gap: 14px;
+  align-items: stretch;
+  overflow: hidden;
 }
-html.embedded-lexicon .sidebar { position: relative; top: auto; height: 100%; max-height: none; min-height: 0; overflow: auto; }
-html.embedded-lexicon .main-stage { height: 100%; min-height: 0; overflow: hidden; gap: 10px; }
-html.embedded-lexicon .console-card { flex: 0 0 auto; padding: 12px; }
-html.embedded-lexicon .table-box { flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; }
-html.embedded-lexicon .section-divider { margin-top: 10px; }
-html.embedded-lexicon .lex-grid-container { margin-bottom: 10px; }
-html.embedded-lexicon .lex-item { content-visibility: auto; contain-intrinsic-size: 150px; }
 
+html.embedded-lexicon .sidebar {
+  position: relative;
+  top: auto;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  overflow: auto;
+}
+
+html.embedded-lexicon .main-stage {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 10px;
+}
+
+html.embedded-lexicon .console-card {
+  flex: 0 0 auto;
+  padding: 12px;
+}
+
+html.embedded-lexicon .table-box {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+html.embedded-lexicon .section-divider {
+  margin-top: 10px;
+}
+
+html.embedded-lexicon .lex-grid-container {
+  margin-bottom: 10px;
+}
+
+html.embedded-lexicon .lex-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 150px;
+}
+
+/* Tablet Breakpoint */
 @media (max-width: 1024px) {
-  .workspace { grid-template-columns: minmax(0, 1fr); }
-  .sidebar { position: static; box-shadow: none; }
-  .sidebar > .nav-list { display: flex; overflow-x: auto; }
-  .nav-item { flex: 0 0 auto; }
-  .sidebar > .brain-box, .sidebar > .sidebar-starter-wrap { display: none; }
-  html.embedded-lexicon .topbar-inner { align-items: flex-start; }
-  html.embedded-lexicon .action-cluster { width: 100%; flex-wrap: nowrap; overflow-x: auto; padding: 1px 0 3px; scrollbar-width: thin; }
-  html.embedded-lexicon .workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 8px; }
-  html.embedded-lexicon .sidebar { width: 100%; height: auto; max-height: 24dvh; padding: 8px; overflow: hidden; }
-  html.embedded-lexicon .sidebar > .nav-list { display: flex; overflow-x: auto; padding: 6px; }
-  html.embedded-lexicon .main-stage { height: auto; }
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: static;
+    box-shadow: none;
+  }
+
+  .sidebar > .nav-list {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+  }
+
+  .sidebar > .brain-box,
+  .sidebar > .sidebar-starter-wrap,
+  .sidebar > div[style*="margin-top:12px"] {
+    display: none;
+  }
+
+  html.embedded-lexicon .topbar-inner {
+    align-items: flex-start;
+  }
+
+  html.embedded-lexicon .action-cluster {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 1px 0 3px;
+    scrollbar-width: thin;
+  }
+
+  html.embedded-lexicon .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  html.embedded-lexicon .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 24dvh;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  html.embedded-lexicon .sidebar > .nav-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 6px;
+  }
+
+  html.embedded-lexicon .main-stage {
+    height: auto;
+  }
 }
 
+/* Mobile Breakpoint */
 @media (max-width: 640px) {
-  .topbar-inner { padding: 9px 12px; align-items: flex-start; }
-  .brand-group { width: 100%; }
-  .action-cluster { width: 100%; flex-wrap: nowrap; overflow-x: auto; }
-  .workspace { gap: 10px; padding: 10px 10px 24px; }
-  .sidebar { padding: 9px; }
-  .sidebar > .side-heading { padding: 5px 7px; }
-  .sidebar > .nav-list { padding: 7px; }
-  .main-stage { gap: 10px; }
-  .console-card { padding: 10px; }
-  .input-grid { grid-template-columns: minmax(0, 1fr); }
-  .lex-grid-container, #searchResults .lex-grid-container { grid-template-columns: minmax(0, 1fr); }
-  #searchResults .lex-item.open { grid-column: auto; }
-  .ex-trio { grid-template-columns: minmax(0, 1fr); }
-  .study-upload-controls { align-items: stretch; }
-  .study-upload-controls .btn { width: 100%; }
-  html.embedded-lexicon .brand-group { width: 100%; justify-content: space-between; }
-  html.embedded-lexicon .brand-tag { max-width: 55vw; overflow: hidden; text-overflow: ellipsis; }
-  html.embedded-lexicon .workspace { padding: 8px; }
-  html.embedded-lexicon .sidebar { max-height: 20dvh; }
-  html.embedded-lexicon .console-card { padding: 9px; }
-  html.embedded-lexicon .az-ribbon { margin-top: 7px; }
+  .topbar-inner {
+    padding: 9px 12px;
+    align-items: flex-start;
+  }
+
+  .brand-group {
+    width: 100%;
+  }
+
+  .action-cluster {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .workspace {
+    gap: 10px;
+    padding: 10px 10px 24px;
+  }
+
+  .sidebar {
+    padding: 9px;
+  }
+
+  .sidebar > .side-heading {
+    padding: 5px 7px;
+  }
+
+  .sidebar > .nav-list {
+    padding: 7px;
+  }
+
+  .main-stage {
+    gap: 10px;
+  }
+
+  .console-card {
+    padding: 10px;
+  }
+
+  .input-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lex-summary {
+    padding: 12px;
+  }
+
+  .lex-grid-container,
+  #searchResults .lex-grid-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #searchResults .lex-item.open {
+    grid-column: auto;
+  }
+
+  .ex-trio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .study-upload-controls {
+    align-items: stretch;
+  }
+
+  .study-upload-controls .btn {
+    width: 100%;
+  }
+
+  html.embedded-lexicon .brand-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  html.embedded-lexicon .brand-tag {
+    max-width: 55vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.embedded-lexicon .workspace {
+    padding: 8px;
+  }
+
+  html.embedded-lexicon .sidebar {
+    max-height: 20dvh;
+  }
+
+  html.embedded-lexicon .console-card {
+    padding: 9px;
+  }
+
+  html.embedded-lexicon .az-ribbon {
+    margin-top: 7px;
+  }
 }
 
+/* Reduced Motion Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  .lex-item, .lex-item:hover { transform: none !important; }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .lex-item,
+  .lex-item:hover {
+    transform: none !important;
+  }
 }
