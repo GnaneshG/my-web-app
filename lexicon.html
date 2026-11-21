@@ -997,6 +997,20 @@
       }
     }
 
+    async function getSpellingCorrection(word) {
+      try {
+        const res = await fetchWithTimeout(
+          `https://api.datamuse.com/sug?s=${encodeURIComponent(word)}&max=3`, {}, 4000
+        );
+        if (!res.ok) return null;
+        const list = await res.json();
+        const top = Array.isArray(list) ? list.find(item => item.word && !item.word.includes(' ')) : null;
+        return top ? top.word : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
     async function getTamilTranslation(word, definition = '', pos = '') {
       const isTamil = value => /[\u0B80-\u0BFF]/.test(String(value || ''));
       const term = String(word || '').trim();
@@ -1020,7 +1034,6 @@
           const primaryRaw = (data?.[0] || []).map(part => part?.[0] || '').join('');
           const cleanedPrimary = cleanCandidate(primaryRaw.replace(/\s*\([^)]*\)\s*$/, ''));
 
-          // Extract alternate dictionary terms from dt=bd if available
           const altTerms = [];
           if (Array.isArray(data?.[1])) {
             for (const group of data[1]) {
@@ -1045,47 +1058,58 @@
         } catch (_) {}
       }
 
-      // 2. Fallback: Configured AI Worker (keeps Gemini secrets server-side)
-      try {
-        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            task: 'translate_en_ta',
-            word: term,
-            term,
-            pos,
-            definition,
-            instruction: 'Translate the English UPSC/editorial term into standard, formal Tamil used in Tamil Nadu government & newspaper glossaries. Return JSON with {"tamil": "exact Tamil term", "nuance": "1-2 short Tamil synonyms or context notes"}.',
-            sourceLanguage: 'en',
-            targetLanguage: 'ta'
-          })
-        }, 12000);
-        const data = await response.json().catch(() => ({}));
-        let rawResult = data?.tamil || data?.translation || data?.translatedText || data?.result || '';
-        let nuanceResult = data?.nuance || '';
+      // 2. Fallback: Configured AI Worker (with single retry on 503)
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              task: 'translate_en_ta',
+              word: term,
+              term,
+              pos,
+              definition,
+              instruction: 'Translate the English UPSC/editorial term into standard, formal Tamil used in Tamil Nadu government & newspaper glossaries. Return JSON with {"tamil": "exact Tamil term", "nuance": "1-2 short Tamil synonyms or context notes"}.',
+              sourceLanguage: 'en',
+              targetLanguage: 'ta'
+            })
+          }, 12000);
 
-        if (typeof rawResult === 'string' && rawResult.trim().startsWith('{')) {
-          try {
-            const parsed = JSON.parse(rawResult.replace(/^```(?:json)?\s*|\s*```$/gi, ''));
-            rawResult = parsed.tamil || parsed.translation || rawResult;
-            nuanceResult = parsed.nuance || nuanceResult;
-          } catch (_) {}
-        }
+          if (response.status === 503 && attempt === 0) {
+            await new Promise(r => setTimeout(r, 1200));
+            continue;
+          }
 
-        const candidate = cleanCandidate(rawResult);
-        const cleanedNuance = cleanCandidate(nuanceResult);
-        if (response.ok && isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
-          return {
-            text: candidate,
-            nuance: isTamil(cleanedNuance) ? cleanedNuance : '',
-            source: data.source || 'AI-assisted (unverified)'
-          };
+          const data = await response.json().catch(() => ({}));
+          let rawResult = data?.tamil || data?.translation || data?.translatedText || data?.result || '';
+          let nuanceResult = data?.nuance || '';
+
+          if (typeof rawResult === 'string' && rawResult.trim().startsWith('{')) {
+            try {
+              const parsed = JSON.parse(rawResult.replace(/^```(?:json)?\s*|\s*```$/gi, ''));
+              rawResult = parsed.tamil || parsed.translation || rawResult;
+              nuanceResult = parsed.nuance || nuanceResult;
+            } catch (_) {}
+          }
+
+          const candidate = cleanCandidate(rawResult);
+          const cleanedNuance = cleanCandidate(nuanceResult);
+          if (response.ok && isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
+            return {
+              text: candidate,
+              nuance: isTamil(cleanedNuance) ? cleanedNuance : '',
+              source: data.source || 'AI-assisted (unverified)'
+            };
+          }
+          return { text: '', nuance: '', source: '', error: data.error || `Translation service returned HTTP ${response.status}.` };
+        } catch (_) {
+          if (attempt === 1) {
+            return { text: '', nuance: '', source: '', error: 'Could not reach the translation service. Check the Worker endpoint and your connection.' };
+          }
         }
-        return { text: '', nuance: '', source: '', error: data.error || `Translation service returned HTTP ${response.status}.` };
-      } catch (_) {
-        return { text: '', nuance: '', source: '', error: 'Could not reach the translation service. Check the Worker endpoint and your connection.' };
       }
+      return { text: '', nuance: '', source: '', error: 'Translation service unavailable.' };
     }
 
     async function retryTamilTranslation(event, id) {
@@ -1207,8 +1231,10 @@
       return null;
     }
 
-    async function lookupEnglishDefinition(word) {
+    async function lookupEnglishDefinition(word, isRetry = false) {
       let servicesResponded = false;
+
+      // 1. Primary: Free Dictionary API
       try {
         const response = await fetchWithTimeout(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`, {}, 7000
@@ -1220,24 +1246,48 @@
         }
       } catch (_) {}
 
+      // 2. Secondary: Datamuse Definitions
       try {
         const parsed = await lookupDatamuseDefinition(word);
         servicesResponded = true;
         if (parsed) return { entry: parsed, servicesResponded: true };
       } catch (_) {}
 
-      try {
-        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ task: 'dictionary_definition', word, language: 'en', responseFormat: 'json' })
-        }, 12000);
-        servicesResponded = true;
-        if (response.ok) {
-          const parsed = extractWorkerDefinition(await response.json(), word);
-          if (parsed) return { entry: parsed, servicesResponded: true };
+      // 3. Auto-Spellcheck Retry (catches typos like "accrediation" -> "accreditation")
+      if (!isRetry && !word.includes(' ')) {
+        const corrected = await getSpellingCorrection(word);
+        if (corrected && corrected.toLowerCase() !== word.toLowerCase()) {
+          const retryResult = await lookupEnglishDefinition(corrected, true);
+          if (retryResult.entry) {
+            showToast(`Auto-corrected spelling: “${word}” ➔ “${corrected}”`);
+            return retryResult;
+          }
         }
-      } catch (_) {}
+      }
+
+      // 4. Fallback: Configured AI Worker (with single retry on 503)
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: 'dictionary_definition', word, language: 'en', responseFormat: 'json' })
+          }, 12000);
+          servicesResponded = true;
+          if (response.ok) {
+            const parsed = extractWorkerDefinition(await response.json(), word);
+            if (parsed) return { entry: parsed, servicesResponded: true };
+            break;
+          }
+          if (response.status === 503 && attempt === 0) {
+            await new Promise(r => setTimeout(r, 1200));
+            continue;
+          }
+          break;
+        } catch (_) {
+          break;
+        }
+      }
 
       return { entry: null, servicesResponded };
     }
@@ -1246,7 +1296,6 @@
       const cleanWord = String(rawTerm || '').trim().replace(/\s+/g, ' ');
       if (!cleanWord) return null;
 
-      // Check if word already exists before making redundant network requests
       const existingByWord = db.find(item =>
         String(item.words || '').split(',').some(word =>
           word.trim().toLowerCase() === cleanWord.toLowerCase()
@@ -1291,6 +1340,13 @@
         return { status: 'NO_DEFINITION' };
       }
 
+      const existingAfterCorrection = db.find(item =>
+        String(item.words || '').split(',').some(word =>
+          word.trim().toLowerCase() === dictionaryWord.toLowerCase()
+        )
+      );
+      if (existingAfterCorrection) return { status: 'EXISTS', item: existingAfterCorrection };
+
       const translation = await getTamilTranslation(dictionaryWord, standardDefinition, partOfSpeech);
       const tamilAvailable = Boolean(translation.text);
       const tamilMeaning = tamilAvailable ? normalizeTamil(translation.text) : '';
@@ -1301,7 +1357,7 @@
         ? overrideGS
         : classifyUPSC(dictionaryWord, standardDefinition, synonymText);
 
-      // Merge side-by-side if an existing entry has the exact same non-empty Tamil meaning
+      // Merge side-by-side if an existing entry shares the exact same Tamil meaning
       if (tamilMeaning) {
         const sameTamilEntry = db.find(item => normalizeTamil(item.tamil) === tamilMeaning);
         if (sameTamilEntry) {
@@ -1357,11 +1413,13 @@
       let lastResult = null;
       const results = [];
       for (const w of list) {
-        if (!lookupHistory.some(h => h.toLowerCase() === w.toLowerCase())) {
-          lookupHistory.unshift(w);
+        const res = await processSingleTerm(w, '', gsSelect ? gsSelect.value : 'AUTO');
+        const resolvedWord = res?.item?.words?.split(',')[0]?.trim() || w;
+        if (!lookupHistory.some(h => h.toLowerCase() === resolvedWord.toLowerCase())) {
+          lookupHistory.unshift(resolvedWord);
         }
-        lastResult = await processSingleTerm(w, '', gsSelect ? gsSelect.value : 'AUTO');
-        results.push(lastResult);
+        lastResult = res;
+        results.push(res);
         saveAll();
       }
       updateLookupHistoryUI();
@@ -1383,7 +1441,11 @@
         showToast(`Indexed "${lastResult.item.words}" with its English definition. Add Tamil meaning via Edit.`);
       }
 
-      if (wInput) wInput.value = list.length === 1 ? list[0] : raw;
+      if (wInput) {
+        wInput.value = (list.length === 1 && lastResult?.item?.words)
+          ? lastResult.item.words.split(',')[0].trim()
+          : (list.length === 1 ? list[0] : raw);
+      }
       if (btn) {
         btn.disabled = false;
         btn.textContent = '+ Analyze & Index';
@@ -1813,7 +1875,6 @@
       if (!body) return;
 
       if (q) {
-        // Rank exact term matches first, then prefix matches, then alphabetical
         filtered.sort((a, b) => {
           const aWords = a.words.toLowerCase().split(',').map(w => w.trim());
           const bWords = b.words.toLowerCase().split(',').map(w => w.trim());
@@ -1953,11 +2014,11 @@
     updateLookupHistoryUI();
   </script>
 
-  <!-- Firebase & Real-Time Cloud Sync Integration -->
+  <!-- Firebase & Real-Time Cloud Sync Integration (Long-Polling enabled for WebChannel stability) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { initializeFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-lexicon-app';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
@@ -1978,7 +2039,10 @@
 
     if (firebaseConfig) {
       const app = initializeApp(firebaseConfig);
-      const dbInstance = getFirestore(app);
+      const dbInstance = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+        useFetchStreams: false
+      });
       const auth = getAuth(app);
 
       const initAuth = async () => {
