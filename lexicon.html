@@ -1938,9 +1938,9 @@
         if (data.mainsRelevance) document.getElementById('editExample2').value = `Gemini draft — verify: ${data.mainsRelevance}`;
         if (data.pyqLinkage) document.getElementById('editExample3').value = `Gemini draft — verify against official UPSC papers: ${data.pyqLinkage}`;
         status.textContent = 'Draft generated. Check accuracy and edit it before saving; no current-affairs source was created.';
-      } catch (error) {
-        status.textContent = error.message || 'Gemini request failed. Check the secure Worker endpoint and try again.';
-      } finally {
+             } catch (error) {
+         status.textContent = error.message || 'Gemini request failed. Check that GEMINI_API_KEY is set as a secret on the Worker used by this Lexicon endpoint, then deploy the Worker again.';
+       } finally {
         button.disabled = false;
         button.textContent = '✨ Generate study notes with Gemini';
       }
