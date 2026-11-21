@@ -3,138 +3,6 @@
   const MAX_FILE_BYTES = 25 * 1024 * 1024;
   const MAX_EXCERPT_CHARS = 24000;
   const MAX_PAGES = 5;
-  let uploadedStudy = null;
-
-  function renderAnalysis(results, data) {
-    results.replaceChildren();
-    const addTextSection = (title, content) => {
-      if (!content) return;
-      const heading = document.createElement('h4');
-      heading.textContent = title;
-      const paragraph = document.createElement('p');
-      paragraph.textContent = content;
-      results.append(heading, paragraph);
-    };
-    const addListSection = (title, values) => {
-      if (!Array.isArray(values) || !values.length) return;
-      const heading = document.createElement('h4');
-      heading.textContent = title;
-      const list = document.createElement('ul');
-      values.forEach(value => {
-        const item = document.createElement('li');
-        item.textContent = String(value);
-        list.appendChild(item);
-      });
-      results.append(heading, list);
-    };
-    const title = document.createElement('h3');
-    title.textContent = 'Gemini study notes';
-    results.appendChild(title);
-    addTextSection('Summary', data.summary);
-    addListSection('Key terms', data.keyTerms);
-    addListSection('Revision points', data.studyPoints);
-    addListSection('Questions to review', data.questions);
-    const note = document.createElement('p');
-    note.className = 'ai-draft-note';
-    note.textContent = 'AI-generated draft based on the extracted text. Verify definitions, facts and any references before relying on them.';
-    results.appendChild(note);
-    results.hidden = false;
-  }
-
-  document.addEventListener('change', async event => {
-    const upload = event.target.closest?.('#study-material-upload');
-    if (!upload) return;
-    const section = upload.closest('.study-upload-card');
-    const status = section?.querySelector('#study-upload-status');
-    const preview = section?.querySelector('#study-upload-excerpt');
-    const button = section?.querySelector('#analyze-study-pdf');
-    const results = section?.querySelector('#study-upload-results');
-    if (!section || !status || !preview || !button) return;
-
-    uploadedStudy = null;
-    preview.value = '';
-    button.disabled = true;
-    if (results) { results.hidden = true; results.replaceChildren(); }
-    const file = upload.files?.[0];
-    if (!file) { status.textContent = 'No PDF selected.'; return; }
-    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-      status.textContent = 'Choose a PDF file.';
-      return;
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      status.textContent = 'This PDF is larger than 25 MB. Choose a smaller file.';
-      return;
-    }
-    if (!window.pdfjsLib) {
-      status.textContent = 'The PDF reader did not load. Check the PDF.js connection and try again.';
-      return;
-    }
-
-    status.textContent = 'Extracting text locally…';
-    try {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
-      const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-      const pagesToRead = Math.min(pdf.numPages, MAX_PAGES);
-      const pageTexts = [];
-      for (let pageNumber = 1; pageNumber <= pagesToRead; pageNumber++) {
-        const page = await pdf.getPage(pageNumber);
-        const content = await page.getTextContent();
-        pageTexts.push(`Page ${pageNumber}: ${content.items.map(item => item.str || '').join(' ')}`);
-      }
-      const text = pageTexts.join('\n\n').trim().slice(0, MAX_EXCERPT_CHARS);
-      if (!text) {
-        status.textContent = 'No selectable text was found. This may be a scanned PDF; OCR is not included.';
-        return;
-      }
-      uploadedStudy = { filename: file.name, text, pages: pagesToRead, totalPages: pdf.numPages };
-      preview.value = text;
-      button.disabled = false;
-      status.textContent = `Ready: extracted pages 1–${pagesToRead} of ${pdf.numPages}. The PDF stays in your browser; extracted text is sent for Gemini analysis when requested.`;
-    } catch (error) {
-      console.error('Study PDF text extraction failed:', error);
-      status.textContent = 'Could not read this PDF. It may be damaged, encrypted, or image-only.';
-    }
-  });
-
-  document.addEventListener('click', async event => {
-    const button = event.target.closest?.('#analyze-study-pdf');
-    if (!button) return;
-    const section = button.closest('.study-upload-card');
-    const status = section?.querySelector('#study-upload-status');
-    const results = section?.querySelector('#study-upload-results');
-    if (!section || !status || !results || !uploadedStudy) return;
-    if (typeof window.lexiconAIEndpoint !== 'function') {
-      status.textContent = 'The AI Worker endpoint is not available on this page.';
-      return;
-    }
-    button.disabled = true;
-    button.textContent = 'Analyzing…';
-    status.textContent = 'Sending extracted text to Gemini. Please wait…';
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000);
-    try {
-      const response = await fetch(window.lexiconAIEndpoint(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: 'document_analysis', filename: uploadedStudy.filename, text: uploadedStudy.text }),
-        signal: controller.signal
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.success) throw new Error(data.error || `Analysis failed (HTTP ${response.status}).`);
-      renderAnalysis(results, data);
-      status.textContent = `Analysis complete for ${uploadedStudy.filename} (pages 1–${uploadedStudy.pages} of ${uploadedStudy.totalPages}).`;
-    } catch (error) {
-      status.textContent = error.name === 'AbortError'
-        ? 'Analysis timed out. Check the AI Worker connection and try again.'
-        : error instanceof TypeError
-          ? 'Could not reach the AI Worker. Check the endpoint, internet connection, and CORS settings.'
-          : error.message || 'Could not analyze the PDF. Check the Worker endpoint and try again.';
-    } finally {
-      clearTimeout(timeoutId);
-      button.disabled = false;
-      button.textContent = '✨ Analyze with Gemini';
-    }
-  });
   const sources = new WeakMap();
 
   function isAdminSurface() {
@@ -181,8 +49,7 @@
     setStatus(section, 'Extracting text locally…');
     try {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
-      const task = window.pdfjsLib.getDocument({ data: await file.arrayBuffer() });
-      const pdf = await task.promise;
+      const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
       const pagesToRead = Math.min(pdf.numPages, MAX_PAGES);
       const pageTexts = [];
       for (let pageNumber = 1; pageNumber <= pagesToRead; pageNumber++) {
