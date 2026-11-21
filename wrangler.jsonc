@@ -13,7 +13,7 @@
     }
   ],
   "vars": {
-    "BREVO_SENDER_EMAIL": "your-verified-sender@example.com",
+    "BREVO_SENDER_EMAIL": "gnaneshwaran2020@gmail.com",
     "BREVO_SENDER_NAME": "TrackerCo Support",
     "GEMINI_MODEL": "gemini-2.5-flash"
   }
