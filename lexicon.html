@@ -2022,6 +2022,7 @@
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-lexicon-app';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+    const trackerEmbedded = ['main', 'admin'].includes(new URLSearchParams(window.location.search).get('embed'));
 
     function sanitizeForFirestore(obj) {
       if (obj === undefined) return null;
@@ -2037,7 +2038,8 @@
       return sanitized;
     }
 
-    if (firebaseConfig) {
+    // The parent tracker owns cloud state while embedded; use its postMessage sync bridge instead.
+    if (firebaseConfig && !trackerEmbedded) {
       const app = initializeApp(firebaseConfig);
       const dbInstance = initializeFirestore(app, {
         experimentalForceLongPolling: true,
