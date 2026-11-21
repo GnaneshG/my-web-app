@@ -394,20 +394,6 @@
     </div>
   </header>
 
-  <template id="lexicon-user-upload-template">
-    <section class="console-card study-upload-card" aria-labelledby="study-upload-heading">
-      <h2 id="study-upload-heading">📄 Analyze a study PDF with Gemini</h2>
-      <p class="study-upload-help">Choose a text-based PDF to get a concise summary, key terms and revision points. The PDF stays in your browser; text from its first five pages is sent to the configured AI Worker for analysis. AI output is a draft—verify facts and citations.</p>
-      <div class="study-upload-controls">
-        <label for="study-material-upload">Study PDF<input type="file" id="study-material-upload" accept="application/pdf,.pdf"></label>
-        <button type="button" class="btn btn-primary" id="analyze-study-pdf" disabled>✨ Analyze with Gemini</button>
-      </div>
-      <p id="study-upload-status" class="study-upload-status" role="status" aria-live="polite">No PDF selected. Maximum 25 MB; text is extracted from up to five pages.</p>
-      <label class="study-excerpt-label" for="study-upload-excerpt">Extracted text preview<textarea id="study-upload-excerpt" rows="4" readonly placeholder="Your extracted text preview will appear here."></textarea></label>
-      <div id="study-upload-results" class="study-upload-results" aria-live="polite" hidden></div>
-    </section>
-  </template>
-
   <div class="workspace">
     <aside class="sidebar" id="mainSidebar">
       <div class="side-heading">
@@ -533,9 +519,7 @@
         <label class="wide">Mains relevance<textarea id="editExample2"></textarea></label>
         <label class="wide">PYQ linkage / theme guidance (do not enter an invented question)<textarea id="editExample3"></textarea></label>
       </div>
-      <p id="gemini-enrichment-status" role="status" aria-live="polite" style="margin:14px 0 0;color:var(--ink-3);font-size:12px;"></p>
       <div class="edit-modal-actions" style="justify-content:space-between;flex-wrap:wrap;">
-        <button class="btn" type="button" id="gemini-enrichment-btn" onclick="generateGeminiStudyNotes(event)">✨ Generate study notes with Gemini</button>
         <span style="display:flex;gap:10px;">
           <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
           <button class="btn btn-primary" type="submit">Save changes</button>
@@ -553,14 +537,6 @@
     }
     let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || DEFAULT_LEXICON_AI_URL;
     window.lexiconAIEndpoint = () => SECURE_WORKER_URL;
-
-    function mountStudyUpload() {
-      const template = document.getElementById('lexicon-user-upload-template');
-      const stage = document.getElementById('mainStageArea');
-      const table = stage?.querySelector('.table-box');
-      if (!template || !stage || !table || stage.querySelector('#study-material-upload')) return;
-      stage.insertBefore(template.content.cloneNode(true), table);
-    }
 
     function bindBackToWebsiteLink() {
       const mode = new URLSearchParams(window.location.search).get('embed');
@@ -736,7 +712,6 @@
             <div id="tableBody"></div>
           </section>
         `;
-        mountStudyUpload();
         bindBackToWebsiteLink();
         updateLookupHistoryUI();
         render();
@@ -853,6 +828,9 @@
     try {
       lookupHistory = JSON.parse(localStorage.getItem('cse_lookup_history_v1') || '[]');
     } catch (e) { lookupHistory = []; }
+    let aiSearchMatchIds = null;
+    let aiSearchTimer = null;
+    let aiSearchRequest = 0;
 
     let selectedGS = 'ALL';
     let selectedLetter = 'ALL';
@@ -931,7 +909,25 @@
       saveAll();
     }
 
-    function classifyUPSC(word, def, syns) {
+    async function classifyUPSC(word, def, syns) {
+      try {
+        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            task: 'classify_subject',
+            word,
+            definition: def,
+            synonyms: syns
+          })
+        }, 12000);
+        const data = await response.json().catch(() => ({}));
+        if (response.ok && data.success && GS_CATEGORIES.includes(data.category)) return data.category;
+      } catch (_) {}
+      return classifyUPSCFallback(word, def, syns);
+    }
+
+    function classifyUPSCFallback(word, def, syns) {
       const text = `${word} ${def} ${syns}`.toLowerCase();
       const tokens = text.replace(/[^a-z\s]/g, ' ').split(/\s+/);
       const scores = {};
@@ -1360,7 +1356,7 @@
       const synonymText = synonyms.slice(0, 8).join(', ');
       const detectedGS = (overrideGS && overrideGS !== 'AUTO')
         ? overrideGS
-        : classifyUPSC(dictionaryWord, standardDefinition, synonymText);
+        : await classifyUPSC(dictionaryWord, standardDefinition, synonymText);
 
       // Merge side-by-side if an existing entry shares the exact same Tamil meaning
       if (tamilMeaning) {
@@ -1490,49 +1486,9 @@
       document.getElementById('editExample1').value = item.ex1 || '';
       document.getElementById('editExample2').value = item.ex2 || '';
       document.getElementById('editExample3').value = item.ex3 || '';
-      document.getElementById('gemini-enrichment-status').textContent = '';
-
       const modal = document.getElementById('editModal');
       if (modal && typeof modal.showModal === 'function') {
         modal.showModal();
-      }
-    }
-
-    async function generateGeminiStudyNotes(event) {
-      event.preventDefault();
-      const button = document.getElementById('gemini-enrichment-btn');
-      const status = document.getElementById('gemini-enrichment-status');
-      const word = document.getElementById('editWords').value.trim();
-      if (!word) {
-        status.textContent = 'Enter an English term before requesting AI notes.';
-        return;
-      }
-      button.disabled = true;
-      button.textContent = '✨ Generating…';
-      status.textContent = 'Gemini is preparing a draft. Review all AI-generated content before saving.';
-      try {
-        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            task: 'study_enrichment',
-            word,
-            definition: document.getElementById('editDefinition').value.trim(),
-            category: document.getElementById('editCategory').value,
-            tamil: document.getElementById('editTamil').value.trim()
-          })
-        }, 20000);
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || !data.success) throw new Error(data.error || 'Gemini could not generate study notes.');
-        if (data.nuance) document.getElementById('editNuance').value = data.nuance;
-        if (data.mainsRelevance) document.getElementById('editExample2').value = `Gemini draft — verify: ${data.mainsRelevance}`;
-        if (data.pyqLinkage) document.getElementById('editExample3').value = `Gemini draft — verify against official UPSC papers: ${data.pyqLinkage}`;
-        status.textContent = 'Draft generated. Check accuracy and edit before saving.';
-      } catch (error) {
-        status.textContent = error.message || 'Gemini request failed. Check the Worker configuration.';
-      } finally {
-        button.disabled = false;
-        button.textContent = '✨ Generate study notes with Gemini';
       }
     }
 
@@ -1646,6 +1602,39 @@
     }
 
     function handleSearchInput() {
+      clearTimeout(aiSearchTimer);
+      aiSearchMatchIds = null;
+      const query = document.getElementById('wordInput')?.value.trim() || '';
+      if (query.length >= 2 && !query.includes(',')) {
+        const requestId = ++aiSearchRequest;
+        aiSearchTimer = setTimeout(async () => {
+          try {
+            const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                task: 'word_search',
+                query,
+                entries: db.map(item => ({
+                  id: item.id,
+                  words: item.words,
+                  category: item.cat,
+                  definition: item.eng,
+                  synonyms: item.syn,
+                  tamil: item.tamil
+                }))
+              })
+            }, 12000);
+            const data = await response.json().catch(() => ({}));
+            if (requestId === aiSearchRequest && response.ok && data.success && Array.isArray(data.ids)) {
+              aiSearchMatchIds = new Set(data.ids);
+              render();
+            }
+          } catch (_) {}
+        }, 450);
+      } else {
+        aiSearchRequest++;
+      }
       render();
     }
 
@@ -1867,6 +1856,7 @@
         const matchLet = selectedLetter === 'ALL' || firstChar === selectedLetter;
         const matchStar = !onlyStarred || item.starred;
         const matchQ = !q ||
+          (aiSearchMatchIds && aiSearchMatchIds.has(String(item.id))) ||
           item.words.toLowerCase().includes(q) ||
           item.tamil.toLowerCase().includes(q) ||
           (item.nuance && item.nuance.toLowerCase().includes(q)) ||
@@ -2014,7 +2004,6 @@
       reader.readAsText(file);
     }
 
-    mountStudyUpload();
     render();
     updateLookupHistoryUI();
   </script>
