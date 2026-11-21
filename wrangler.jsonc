@@ -15,6 +15,6 @@
   "vars": {
     "BREVO_SENDER_EMAIL": "gnaneshwaran2020@gmail.com",
     "BREVO_SENDER_NAME": "TrackerCo Support",
-    "GEMINI_MODEL": "gemini-2.5-flash"
+    "GEMINI_MODEL": "gemini-3.8-flash"
   }
 }
