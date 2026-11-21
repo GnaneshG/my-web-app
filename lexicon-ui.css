@@ -534,3 +534,35 @@ html.embedded-lexicon .lex-item { content-visibility: auto; contain-intrinsic-si
   }
 }
 
+/* Keep incomplete translations useful without showing an empty-looking card. */
+.lex-summary .c-tamil-box.is-empty {
+  padding: 8px 11px;
+  background: color-mix(in srgb, var(--bg-subtle) 72%, var(--bg-panel));
+  border-left-color: var(--border-strong);
+}
+.lex-summary .c-tamil-box.is-empty .d-label { margin-bottom: 3px; }
+.tamil-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.tamil-add-btn {
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--brand) 32%, var(--border));
+  border-radius: 7px;
+  background: var(--bg-panel);
+  color: var(--brand);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.tamil-add-btn:hover { background: var(--brand-soft); }
+.lex-summary > .c-def .d-label { display: block; margin-bottom: 3px; }
+.c-def-text { line-height: 1.6; }
