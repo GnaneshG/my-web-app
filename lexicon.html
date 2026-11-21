@@ -934,6 +934,20 @@
     </div>
   </header>
 
+  <template id="lexicon-user-upload-template">
+    <section class="console-card study-upload-card" aria-labelledby="study-upload-heading">
+      <h2 id="study-upload-heading">📄 Analyze a study PDF with Gemini</h2>
+      <p class="study-upload-help">Choose a text-based PDF to get a concise summary, key terms and revision points. The PDF stays in your browser; text from its first five pages is sent to the configured AI Worker for analysis. AI output is a draft—verify facts and citations.</p>
+      <div class="study-upload-controls">
+        <label for="study-material-upload">Study PDF<input type="file" id="study-material-upload" accept="application/pdf,.pdf"></label>
+        <button type="button" class="btn btn-primary" id="analyze-study-pdf" disabled>✨ Analyze with Gemini</button>
+      </div>
+      <p id="study-upload-status" class="study-upload-status" role="status" aria-live="polite">No PDF selected. Maximum 25 MB; text is extracted from up to five pages.</p>
+      <label class="study-excerpt-label" for="study-upload-excerpt">Extracted text preview<textarea id="study-upload-excerpt" rows="4" readonly placeholder="Your extracted text preview will appear here."></textarea></label>
+      <div id="study-upload-results" class="study-upload-results" aria-live="polite" hidden></div>
+    </section>
+  </template>
+
   <div class="workspace">
     <aside class="sidebar" id="mainSidebar">
       <div class="side-heading">
@@ -1073,6 +1087,16 @@
 
   <script>
     let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || "https://tracker.studiz.workers.dev/api/ai-lookup";
+    window.lexiconAIEndpoint = () => SECURE_WORKER_URL;
+
+    function mountStudyUpload() {
+      const template = document.getElementById('lexicon-user-upload-template');
+      const stage = document.getElementById('mainStageArea');
+      const table = stage?.querySelector('.table-box');
+      if (!template || !stage || !table || stage.querySelector('#study-material-upload')) return;
+      stage.insertBefore(template.content.cloneNode(true), table);
+    }
+
     function bindBackToWebsiteLink() {
       const mode = new URLSearchParams(window.location.search).get('embed');
       const backToWebsiteButton = document.getElementById('back-to-website');
@@ -1251,6 +1275,7 @@
             <div id="tableBody"></div>
           </section>
         `;
+        mountStudyUpload();
         bindBackToWebsiteLink();
         updateLookupHistoryUI();
         render();
@@ -1607,8 +1632,7 @@
         } catch (error) {}
       }
 
-      // The worker keeps any Gemini credentials server-side. Its output is only
-      // treated as a translation candidate, never as independent verification.
+      // Keep Gemini credentials on the Worker; treat its result as an unverified candidate.
       try {
         const response = await fetchWithTimeout(SECURE_WORKER_URL, {
           method: 'POST',
@@ -1618,18 +1642,42 @@
             instruction: 'Translate only the English term into a concise Tamil word or phrase. Return only the Tamil translation, with no explanation or sentence.',
             sourceLanguage: 'en', targetLanguage: 'ta'
           })
-        }, 7000);
-        if (response.ok) {
-          const data = await response.json();
-          const candidate = cleanCandidate(data?.tamil || data?.translation || data?.translatedText || data?.result || '');
-          if (isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
-            return { text: candidate, source: 'AI-assisted translation (unverified)' };
-          }
+        }, 12000);
+        const data = await response.json().catch(() => ({}));
+        const candidate = cleanCandidate(data?.tamil || data?.translation || data?.translatedText || data?.result || '');
+        if (response.ok && isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
+          return { text: candidate, source: data.source || 'AI-assisted translation (unverified)' };
         }
-      } catch (error) {}
-
-      return { text: '', source: '' };
+        return { text: '', source: '', error: data.error || `Translation service returned HTTP ${response.status}.` };
+      } catch (error) {
+        return { text: '', source: '', error: 'Could not reach the translation service. Check the Worker endpoint and your connection.' };
+      }
     }
+
+    async function retryTamilTranslation(event, id) {
+      event.stopPropagation();
+      const item = db.find(entry => String(entry.id) === String(id));
+      const state = event.currentTarget.closest('.tamil-empty-state');
+      const button = event.currentTarget;
+      const status = state?.querySelector('.tamil-translation-status');
+      if (!item || !status) return;
+      button.disabled = true;
+      button.textContent = 'Translating…';
+      status.textContent = 'Trying the translation service. Please wait…';
+      const result = await getTamilTranslation(item.words.split(',')[0].trim(), item.eng);
+      if (!result.text) {
+        button.disabled = false;
+        button.textContent = '✨ Get Tamil meaning';
+        status.textContent = result.error || 'No Tamil translation was returned. Check the Worker’s Gemini configuration, then try again or add it manually.';
+        return;
+      }
+      item.tamil = normalizeTamil(result.text);
+      item.tamilVerified = false;
+      item.tamilSource = result.source || 'AI-assisted translation (unverified)';
+      saveAll();
+      render();
+      showToast('Tamil translation added as an unverified candidate. Please review it before study use.');
+    };
 
     function extractDictionaryApiEntry(entries, requestedWord) {
       if (!Array.isArray(entries)) return null;
@@ -2233,7 +2281,7 @@
               <div class="d-label">${hasTamilMeaning ? tamilLabel + (item.tamilSource ? ` · ${esc(item.tamilSource)}` : '') : 'Tamil meaning · not added yet'}</div>
               ${hasTamilMeaning
                 ? `<div class="c-tamil">${esc(normalizeTamil(item.tamil))}</div>${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}`
-                : `<div class="tamil-empty-state"><span>Add a verified translation to complete this entry.</span><button type="button" class="tamil-add-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})">＋ Add Tamil meaning</button></div>`}
+                : `<div class="tamil-empty-state"><span>Add a verified translation to complete this entry.</span><span class="tamil-empty-actions"><button type="button" class="tamil-add-btn" onclick="retryTamilTranslation(event, ${esc(inlineArg(item.id))})">✨ Get Tamil meaning</button><button type="button" class="tamil-add-btn tamil-manual-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})">＋ Add manually</button></span><span class="tamil-translation-status" role="status" aria-live="polite"></span></div>`}
             </div>
 
             <div class="c-def"><div class="d-label">English definition · ${esc(item.definitionSource || 'dictionary')}</div><div class="c-def-text">${esc(item.eng)}</div></div>
@@ -2414,6 +2462,7 @@
       reader.readAsText(file);
     }
 
+    mountStudyUpload();
     render();
     updateLookupHistoryUI();
   </script>
