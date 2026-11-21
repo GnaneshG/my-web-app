@@ -178,7 +178,12 @@ export default {
 
         if (task === "dictionary_definition" || task === "study_enrichment") {
           if (!term) return jsonResponse({ success: false, error: "An English term is required." }, 400);
-          if (!env.GEMINI_API_KEY) return jsonResponse({ success: false, error: "Gemini is not configured on the Worker." }, 503);
+          if (typeof env.GEMINI_API_KEY !== "string" || !env.GEMINI_API_KEY.trim()) {
+            return jsonResponse({
+              success: false,
+              error: "GEMINI_API_KEY is missing from the Worker serving this request. Add it as a secret named GEMINI_API_KEY to the Worker deployment used by the Lexicon endpoint (tracker.studiz.workers.dev), then deploy again. A Pages project secret is separate and is not shared with this Worker."
+            }, 503);
+          }
           const definition = String(body.definition || "").trim().slice(0, 1200);
           const category = String(body.category || "").trim().slice(0, 100);
           const tamil = String(body.tamil || "").trim().slice(0, 160);
