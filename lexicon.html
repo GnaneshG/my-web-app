@@ -546,7 +546,12 @@
   <input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)" />
 
   <script>
-    let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || "https://tracker.studiz.workers.dev/api/ai-lookup";
+    const DEFAULT_LEXICON_AI_URL = 'https://tracker-reset.studiz.workers.dev/api/ai-lookup';
+    const savedLexiconAIUrl = localStorage.getItem('cse_lexicon_engine_url');
+    if (savedLexiconAIUrl === 'https://tracker.studiz.workers.dev/api/ai-lookup') {
+      localStorage.setItem('cse_lexicon_engine_url', DEFAULT_LEXICON_AI_URL);
+    }
+    let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || DEFAULT_LEXICON_AI_URL;
     window.lexiconAIEndpoint = () => SECURE_WORKER_URL;
 
     function mountStudyUpload() {
