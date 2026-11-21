@@ -129,72 +129,98 @@ export default {
 
       const body = await request.json().catch(() => ({}));
 
-      // Lexicon translation proxy: Google Translate first, then Gemini when configured.
+      // Lexicon AI tasks run through this Worker so Gemini credentials stay server-side.
       if (url.pathname === "/api/ai-lookup" || url.pathname === "/ai-lookup") {
-        if (body.task !== "translate_en_ta") {
-          return new Response(JSON.stringify({ success: false, error: "Unsupported lookup task." }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
-          });
-        }
-
+        const task = String(body.task || "");
         const term = String(body.word || body.term || "").trim().slice(0, 160);
-        if (!term) {
-          return new Response(JSON.stringify({ success: false, error: "An English term is required." }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
-          });
-        }
+        const jsonResponse = (payload, status = 200) => new Response(JSON.stringify(payload), {
+          status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+        const hasTamil = value => /[\u0B80-\u0BFF]/.test(String(value || ""));
 
-        const hasTamil = value => /[\\u0B80-\\u0BFF]/.test(String(value || ""));
-        try {
-          const googleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`;
-          const googleResponse = await fetch(googleUrl);
-          if (googleResponse.ok) {
-            const googleData = await googleResponse.json();
-            const tamil = (googleData?.[0] || []).map(part => part?.[0] || "").join("").trim();
-            if (hasTamil(tamil)) {
-              return new Response(JSON.stringify({ success: true, tamil, source: "Google Translate" }), {
-                status: 200,
-                headers: { ...corsHeaders, "Content-Type": "application/json" }
+        if (task === "translate_en_ta") {
+          if (!term) return jsonResponse({ success: false, error: "An English term is required." }, 400);
+          try {
+            const googleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`;
+            const googleResponse = await fetch(googleUrl);
+            if (googleResponse.ok) {
+              const googleData = await googleResponse.json();
+              const tamil = (googleData?.[0] || []).map(part => part?.[0] || "").join("").trim();
+              if (hasTamil(tamil)) return jsonResponse({ success: true, tamil, source: "Google Translate" });
+            }
+          } catch (error) {
+            console.warn("Google Translate proxy failed:", error);
+          }
+          if (env.GEMINI_API_KEY) {
+            try {
+              const result = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(env.GEMINI_API_KEY)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `Translate this English term or short phrase into concise, natural Tamil. Return only the Tamil translation.\n\nTerm: ${term}` }] }],
+                  generationConfig: { temperature: 0.1, maxOutputTokens: 80 }
+                })
               });
+              if (result.ok) {
+                const data = await result.json();
+                const tamil = (data?.candidates?.[0]?.content?.parts || []).map(part => part?.text || "").join("").trim();
+                if (hasTamil(tamil) && tamil.length <= 140 && !/[.!?\n\r]/.test(tamil)) {
+                  return jsonResponse({ success: true, tamil, source: "Gemini (unverified)" });
+                }
+              }
+            } catch (error) {
+              console.warn("Gemini translation proxy failed:", error);
             }
           }
-        } catch (error) {
-          console.warn("Google Translate proxy failed:", error);
+          return jsonResponse({ success: false, error: "Translation providers returned no Tamil translation." }, 502);
         }
 
-        if (env.GEMINI_API_KEY) {
+        if (task === "dictionary_definition" || task === "study_enrichment") {
+          if (!term) return jsonResponse({ success: false, error: "An English term is required." }, 400);
+          if (!env.GEMINI_API_KEY) return jsonResponse({ success: false, error: "Gemini is not configured on the Worker." }, 503);
+          const definition = String(body.definition || "").trim().slice(0, 1200);
+          const category = String(body.category || "").trim().slice(0, 100);
+          const tamil = String(body.tamil || "").trim().slice(0, 160);
+          const prompt = task === "dictionary_definition"
+            ? `Give a concise, standard English dictionary definition for the term. Do not invent citations or claim a source. Return only valid JSON: {"definition":"...","partOfSpeech":"...","synonyms":["..."]}. Term: ${term}`
+            : `Prepare a cautious UPSC study-note draft for this entry. Return only valid JSON with string fields "nuance", "mainsRelevance", and "pyqLinkage". Do not invent dated events, statistics, policies, citations, or specific previous-year questions. PYQ linkage must be broad syllabus-theme guidance and say it should be checked against official UPSC papers. Keep each field concise. Term: ${term}\nEnglish definition: ${definition}\nGS category: ${category}\nTamil meaning: ${tamil}`;
           try {
-            const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(env.GEMINI_API_KEY)}`, {
+            const result = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(env.GEMINI_API_KEY)}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                contents: [{ parts: [{ text: `Translate the English term or short phrase below into concise, natural Tamil. Return only the Tamil translation, with no explanation.\n\nTerm: ${term}` }] }],
-                generationConfig: { temperature: 0.1, maxOutputTokens: 80 }
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.2, maxOutputTokens: task === "dictionary_definition" ? 220 : 420, responseMimeType: "application/json" }
               })
             });
-            if (geminiResponse.ok) {
-              const geminiData = await geminiResponse.json();
-              const tamil = (geminiData?.candidates?.[0]?.content?.parts || []).map(part => part?.text || "").join("").trim();
-              if (hasTamil(tamil) && tamil.length <= 140 && !/[.!?\\n\\r]/.test(tamil)) {
-                return new Response(JSON.stringify({ success: true, tamil, source: "Gemini (unverified)" }), {
-                  status: 200,
-                  headers: { ...corsHeaders, "Content-Type": "application/json" }
-                });
-              }
-            } else {
-              console.warn("Gemini translation request failed:", geminiResponse.status);
+            if (!result.ok) {
+              console.warn("Gemini Lexicon request failed:", result.status);
+              return jsonResponse({ success: false, error: "Gemini could not complete the request." }, 502);
             }
+            const data = await result.json();
+            const raw = (data?.candidates?.[0]?.content?.parts || []).map(part => part?.text || "").join("").trim();
+            const parsed = JSON.parse(raw.replace(/^```(?:json)?\s*|\s*```$/gi, ""));
+            if (task === "dictionary_definition") {
+              const text = String(parsed.definition || "").trim().slice(0, 600);
+              if (!text) return jsonResponse({ success: false, error: "Gemini returned no usable definition." }, 502);
+              return jsonResponse({ success: true, definition: text, partOfSpeech: String(parsed.partOfSpeech || "").slice(0, 40), synonyms: Array.isArray(parsed.synonyms) ? parsed.synonyms.map(value => String(value).trim().slice(0, 60)).filter(Boolean).slice(0, 8) : [], source: "Gemini AI draft · verify" });
+            }
+            const fields = {};
+            for (const key of ["nuance", "mainsRelevance", "pyqLinkage"]) {
+              fields[key] = typeof parsed[key] === "string" ? parsed[key].trim().slice(0, 500) : "";
+            }
+            if (!fields.nuance && !fields.mainsRelevance && !fields.pyqLinkage) {
+              return jsonResponse({ success: false, error: "Gemini returned no usable study notes." }, 502);
+            }
+            return jsonResponse({ success: true, ...fields, source: "Gemini AI draft · verify" });
           } catch (error) {
-            console.warn("Gemini translation proxy failed:", error);
+            console.warn("Gemini Lexicon generation failed:", error);
+            return jsonResponse({ success: false, error: "Gemini returned an invalid response or is temporarily unavailable." }, 502);
           }
         }
 
-        return new Response(JSON.stringify({ success: false, error: "Translation providers returned no Tamil translation." }), {
-          status: 502,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
+        return jsonResponse({ success: false, error: "Unsupported lookup task." }, 400);
       }
 
       // ROUTE 1: Send OTP
