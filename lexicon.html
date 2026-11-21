@@ -1059,9 +1059,13 @@
         <label class="wide">Mains relevance<textarea id="editExample2"></textarea></label>
         <label class="wide">PYQ linkage / theme guidance (do not enter an invented question)<textarea id="editExample3"></textarea></label>
       </div>
-      <div class="edit-modal-actions">
-        <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
-        <button class="btn btn-primary" type="submit">Save changes</button>
+      <p id="gemini-enrichment-status" role="status" aria-live="polite" style="margin:14px 0 0;color:var(--ink-3);font-size:12px;"></p>
+      <div class="edit-modal-actions" style="justify-content:space-between;flex-wrap:wrap;">
+        <button class="btn" type="button" id="gemini-enrichment-btn" onclick="generateGeminiStudyNotes(event)">✨ Generate study notes with Gemini</button>
+        <span style="display:flex;gap:10px;">
+          <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save changes</button>
+        </span>
       </div>
     </form>
   </dialog>
@@ -1900,6 +1904,44 @@
       const modal = document.getElementById('editModal');
       if (modal && typeof modal.showModal === 'function') {
         modal.showModal();
+      }
+    }
+
+    async function generateGeminiStudyNotes(event) {
+      event.preventDefault();
+      const button = document.getElementById('gemini-enrichment-btn');
+      const status = document.getElementById('gemini-enrichment-status');
+      const word = document.getElementById('editWords').value.trim();
+      if (!word) {
+        status.textContent = 'Enter an English term before requesting AI notes.';
+        return;
+      }
+      button.disabled = true;
+      button.textContent = '✨ Generating…';
+      status.textContent = 'Gemini is preparing a draft. Review all AI-generated content before saving.';
+      try {
+        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            task: 'study_enrichment',
+            word,
+            definition: document.getElementById('editDefinition').value.trim(),
+            category: document.getElementById('editCategory').value,
+            tamil: document.getElementById('editTamil').value.trim()
+          })
+        }, 20000);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || 'Gemini could not generate study notes.');
+        if (data.nuance) document.getElementById('editNuance').value = data.nuance;
+        if (data.mainsRelevance) document.getElementById('editExample2').value = `Gemini draft — verify: ${data.mainsRelevance}`;
+        if (data.pyqLinkage) document.getElementById('editExample3').value = `Gemini draft — verify against official UPSC papers: ${data.pyqLinkage}`;
+        status.textContent = 'Draft generated. Check accuracy and edit it before saving; no current-affairs source was created.';
+      } catch (error) {
+        status.textContent = error.message || 'Gemini request failed. Check the secure Worker endpoint and try again.';
+      } finally {
+        button.disabled = false;
+        button.textContent = '✨ Generate study notes with Gemini';
       }
     }
 
