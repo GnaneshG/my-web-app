@@ -1766,9 +1766,7 @@
 
       const translation = await getTamilTranslation(dictionaryWord, standardDefinition);
       const tamilAvailable = Boolean(translation.text);
-      const tamilMeaning = tamilAvailable
-        ? translation.text
-        : 'தமிழ் மொழிபெயர்ப்பு கிடைக்கவில்லை — கைமுறையாகச் சரிபார்க்கவும்';
+      const tamilMeaning = tamilAvailable ? translation.text : '—';
 
       const definitionText = standardDefinition;
       const synonymText = synonyms.slice(0, 8).join(', ');
