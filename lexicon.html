@@ -1267,11 +1267,12 @@
     }
 
     function normalizeTamil(str) {
-      return String(str || '')
+      const normalized = String(str || '')
         // Preserve joiners used by some Tamil sequences; strip only invisible spacing marks.
         .replace(/[\u200B\uFEFF]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
+      return /^[-—]+$/.test(normalized) ? '' : normalized;
     }
 
     function isLegacyGeneratedStudyText(value) {
@@ -1770,7 +1771,7 @@
 
       const translation = await getTamilTranslation(dictionaryWord, standardDefinition);
       const tamilAvailable = Boolean(translation.text);
-      const tamilMeaning = tamilAvailable ? translation.text : '—';
+      const tamilMeaning = tamilAvailable ? normalizeTamil(translation.text) : '';
 
       const definitionText = standardDefinition;
       const synonymText = synonyms.slice(0, 8).join(', ');
@@ -2196,6 +2197,8 @@
       const synList = (item.syn && item.syn !== '—' && item.syn !== '-')
         ? item.syn.split(',').map(s => s.trim()).filter(Boolean)
         : [];
+      const hasTamilMeaning = Boolean(normalizeTamil(item.tamil));
+      const tamilLabel = item.tamilVerified === false ? 'Tamil meaning · unverified' : 'Tamil meaning';
 
       const synButtons = synList.length
         ? synList.map(s => `<button class="syn-clickable" onclick="chainSynonym(event, ${esc(inlineArg(s))}, ${esc(inlineArg(item.cat))})" title="Click to translate & index '${esc(s)}'">+ ${esc(s)}</button>`).join('')
@@ -2226,12 +2229,14 @@
               </div>
             </div>
             
-            <div class="c-tamil-box" lang="ta">
-              <div class="d-label">${item.tamilVerified === false ? 'Tamil definition · unverified' : 'Tamil definition'}${item.tamilSource ? ` · ${esc(item.tamilSource)}` : ''}</div><div class="c-tamil">${esc(item.tamil)}</div>
-              ${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}
+            <div class="c-tamil-box ${hasTamilMeaning ? '' : 'is-empty'}" lang="ta">
+              <div class="d-label">${hasTamilMeaning ? tamilLabel + (item.tamilSource ? ` · ${esc(item.tamilSource)}` : '') : 'Tamil meaning · not added yet'}</div>
+              ${hasTamilMeaning
+                ? `<div class="c-tamil">${esc(normalizeTamil(item.tamil))}</div>${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}`
+                : `<div class="tamil-empty-state"><span>Add a verified translation to complete this entry.</span><button type="button" class="tamil-add-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})">＋ Add Tamil meaning</button></div>`}
             </div>
 
-            <div class="c-def"><span class="d-label">${esc(item.definitionSource || 'English dictionary')} · one definition</span>${esc(item.eng)}</div>
+            <div class="c-def"><div class="d-label">English definition · ${esc(item.definitionSource || 'dictionary')}</div><div class="c-def-text">${esc(item.eng)}</div></div>
 
             <div class="c-meta" onclick="event.stopPropagation()">
               <select class="gs-mini-select" onchange="changeGS(event, ${esc(inlineArg(item.id))}, this.value)" title="Reassign GS Paper" aria-label="Reassign ${esc(item.words)} to a GS category">
