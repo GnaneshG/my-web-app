@@ -551,6 +551,9 @@ html.embedded-lexicon .lex-item { content-visibility: auto; contain-intrinsic-si
   font-size: 12px;
   line-height: 1.45;
 }
+.tamil-empty-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.tamil-translation-status { flex: 1 0 100%; color: var(--danger); font-size: 11.5px; }
+.tamil-add-btn:disabled { opacity: .6; cursor: wait; }
 .tamil-add-btn {
   flex: 0 0 auto;
   padding: 4px 9px;
@@ -566,3 +569,23 @@ html.embedded-lexicon .lex-item { content-visibility: auto; contain-intrinsic-si
 .tamil-add-btn:hover { background: var(--brand-soft); }
 .lex-summary > .c-def .d-label { display: block; margin-bottom: 3px; }
 .c-def-text { line-height: 1.6; }
+
+.study-upload-card h2 { margin-bottom: 4px; font-size: 16px; font-weight: 700; color: var(--ink-1); }
+.study-upload-help { margin-bottom: 12px; color: var(--ink-3); font-size: 12.5px; }
+.study-upload-controls { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
+.study-upload-controls label { flex: 1 1 260px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.study-upload-controls input { display: block; margin-top: 5px; }
+.study-upload-controls .btn { justify-content: center; }
+.study-upload-status { margin-top: 9px; color: var(--ink-3); font-size: 12px; }
+.study-excerpt-label { display: block; margin-top: 10px; color: var(--ink-2); font-size: 12px; font-weight: 650; }
+.study-excerpt-label textarea { display: block; width: 100%; min-height: 90px; margin-top: 5px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-app); color: var(--ink-2); font: inherit; font-size: 12px; resize: vertical; }
+.study-upload-results { margin-top: 14px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-panel); color: var(--ink-2); }
+.study-upload-results h3 { margin: 0 0 6px; color: var(--ink-1); font-size: 14px; }
+.study-upload-results h4 { margin: 12px 0 4px; color: var(--brand); font-size: 12px; }
+.study-upload-results p, .study-upload-results li { font-size: 12.5px; line-height: 1.6; }
+.study-upload-results ul { padding-left: 20px; }
+.study-upload-results .ai-draft-note { margin-top: 10px; color: var(--ink-3); font-size: 11px; }
+@media (max-width: 640px) {
+  .study-upload-controls { align-items: stretch; }
+  .study-upload-controls .btn { width: 100%; }
+}
