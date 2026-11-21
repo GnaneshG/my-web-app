@@ -229,7 +229,7 @@ export default {
           if (typeof env.GEMINI_API_KEY !== "string" || !env.GEMINI_API_KEY.trim()) {
             return jsonResponse({
               success: false,
-              error: "GEMINI_API_KEY is missing from the Worker serving this request. Add it as a secret named GEMINI_API_KEY to the Worker deployment used by the Lexicon endpoint (tracker.studiz.workers.dev), then deploy again. A Pages project secret is separate and is not shared with this Worker."
+              error: "GEMINI_API_KEY is missing from the Worker serving this request. Add it as a secret named GEMINI_API_KEY to the tracker-reset Worker, then deploy again. A Pages project secret is separate and is not shared with this Worker."
             }, 503);
           }
           const definition = String(body.definition || "").trim().slice(0, 1200);
