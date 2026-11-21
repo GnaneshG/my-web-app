@@ -110,19 +110,27 @@
     button.disabled = true;
     button.textContent = 'Analyzing…';
     status.textContent = 'Sending extracted text to Gemini. Please wait…';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
     try {
       const response = await fetch(window.lexiconAIEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: 'document_analysis', filename: uploadedStudy.filename, text: uploadedStudy.text })
+        body: JSON.stringify({ task: 'document_analysis', filename: uploadedStudy.filename, text: uploadedStudy.text }),
+        signal: controller.signal
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.success) throw new Error(data.error || `Analysis failed (HTTP ${response.status}).`);
       renderAnalysis(results, data);
       status.textContent = `Analysis complete for ${uploadedStudy.filename} (pages 1–${uploadedStudy.pages} of ${uploadedStudy.totalPages}).`;
     } catch (error) {
-      status.textContent = error.message || 'Could not analyze the PDF. Check the Worker endpoint and try again.';
+      status.textContent = error.name === 'AbortError'
+        ? 'Analysis timed out. Check the AI Worker connection and try again.'
+        : error instanceof TypeError
+          ? 'Could not reach the AI Worker. Check the endpoint, internet connection, and CORS settings.'
+          : error.message || 'Could not analyze the PDF. Check the Worker endpoint and try again.';
     } finally {
+      clearTimeout(timeoutId);
       button.disabled = false;
       button.textContent = '✨ Analyze with Gemini';
     }
