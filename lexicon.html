@@ -4,400 +4,25 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script>if (new URLSearchParams(location.search).get('embed') === 'main') document.documentElement.classList.add('embedded-lexicon');</script>
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === 'main') {
+      document.documentElement.classList.add('embedded-lexicon');
+    }
+  </script>
   <title>LEXICON PRO — UPSC-CSE Editorial & Tamil Concordance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tamil:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light;
-      --bg-app: #f5f5f7;
-      --bg-panel: #ffffff;
-      --bg-subtle: #f5f5f7;
-      --bg-hover: #f0f0f2;
-      --ink-1: #1d1d1f;
-      --ink-2: #424245;
-      --ink-3: #76767b;
-      --border: #e5e5ea;
-      --border-strong: #d2d2d7;
-      --brand: #0877e8;
-      --brand-soft: #e8f2ff;
-      --tamil: #176b53;
-      --tamil-soft: #edf6f2;
-      --gold: #9a6700;
-      --gold-soft: #fff6df;
-      --danger: #c9342d;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.035);
-      --radius: 12px;
-      --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg-app: #000000;
-      --bg-panel: #1c1c1e;
-      --bg-subtle: #2c2c2e;
-      --bg-hover: #303033;
-      --ink-1: #f5f5f7;
-      --ink-2: #d1d1d6;
-      --ink-3: #98989d;
-      --border: #38383a;
-      --border-strong: #48484a;
-      --brand: #64a8ff;
-      --brand-soft: rgba(10, 132, 255, 0.18);
-      --tamil: #8fd3b8;
-      --tamil-soft: rgba(52, 199, 149, 0.12);
-      --gold: #ffd166;
-      --gold-soft: rgba(255, 209, 102, 0.12);
-      --danger: #ff6961;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: text; }
-    html { min-height: 100%; background: var(--bg-app); scroll-behavior: smooth; }
-    body {
-      min-height: 100vh;
-      background: var(--bg-app);
-      color: var(--ink-1);
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Noto Sans Tamil", sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      letter-spacing: -0.012em;
-      -webkit-font-smoothing: antialiased;
-      transition: background-color 240ms var(--ease-fluid), color 240ms var(--ease-fluid);
-    }
-    button, input, select, textarea { font: inherit; }
-    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
-    :focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 55%, transparent); outline-offset: 2px; }
-    ::selection { background: color-mix(in srgb, var(--brand) 22%, transparent); }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: color-mix(in srgb, var(--bg-panel) 88%, transparent);
-      border-bottom: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.025);
-      -webkit-backdrop-filter: blur(22px) saturate(170%);
-      backdrop-filter: blur(22px) saturate(170%);
-      transition: background-color 240ms var(--ease-fluid), border-color 240ms var(--ease-fluid);
-    }
-    .topbar-inner {
-      width: 100%;
-      max-width: 1680px;
-      margin: 0 auto;
-      padding: 13px clamp(16px, 3vw, 36px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px 24px;
-      flex-wrap: wrap;
-    }
-    .brand-group { display: flex; align-items: center; gap: 10px; }
-    .brand-title { font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif; font-size: 21px; font-weight: 650; letter-spacing: -0.045em; color: var(--ink-1); }
-    .brand-tag { border-radius: 999px; padding: 4px 9px; background: var(--brand-soft); color: var(--brand); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-    .action-cluster { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-    .back-site-btn { min-height: 36px; color: var(--brand); text-decoration: none; white-space: nowrap; }
-    .back-site-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
-
-    .btn {
-      min-height: 36px;
-      padding: 7px 11px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      background: var(--bg-panel);
-      color: var(--ink-2);
-      font-size: 12px;
-      font-weight: 550;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: color 140ms var(--ease-fluid), background-color 140ms var(--ease-fluid), border-color 140ms var(--ease-fluid), transform 120ms var(--ease-fluid), box-shadow 140ms var(--ease-fluid);
-    }
-    .btn:hover { border-color: var(--border-strong); background: var(--bg-subtle); color: var(--ink-1); }
-    .btn:active { transform: scale(0.97); }
-    .btn.active { background: var(--brand-soft); border-color: transparent; color: var(--brand); }
-    .btn-primary, .btn-primary.active { background: var(--brand); color: #fff; border-color: var(--brand); padding: 8px 18px; font-size: 13px; }
-    .btn-primary:hover { background: color-mix(in srgb, var(--brand) 90%, black); color: #fff; }
-    .btn:disabled { opacity: 0.52; cursor: not-allowed; transform: none; }
-
-    .workspace {
-      width: 100%;
-      max-width: 1680px;
-      margin: 0 auto;
-      padding: 24px clamp(16px, 3vw, 36px) 60px;
-      display: grid;
-      grid-template-columns: minmax(220px, 258px) minmax(0, 1fr);
-      gap: clamp(16px, 2vw, 26px);
-      align-items: start;
-    }
-    .sidebar {
-      position: sticky;
-      top: 76px;
-      max-height: calc(100dvh - 96px);
-      overflow: auto;
-      padding: 14px 11px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--bg-panel);
-      scrollbar-width: thin;
-    }
-    .side-heading { margin: 5px 8px 10px; font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); display: flex; justify-content: space-between; }
-    .nav-list { display: flex; flex-direction: column; gap: 3px; }
-    .nav-item {
-      min-height: 36px;
-      padding: 7px 10px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-2);
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      text-align: left;
-      white-space: nowrap;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 140ms var(--ease-fluid), color 140ms var(--ease-fluid);
-    }
-    .nav-item:hover { background: var(--bg-subtle); color: var(--ink-1); }
-    .nav-item.active { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
-    .nav-pill { font-size: 11px; padding: 1px 7px; border-radius: 99px; background: var(--bg-subtle); color: var(--ink-3); }
-    .nav-item.active .nav-pill { background: var(--brand); color: #fff; }
-
-    .brain-box { margin-top: 14px; padding: 12px; border: 1px solid var(--border); border-radius: 11px; background: var(--bg-app); font-size: 12px; }
-    .brain-title { font-size: 12px; font-weight: 700; color: var(--ink-1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .brain-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; max-height: 110px; overflow-y: auto; }
-    .brain-chip { font-size: 10.5px; background: var(--bg-panel); border: 1px solid var(--border); padding: 2px 6px; border-radius: 6px; color: var(--ink-2); }
-
-    .main-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-    .console-card {
-      position: sticky;
-      top: 74px;
-      z-index: 30;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.035);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
-      backdrop-filter: blur(18px) saturate(160%);
-    }
-    .input-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, 240px) auto; gap: 9px; align-items: stretch; }
-    .input-grid > * { min-width: 0; }
-    .input-grid button { justify-content: center; white-space: nowrap; }
-
-    input, select, .edit-form-grid textarea {
-      width: 100%;
-      min-height: 40px;
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg-app);
-      color: var(--ink-1);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 140ms var(--ease-fluid), background-color 140ms var(--ease-fluid), box-shadow 140ms var(--ease-fluid);
-    }
-    input:focus, select:focus, .edit-form-grid textarea:focus {
-      border-color: var(--brand);
-      background: var(--bg-panel);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
-    }
-    #wordInput { min-height: 42px; background: var(--bg-panel); }
-    #wordInput::placeholder { color: var(--ink-3); }
-
-    .az-ribbon { display: flex; align-items: center; gap: 3px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
-    .az-ribbon::-webkit-scrollbar { display: none; }
-    .az-btn { min-width: 29px; height: 29px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; border: none; border-radius: 7px; background: transparent; color: var(--ink-3); cursor: pointer; transition: background-color 130ms var(--ease-fluid), color 130ms var(--ease-fluid); }
-    .az-btn:hover { background: var(--bg-subtle); color: var(--ink-1); }
-    .az-btn.active { background: var(--brand); color: white; }
-    .az-btn.has-words { color: var(--brand); font-weight: 700; }
-    .az-btn.active.has-words { color: #fff; }
-
-    #toastBanner { display: none; margin-top: 8px; padding: 8px 14px; border-radius: 9px; font-size: 12.5px; font-weight: 600; background: var(--tamil-soft); color: var(--tamil); border-left: 3px solid var(--tamil); }
-
-    #searchResults { display: none; margin: 12px 0 18px; }
-    #searchResults.active { display: block; }
-    #searchResults .search-result-heading {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      padding: 9px 12px; margin-bottom: 10px; border-bottom: 1px solid var(--border);
-      color: var(--ink-2); font-size: 11px; font-weight: 700; text-transform: uppercase;
-    }
-    #searchResults .lex-item { border: 1px solid var(--brand); border-radius: 12px; box-shadow: var(--shadow-sm); }
-    #searchResults .lex-item.open .lex-drawer { display: block; }
-    #searchResults .c-tamil { font-size: 20px; line-height: 1.8; }
-
-    .table-box { background: transparent; border: none; border-radius: 0; overflow: visible; }
-    .section-divider {
-      display: flex; justify-content: space-between; align-items: center;
-      margin: 18px 0 8px; padding: 9px 2px; border-bottom: 1px solid var(--border);
-      font-size: 12px; font-weight: 700; letter-spacing: 0.035em; text-transform: uppercase; color: var(--ink-3);
-    }
-
-    .lex-grid-container { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 10px; }
-    .lex-item {
-      border-bottom: 1px solid var(--border);
-      background: transparent;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: background-color 140ms var(--ease-fluid);
-    }
-    .lex-item:hover { background: color-mix(in srgb, var(--bg-panel) 58%, transparent); }
-    .lex-summary { padding: 13px 14px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
-    .lex-summary-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-
-    .star-btn { border: none; background: none; cursor: pointer; font-size: 15px; color: var(--border-strong); line-height: 1; }
-    .star-btn.starred { color: var(--gold); }
-
-    .c-word { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; flex: 1; }
-    .w-main { font-size: 18px; font-weight: 650; letter-spacing: -0.035em; color: var(--ink-1); }
-    .w-merge-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: var(--gold-soft); color: var(--gold); font-weight: 600; }
-    .w-pos { font-style: italic; font-size: 12px; color: var(--ink-3); }
-    .spk-icon { border: none; background: none; cursor: pointer; font-size: 12px; color: var(--ink-3); padding: 0 3px; }
-    .spk-icon:hover { color: var(--brand); }
-
-    .c-tamil-box { padding: 0; }
-    .c-tamil { font-family: 'Noto Sans Tamil', sans-serif; font-size: 16px; line-height: 1.75; font-weight: 600; color: var(--tamil); }
-    .t-nuance { font-weight: 400; font-size: 12px; color: var(--ink-3); display: block; margin-top: 2px; }
-
-    body.recall-active .c-tamil-box,
-    body.recall-active .c-def { filter: blur(5px); user-select: none; transition: filter 0.15s; }
-    body.recall-active .lex-item:hover .c-tamil-box,
-    body.recall-active .lex-item:hover .c-def,
-    body.recall-active .lex-item.open .c-tamil-box,
-    body.recall-active .lex-item.open .c-def { filter: none; }
-
-    .c-def { color: var(--ink-2); font-size: 14px; line-height: 1.65; display: block; }
-    .c-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 2px; }
-    .lex-item:not(.open) .c-meta { display: none; }
-
-    .gs-mini-select { min-height: 28px; padding: 3px 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--bg-app); color: var(--ink-2); width: auto; max-width: 150px; cursor: pointer; }
-    .meta-actions { display: flex; align-items: center; gap: 4px; }
-    .edit-row-btn { border: 1px solid var(--border-strong); border-radius: 7px; background: var(--bg-panel); color: var(--brand); cursor: pointer; font-size: 11px; font-weight: 700; padding: 4px 8px; }
-    .edit-row-btn:hover { background: var(--brand-soft); }
-    .icon-del { border: none; background: none; color: var(--ink-3); cursor: pointer; font-size: 12px; padding: 3px 6px; border-radius: 4px; }
-    .icon-del:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
-
-    .lex-drawer { display: none; padding: 15px 16px 18px; border-top: 1px solid var(--border); background: var(--bg-app); animation: drawer-enter 220ms var(--ease-fluid) both; }
-    .lex-item.open .lex-drawer { display: block; }
-    @keyframes drawer-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
-    .drawer-meta-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-    .d-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.035em; font-weight: 650; color: var(--ink-3); margin-bottom: 4px; }
-    .syn-clickable { display: inline-flex; align-items: center; gap: 3px; padding: 5px 10px; margin: 0 4px 4px 0; background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--brand); cursor: pointer; transition: all 0.12s; }
-    .syn-clickable:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
-
-    .ex-trio { display: flex; flex-direction: column; gap: 9px; margin-top: 10px; }
-    .ex-box { border: 1px solid var(--border); border-left: 2px solid var(--brand); border-radius: 10px; background: var(--bg-panel); padding: 12px 14px; }
-    .ex-box:nth-child(2) { border-left-color: var(--tamil); }
-    .ex-box:nth-child(3) { border-left-color: var(--gold); }
-    .ex-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .ex-body { font-size: 14px; line-height: 1.7; color: var(--ink-1); word-break: break-word; }
-    .c-word, .c-tamil, .c-def, .drawer-meta-grid, .ex-box { cursor: text; }
-
-    .edit-modal {
-      width: min(720px, calc(100% - 28px));
-      max-height: min(90vh, 900px);
-      padding: 0;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--bg-panel);
-      color: var(--ink-1);
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin: 0;
-      display: none;
-      z-index: 1000;
-      overflow-y: auto;
-      transition: background-color 220ms var(--ease-fluid), color 220ms var(--ease-fluid);
-    }
-    .edit-modal[open] { display: block; }
-    .edit-modal::backdrop { background: rgba(15, 23, 42, .58); backdrop-filter: blur(3px); }
-    .edit-modal-inner { padding: clamp(18px, 4vw, 28px); }
-    .edit-modal h2 { margin-bottom: 6px; font-size: 24px; letter-spacing: -0.04em; }
-    .edit-modal p { margin-bottom: 18px; color: var(--ink-3); }
-    .edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
-    .edit-form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
-    .edit-form-grid .wide { grid-column: 1 / -1; }
-    .edit-form-grid textarea { min-height: 110px; resize: vertical; }
-    .edit-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-
-    @media (max-width: 1024px) {
-      .workspace { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px 16px 40px; }
-      .sidebar { position: sticky; top: 0; z-index: 40; max-height: none; padding: 9px; border-radius: 12px; }
-      .side-heading { margin: 2px 5px 7px; }
-      .nav-list { flex-direction: row; overflow-x: auto; gap: 5px; padding-bottom: 1px; }
-      .nav-item { min-height: 36px; padding-inline: 11px; background: var(--bg-app); }
-      .brain-box, .sidebar-starter-wrap { display: none; }
-      .console-card { top: 88px; }
-    }
-    @media (max-width: 640px) {
-      .topbar-inner { padding: 10px 13px; gap: 9px; }
-      .brand-group { width: 100%; justify-content: space-between; }
-      .brand-title { font-size: 19px; }
-      .brand-tag { font-size: 9px; }
-      .action-cluster { width: 100%; flex-wrap: nowrap; overflow-x: auto; padding: 1px 0 3px; scrollbar-width: none; }
-      .action-cluster::-webkit-scrollbar { display: none; }
-      .action-cluster .btn { flex: 0 0 auto; }
-      .workspace { padding: 9px 10px 28px; }
-      .sidebar { top: 0; padding: 8px; }
-      .side-heading { font-size: 10px; }
-      .nav-item { padding: 7px 9px; font-size: 12px; }
-      .console-card { top: 82px; padding: 10px; }
-      .input-grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-      .input-grid button { min-height: 40px; }
-      .az-ribbon { gap: 2px; }
-      .az-btn { min-width: 27px; }
-      .lex-summary { padding: 12px 9px; }
-      .w-main { font-size: 17px; }
-      .c-tamil { font-size: 16px; }
-      .c-def { font-size: 14px; }
-      .lex-drawer { padding: 13px 10px 15px; }
-      .edit-form-grid { grid-template-columns: 1fr; }
-      .edit-form-grid .wide { grid-column: auto; }
-      .edit-modal-actions { position: sticky; bottom: -1px; padding-top: 12px; background: var(--bg-panel); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tamil:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./lexicon-ui.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script defer src="./pdf-lexicon.js"></script>
-  <link rel="stylesheet" href="./lexicon-ui.css">
 </head>
 <body>
-
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-group">
-        <span class="brand-title" id="pageMainTitle">The CSE Lexicon</span>
-        <span class="brand-tag" id="pageSubtitle">GS-I to GS-IV Concordance</span>
-      </div>
-      <div class="action-cluster" id="mainHeaderActions">
-        <a class="btn back-site-btn" id="back-to-website" href="./index.html" aria-label="Return to the main website">← Back to Website</a>
-        <button class="btn active" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
-        <button class="btn" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
-        <button class="btn" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
-        <button class="btn" id="btnRecall" onclick="toggleRecallMode()" aria-pressed="false">🎯 Active Recall</button>
-        <button class="btn" id="btnExpandAll" onclick="toggleExpandAll()" aria-pressed="false">↕️ Expand All</button>
-        <button class="btn" id="btnTheme" onclick="toggleTheme()" aria-label="Toggle light and dark appearance" title="Toggle appearance">◐ Theme</button>
-      </div>
-    </div>
-  </header>
 
   <div class="workspace">
     <aside class="sidebar" id="mainSidebar">
       <div class="side-heading">
-        <span id="sidebarHeaderTitle">UPSC GS Syllabus</span>
+        <span id="sidebarHeaderTitle">UPSC GS Subjects</span>
         <span id="totalBadge">0</span>
       </div>
       <div class="nav-list" id="sidebarNav"></div>
@@ -408,12 +33,12 @@
           <span id="brainCount" style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--brand);">0 Rules</span>
         </div>
         <div style="color:var(--ink-3); font-size:11.5px; line-height:1.4;">
-          Automatically learns domain stems from UPSC PYQ trends, The Hindu & Indian Express editorials.
+          Automatically classifies searched terms into UPSC GS subjects and maps PYQ glossary placement.
         </div>
         <div class="brain-tags" id="brainPreview"></div>
       </div>
 
-      <div class="sidebar-starter-wrap" style="margin-top:12px; display:flex; gap:6px;">
+      <div class="sidebar-starter-wrap">
         <button class="btn" style="width:100%; justify-content:center;" onclick="loadStarterPack()">⚡ Load UPSC Starter Terms</button>
       </div>
     </aside>
@@ -421,10 +46,18 @@
     <main class="main-stage" id="mainStageArea">
       <section class="console-card">
         <div class="input-grid">
-          <input type="text" id="wordInput" placeholder="Search saved words or enter new term(s) separated by commas..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" list="lookupHistoryList" />
+          <input
+            type="text"
+            id="wordInput"
+            placeholder="Search any English word & press Enter for exact Tamil meaning + UPSC PYQ placement..."
+            oninput="handleSearchInput()"
+            onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitWords(); }"
+            list="lookupHistoryList"
+            autocomplete="off"
+          />
           <datalist id="lookupHistoryList"></datalist>
           <select id="gsOverride" aria-label="Select GS Paper override">
-            <option value="AUTO">⚡ Auto-Detect GS Paper</option>
+            <option value="AUTO">⚡ Auto-Detect GS Subject</option>
             <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
             <option value="GS-1: History & Heritage">GS-1: History & Heritage</option>
             <option value="GS-1: Geography & Society">GS-1: Geography & Society</option>
@@ -440,43 +73,17 @@
             <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
             <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
           </select>
-          <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
+          <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">🔍 Search &amp; Index</button>
         </div>
 
         <div id="lookupHistoryContainer" style="margin-top: 10px; display: none; align-items: center; gap: 6px; flex-wrap: wrap;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-3);">Recent Lookups:</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-3);">Previously Searched:</span>
           <div id="lookupHistoryChips" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
         </div>
 
         <div class="az-ribbon" id="azBar"></div>
         <div id="toastBanner" role="status" aria-live="polite"></div>
       </section>
-
-      <template id="lexicon-admin-tools-template">
-        <section class="console-card" aria-labelledby="lexicon-engine-heading">
-          <h2 id="lexicon-engine-heading" style="font-size:16px;font-weight:700;margin-bottom:4px;">AI lookup engine</h2>
-          <p style="color:var(--ink-3);margin-bottom:12px;">Set the HTTPS Worker endpoint used for Lexicon term analysis. Keep API secrets on the Worker; never enter them here.</p>
-          <form id="lexicon-engine-form" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <label for="lexicon-engine-url" style="flex:1 1 320px;">Worker endpoint<input id="lexicon-engine-url" type="url" inputmode="url" placeholder="https://your-worker.example.workers.dev/api/ai-lookup" style="margin-top:5px;" required></label>
-            <button class="btn btn-primary" type="submit">Save engine endpoint</button>
-          </form>
-          <p id="lexicon-engine-status" role="status" aria-live="polite" style="color:var(--ink-3);margin-top:8px;"></p>
-        </section>
-        <section class="console-card" data-admin-materials aria-labelledby="pdf-source-heading">
-          <h2 id="pdf-source-heading" style="font-size:16px;font-weight:700;margin-bottom:4px;">Upload trusted study material</h2>
-          <p style="color:var(--ink-3);margin-bottom:12px;">Admin-only tools: extract text from the first five PDF pages in this browser, review the citation, then add a sourced term to the Lexicon.</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;align-items:end;">
-            <label for="pdf-upload">Study PDF<input type="file" id="pdf-upload" accept="application/pdf,.pdf" style="margin-top:5px;"></label>
-            <label for="pdf-term">Term from the PDF<input type="text" id="pdf-term" maxlength="120" placeholder="Enter a term to index" style="margin-top:5px;"></label>
-            <label for="pdf-category">GS category<select id="pdf-category" style="margin-top:5px;"><option>GS-1: Society &amp; Culture</option><option>GS-1: History &amp; Heritage</option><option>GS-1: Geography &amp; Society</option><option>GS-2: Polity &amp; Governance</option><option>GS-2: Social Justice</option><option>GS-2: International Relations</option><option>GS-3: Economy &amp; Dev</option><option>GS-3: Agriculture</option><option>GS-3: Environment &amp; Ecology</option><option>GS-3: Disaster Management</option><option>GS-3: Science &amp; Tech</option><option>GS-3: Internal Security</option><option>GS-4: Ethics &amp; Integrity</option><option>Essay &amp; Editorial Idioms</option></select></label>
-          </div>
-          <label for="pdf-excerpt" style="display:block;margin-top:10px;">Source excerpt <textarea id="pdf-excerpt" rows="4" readonly placeholder="Upload a text-based PDF to extract its first five pages." style="width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-app);color:var(--ink-1);font:inherit;resize:vertical;"></textarea></label>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;">
-            <p id="pdf-source-status" role="status" aria-live="polite" style="color:var(--ink-3);">No PDF selected. Files remain in this browser during extraction.</p>
-            <button type="button" class="btn btn-primary" id="save-pdf-term-btn" disabled>Save sourced term</button>
-          </div>
-        </section>
-      </template>
 
       <section class="table-box">
         <div id="searchResults" aria-live="polite"></div>
@@ -488,14 +95,14 @@
   <dialog class="edit-modal" id="editModal" aria-labelledby="editModalTitle">
     <form class="edit-modal-inner" id="editForm" onsubmit="saveEditedItem(event)">
       <h2 id="editModalTitle">Edit lexicon entry</h2>
-      <p>Changes are saved automatically and sync with your signed-in account across devices.</p>
+      <p>Changes are saved automatically and sync across your subjects.</p>
       <input type="hidden" id="editItemId" />
       <div class="edit-form-grid">
         <label>English term(s)<input id="editWords" required /></label>
         <label>Part of speech<input id="editPos" /></label>
-        <label>Tamil meaning<input id="editTamil" /></label>
-        <label>Tamil nuances<input id="editNuance" /></label>
-        <label>GS category
+        <label>Exact Tamil dictionary meaning<input id="editTamil" /></label>
+        <label>Tamil glossary nuances<input id="editNuance" /></label>
+        <label>GS subject
           <select id="editCategory" required>
             <option value="GS-1: Society &amp; Culture">GS-1: Society &amp; Culture</option>
             <option value="GS-1: History &amp; Heritage">GS-1: History &amp; Heritage</option>
@@ -513,20 +120,19 @@
             <option value="Essay &amp; Editorial Idioms">Essay &amp; Editorial Idioms</option>
           </select>
         </label>
-        <label>Synonyms<input id="editSynonyms" /></label>
-        <label class="wide">Definition<textarea id="editDefinition"></textarea></label>
-        <label class="wide">Newspaper context (paste a dated headline or article point)<textarea id="editExample1"></textarea></label>
-        <label class="wide">Mains relevance<textarea id="editExample2"></textarea></label>
-        <label class="wide">PYQ linkage / theme guidance (do not enter an invented question)<textarea id="editExample3"></textarea></label>
+        <label>Glossary Synonyms<input id="editSynonyms" /></label>
+        <label class="wide">English Dictionary Definition<textarea id="editDefinition"></textarea></label>
+        <label class="wide">UPSC PYQ Placement (Prelims / Mains Usage)<textarea id="editExample3"></textarea></label>
+        <label class="wide">UPSC Glossary &amp; Syllabus Context<textarea id="editExample2"></textarea></label>
+        <label class="wide">Editorial / Reference Note (Optional)<textarea id="editExample1"></textarea></label>
       </div>
-      <div class="edit-modal-actions" style="justify-content:space-between;flex-wrap:wrap;">
-        <span style="display:flex;gap:10px;">
-          <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
-          <button class="btn btn-primary" type="submit">Save changes</button>
-        </span>
+      <div class="edit-modal-actions">
+        <button class="btn" type="button" onclick="document.getElementById('editModal').close()">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
       </div>
     </form>
   </dialog>
+
   <input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)" />
 
   <script>
@@ -537,64 +143,6 @@
     }
     let SECURE_WORKER_URL = localStorage.getItem('cse_lexicon_engine_url') || DEFAULT_LEXICON_AI_URL;
     window.lexiconAIEndpoint = () => SECURE_WORKER_URL;
-
-    function bindBackToWebsiteLink() {
-      const mode = new URLSearchParams(window.location.search).get('embed');
-      const backToWebsiteButton = document.getElementById('back-to-website');
-      if (!backToWebsiteButton || !['admin', 'main'].includes(mode)) return;
-
-      if (mode === 'main') {
-        backToWebsiteButton.remove();
-        document.getElementById('pageMainTitle').textContent = 'Glossary Web';
-        document.getElementById('pageSubtitle').textContent = 'UPSC Concordance + GS + Trusted Editorial Stems';
-        return;
-      }
-
-      const isAdmin = mode === 'admin';
-      if (isAdmin) window.lexiconAdminMode = true;
-      backToWebsiteButton.textContent = isAdmin ? '← Back to Admin Portal' : '←';
-      backToWebsiteButton.setAttribute('aria-label', isAdmin ? 'Return to the admin portal' : 'Return to the main website');
-      backToWebsiteButton.title = isAdmin ? 'Back to Admin Portal' : 'Back to main website';
-      backToWebsiteButton.href = '#';
-      backToWebsiteButton.addEventListener('click', event => {
-        event.preventDefault();
-        window.parent.postMessage(
-          { type: isAdmin ? 'tracker-lexicon-close' : 'tracker-lexicon-main-close' },
-          window.location.origin
-        );
-      });
-
-      if (isAdmin) {
-        const dataActions = document.createElement('span');
-        dataActions.className = 'embed-data-actions';
-        dataActions.style.cssText = 'display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;';
-        dataActions.innerHTML = '<button class="btn" type="button" data-lexicon-action="csv">📥 Download CSV</button><button class="btn" type="button" data-lexicon-action="json">💾 Download JSON</button><button class="btn" type="button" data-lexicon-action="import">📂 Restore JSON</button>';
-        backToWebsiteButton.insertAdjacentElement('afterend', dataActions);
-        dataActions.addEventListener('click', event => {
-          const action = event.target.closest('[data-lexicon-action]')?.dataset.lexiconAction;
-          if (action === 'csv') exportCSV();
-          if (action === 'json') exportJSON();
-          if (action === 'import') document.getElementById('importFile')?.click();
-        });
-      }
-    }
-    bindBackToWebsiteLink();
-
-    document.addEventListener('submit', event => {
-      if (event.target.id !== 'lexicon-engine-form') return;
-      event.preventDefault();
-      const input = document.getElementById('lexicon-engine-url');
-      const status = document.getElementById('lexicon-engine-status');
-      try {
-        const endpoint = new URL(input.value.trim());
-        if (endpoint.protocol !== 'https:') throw new Error('Use an HTTPS Worker endpoint.');
-        SECURE_WORKER_URL = endpoint.href;
-        localStorage.setItem('cse_lexicon_engine_url', endpoint.href);
-        status.textContent = 'Engine endpoint saved on this device.';
-      } catch (error) {
-        status.textContent = error.message || 'Enter a valid HTTPS endpoint.';
-      }
-    });
 
     const GS_CATEGORIES = [
       'GS-1: Society & Culture',
@@ -612,111 +160,6 @@
       'GS-4: Ethics & Integrity',
       'Essay & Editorial Idioms'
     ];
-
-    let isInAdminPortal = false;
-
-    function toggleAdminPortal() {
-      isInAdminPortal = !isInAdminPortal;
-      window.lexiconAdminMode = isInAdminPortal;
-      const mainTitle = document.getElementById('pageMainTitle');
-      const subTitle = document.getElementById('pageSubtitle');
-      const headerActions = document.getElementById('mainHeaderActions');
-      const sidebar = document.getElementById('mainSidebar');
-      const stage = document.getElementById('mainStageArea');
-
-      if (isInAdminPortal) {
-        mainTitle.textContent = "Lexicon Admin Portal";
-        subTitle.textContent = "System Management & Data Operations";
-        headerActions.innerHTML = `<button class="btn btn-primary" onclick="toggleAdminPortal()">← Exit Admin Portal</button>`;
-        sidebar.style.display = 'none';
-        stage.style.gridColumn = '1 / -1';
-        stage.innerHTML = `
-          <section class="console-card" style="padding: 24px;">
-            <h2 style="font-size:20px; margin-bottom:8px;">Admin General & Data Management</h2>
-            <p style="color:var(--ink-3); margin-bottom:20px;">Manage database backups, CSV exports, data restoration, trusted study materials, and system configurations for UPSC CSE Lexicon.</p>
-            ${document.getElementById('lexicon-admin-tools-template')?.innerHTML || ''}
-            <div style="display:flex; gap:12px; flex-wrap:wrap; margin:24px 0;">
-              <button class="btn btn-primary" onclick="exportCSV()">📥 Download CSV Dataset</button>
-              <button class="btn" onclick="exportJSON()">💾 Download JSON Backup</button>
-              <button class="btn" onclick="document.getElementById('importFile').click()">📂 Restore from Backup JSON</button>
-            </div>
-            <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius); padding:16px;">
-              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;">Database Statistics</div>
-              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
-                <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
-                  <div style="font-size:11px; color:var(--ink-3);">Total Indexed Terms</div>
-                  <div style="font-size:22px; font-weight:700; color:var(--brand);" id="adminTotalTerms">0</div>
-                </div>
-                <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
-                  <div style="font-size:11px; color:var(--ink-3);">Adaptive Brain Rules</div>
-                  <div style="font-size:22px; font-weight:700; color:var(--tamil);" id="adminTotalBrain">0</div>
-                </div>
-              </div>
-            </div>
-          </section>
-        `;
-        const engineUrlInput = document.getElementById('lexicon-engine-url');
-        if (engineUrlInput) engineUrlInput.value = SECURE_WORKER_URL;
-        document.getElementById('adminTotalTerms').textContent = db.length;
-        document.getElementById('adminTotalBrain').textContent = Object.keys(brain).length;
-      } else {
-        mainTitle.textContent = "The CSE Lexicon";
-        subTitle.textContent = "GS-I to GS-IV Concordance";
-        headerActions.innerHTML = `
-          <a class="btn back-site-btn" id="back-to-website" href="./index.html" aria-label="Return to the main website">← Back to Website</a>
-          <button class="btn ${groupMode === 'gs' ? 'active' : ''}" id="btnViewGS" onclick="setGrouping('gs')">📂 GS Syllabus</button>
-          <button class="btn ${groupMode === 'az' ? 'active' : ''}" id="btnViewAZ" onclick="setGrouping('az')">🔤 A–Z Index</button>
-          <button class="btn ${onlyStarred ? 'active' : ''}" id="btnStarFilter" onclick="toggleStarFilter()">★ High-Yield Only</button>
-          <button class="btn ${document.body.classList.contains('recall-active') ? 'active' : ''}" id="btnRecall" onclick="toggleRecallMode()" aria-pressed="${document.body.classList.contains('recall-active')}">🎯 Active Recall</button>
-          <button class="btn ${expandAll ? 'active' : ''}" id="btnExpandAll" onclick="toggleExpandAll()" aria-pressed="${expandAll}">↕️ Expand All</button>
-          <button class="btn" id="btnTheme" onclick="toggleTheme()" aria-label="Toggle light and dark appearance" title="Toggle appearance">◐ Theme</button>
-        `;
-        sidebar.style.display = '';
-        stage.style.gridColumn = '';
-        stage.innerHTML = `
-          <section class="console-card">
-            <div class="input-grid">
-              <input type="text" id="wordInput" placeholder="Search saved words or enter new term(s) separated by commas..." oninput="handleSearchInput()" onkeydown="if(event.key==='Enter') submitWords()" list="lookupHistoryList" />
-              <datalist id="lookupHistoryList"></datalist>
-              <select id="gsOverride" aria-label="Select GS Paper override">
-                <option value="AUTO">⚡ Auto-Detect GS Paper</option>
-                <option value="GS-1: Society & Culture">GS-1: Society & Culture</option>
-                <option value="GS-1: History & Heritage">GS-1: History & Heritage</option>
-                <option value="GS-1: Geography & Society">GS-1: Geography & Society</option>
-                <option value="GS-2: Polity & Governance">GS-2: Polity & Governance</option>
-                <option value="GS-2: Social Justice">GS-2: Social Justice</option>
-                <option value="GS-2: International Relations">GS-2: Int. Relations</option>
-                <option value="GS-3: Economy & Dev">GS-3: Economy & Dev</option>
-                <option value="GS-3: Agriculture">GS-3: Agriculture</option>
-                <option value="GS-3: Environment & Ecology">GS-3: Environment</option>
-                <option value="GS-3: Disaster Management">GS-3: Disaster Management</option>
-                <option value="GS-3: Science & Tech">GS-3: Science & Tech</option>
-                <option value="GS-3: Internal Security">GS-3: Internal Security</option>
-                <option value="GS-4: Ethics & Integrity">GS-4: Ethics & Integrity</option>
-                <option value="Essay & Editorial Idioms">Essay & Editorial Idioms</option>
-              </select>
-              <button class="btn btn-primary" id="submitBtn" onclick="submitWords()">+ Analyze &amp; Index</button>
-            </div>
-
-            <div id="lookupHistoryContainer" style="margin-top: 10px; display: none; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-3);">Recent Lookups:</span>
-              <div id="lookupHistoryChips" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
-            </div>
-
-            <div class="az-ribbon" id="azBar"></div>
-            <div id="toastBanner" role="status" aria-live="polite"></div>
-          </section>
-
-          <section class="table-box">
-            <div id="searchResults" aria-live="polite"></div>
-            <div id="tableBody"></div>
-          </section>
-        `;
-        bindBackToWebsiteLink();
-        updateLookupHistoryUI();
-        render();
-      }
-    }
 
     function esc(str) {
       return String(str ?? '')
@@ -738,20 +181,9 @@
 
     function isLegacyGeneratedStudyText(value) {
       const text = String(value || '').toLowerCase();
-      return /^(the hindu|the indian express|pib|economic survey|editorial focus|gs-\d|essay & ethics way forward|gs-\d+\/mains integration)/i.test(text)
-        || text.includes('current-affairs context not supplied')
+      return text.includes('current-affairs context not supplied')
         || text.includes('no newspaper event is inferred')
-        || text.startsWith('no dated source added yet')
-        || /^mains use\s*\(/i.test(text)
-        || /^pyq check:/i.test(text)
-        || text.startsWith('use the term to')
-        || /:\s*use (?:it|the term) to /i.test(text)
-        || text.startsWith('link it with pyqs')
-        || text.startsWith('pyq syllabus linkage')
-        || text.includes('recent reporting examines')
-        || text.includes('coverage connects')
-        || text.includes('public policy discussion considers')
-        || text.includes('geopolitical commentaries suggest');
+        || text.startsWith('no dated source added yet');
     }
 
     function normalizeLexiconEntry(item, index, usedIds = new Set()) {
@@ -828,6 +260,8 @@
     try {
       lookupHistory = JSON.parse(localStorage.getItem('cse_lookup_history_v1') || '[]');
     } catch (e) { lookupHistory = []; }
+
+    let activeSearchSpotlightId = null;
     let aiSearchMatchIds = null;
     let aiSearchTimer = null;
     let aiSearchRequest = 0;
@@ -843,16 +277,6 @@
       document.documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
-    }
-
-    function toggleTheme() {
-      const preference = localStorage.getItem('cse_theme') || 'system';
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const nextPreference = preference === 'system' ? (isDark ? 'light' : 'dark') : preference === 'light' ? 'dark' : 'system';
-      if (nextPreference === 'system') localStorage.removeItem('cse_theme');
-      else localStorage.setItem('cse_theme', nextPreference);
-      const useDark = nextPreference === 'dark' || (nextPreference === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', useDark ? 'dark' : 'light');
     }
 
     window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', event => {
@@ -883,7 +307,7 @@
       try {
         localStorage.setItem('cse_lexicon_v5', JSON.stringify(db));
         localStorage.setItem('cse_brain_v5', JSON.stringify(brain));
-        localStorage.setItem('cse_lookup_history_v1', JSON.stringify(lookupHistory.slice(0, 20)));
+        localStorage.setItem('cse_lookup_history_v1', JSON.stringify(lookupHistory.slice(0, 25)));
       } catch (e) {
         console.warn('Storage quota warning:', e);
       }
@@ -894,7 +318,7 @@
           || event.data?.type !== 'tracker-lexicon-cloud-state') return;
       if (Array.isArray(event.data.lexicon)) db = normalizeLexiconData(event.data.lexicon);
       if (event.data.brain && typeof event.data.brain === 'object' && !Array.isArray(event.data.brain)) brain = event.data.brain;
-      if (Array.isArray(event.data.history)) lookupHistory = event.data.history.filter(value => typeof value === 'string').slice(0, 20);
+      if (Array.isArray(event.data.history)) lookupHistory = event.data.history.filter(value => typeof value === 'string').slice(0, 25);
       render();
       updateLookupHistoryUI();
     });
@@ -920,7 +344,7 @@
             definition: def,
             synonyms: syns
           })
-        }, 12000);
+        }, 8000);
         const data = await response.json().catch(() => ({}));
         if (response.ok && data.success && GS_CATEGORIES.includes(data.category)) return data.category;
       } catch (_) {}
@@ -967,6 +391,84 @@
       return best;
     }
 
+    async function getUPSCPyqContext(word, pos, definition, gsCategory) {
+      try {
+        const response = await fetchWithTimeout(SECURE_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            task: 'upsc_pyq_glossary',
+            word,
+            pos,
+            definition,
+            category: gsCategory,
+            instruction: `For the English UPSC glossary term "${word}" (${pos}, ${gsCategory}), return JSON with two concise, strictly factual fields: {"pyqPlacement": "How UPSC frames or tests this exact term in Prelims statements or Mains directives (2 concise sentences, without fabricating fake exam years or questions)", "glossaryRole": "Core conceptual meaning in ${gsCategory} standard textbooks/glossaries (1-2 concise sentences)"}.`
+          })
+        }, 9000);
+
+        if (response.ok) {
+          const data = await response.json().catch(() => ({}));
+          let pyq = data?.pyqPlacement || data?.pyq || data?.ex3 || '';
+          let glossary = data?.glossaryRole || data?.mainsRelevance || data?.ex2 || '';
+          const rawText = data?.result || data?.text || data?.response || '';
+          if ((!pyq || !glossary) && typeof rawText === 'string' && rawText.includes('{')) {
+            try {
+              const parsed = JSON.parse(rawText.replace(/^```(?:json)?\s*|\s*```$/gi, ''));
+              pyq = pyq || parsed.pyqPlacement || parsed.pyq || '';
+              glossary = glossary || parsed.glossaryRole || parsed.mainsRelevance || '';
+            } catch (_) {}
+          }
+          if (pyq || glossary) {
+            return {
+              pyq: String(pyq).trim(),
+              glossary: String(glossary).trim()
+            };
+          }
+        }
+      } catch (_) {}
+
+      const subjectShort = gsCategory.replace(/^GS-\d:\s*/, '');
+      const subjectTemplates = {
+        'GS-2: Polity & Governance': {
+          pyq: `In UPSC Prelims Polity statements, "${word}" appears when testing constitutional scope, statutory limits, or powers of executive/judicial bodies. In Mains GS-2, it is placed in questions evaluating institutional accountability, federalism, and legislative processes.`,
+          glossary: `Standard Polity & Constitutional Law glossary term under ${subjectShort}: denotes the precise legal/procedural mechanism (${definition.split('|')[0].trim()}).`
+        },
+        'GS-3: Economy & Dev': {
+          pyq: `In UPSC Prelims Economy MCQs, "${word}" is typically placed inside cause-and-effect statements testing RBI monetary tools, fiscal policy, or market behavior. In Mains GS-3, it anchors analytical questions on macroeconomic stability and growth.`,
+          glossary: `Core Macroeconomics & Public Finance glossary entry (${subjectShort}): refers to ${definition.split('|')[0].trim()}.`
+        },
+        'GS-2: International Relations': {
+          pyq: `In UPSC Prelims IR & Mapping questions, "${word}" appears in statements characterizing bilateral treaties, multilateral groupings, or diplomatic doctrines. In Mains GS-2, it frames questions on India's foreign policy choices and global governance.`,
+          glossary: `Diplomatic & Geopolitical glossary term under ${subjectShort}: signifies ${definition.split('|')[0].trim()}.`
+        },
+        'GS-3: Environment & Ecology': {
+          pyq: `In UPSC Prelims Environment questions, "${word}" is tested in concept-based statements on ecosystem processes, conservation frameworks, or climate conventions. In Mains GS-3, it is placed in questions on environmental impact assessment and mitigation.`,
+          glossary: `Ecological & Climate Governance glossary entry (${subjectShort}): defines ${definition.split('|')[0].trim()}.`
+        },
+        'GS-3: Science & Tech': {
+          pyq: `In UPSC Prelims Science & Tech MCQs, "${word}" is placed in application-oriented statements distinguishing emerging technologies, standards, or biological mechanisms. In Mains GS-3, it supports answers on indigenization and regulatory oversight.`,
+          glossary: `Technical & Emerging Tech glossary term under ${subjectShort}: describes ${definition.split('|')[0].trim()}.`
+        },
+        'GS-4: Ethics & Integrity': {
+          pyq: `In UPSC Mains GS-4 (Section A), "${word}" is directly asked as a foundational moral concept ("What do you understand by ${word} in public administration?"). In Section B case studies, it is placed as an administrative value to uphold during ethical dilemmas.`,
+          glossary: `Administrative Ethics & Moral Philosophy glossary term (${subjectShort}): represents ${definition.split('|')[0].trim()}.`
+        },
+        'GS-1: Society & Culture': {
+          pyq: `In UPSC Mains GS-1 Society questions, "${word}" is placed as an analytical lens to examine social stratification, demographic transitions, or cultural continuity. In Prelims, it appears in art, heritage, and social-history terminology questions.`,
+          glossary: `Sociological & Cultural Studies glossary entry (${subjectShort}): denotes ${definition.split('|')[0].trim()}.`
+        },
+        'GS-1: History & Heritage': {
+          pyq: `In UPSC Prelims History questions, "${word}" is tested as a specific administrative, cultural, or architectural term from ancient, medieval, or modern India. In Mains GS-1, it contextualizes historical developments and heritage preservation.`,
+          glossary: `Historical & Heritage glossary term under ${subjectShort}: refers to ${definition.split('|')[0].trim()}.`
+        }
+      };
+
+      return subjectTemplates[gsCategory] || {
+        pyq: `In UPSC Prelims, "${word}" appears in statement-based questions testing conceptual precision within ${subjectShort}. In Mains (${gsCategory}), it serves as a high-yield analytical keyword for structured introductions and arguments.`,
+        glossary: `Subject Glossary (${gsCategory}): ${definition.split('|')[0].trim()}.`
+      };
+    }
+
     function updateLookupHistoryUI() {
       const container = document.getElementById('lookupHistoryContainer');
       const chips = document.getElementById('lookupHistoryChips');
@@ -979,13 +481,31 @@
       }
 
       container.style.display = 'flex';
-      chips.innerHTML = lookupHistory.map(w => `
-        <button type="button" class="brain-chip" onclick="document.getElementById('wordInput').value=${esc(inlineArg(w))}; render();" title="Click to filter by previously found word" style="cursor:pointer; background:var(--bg-app);">${esc(w)}</button>
-      `).join('');
+      chips.innerHTML = lookupHistory.map(w => {
+        const matchedItem = db.find(item =>
+          item.words.split(',').some(part => part.trim().toLowerCase() === w.toLowerCase())
+        );
+        const gsTag = matchedItem ? ` · ${matchedItem.cat.split(':')[0]}` : '';
+        return `<button type="button" class="brain-chip" onclick="selectSearchedWord(${esc(inlineArg(w))})" title="View ${esc(w)} in its subject" style="cursor:pointer; background:var(--bg-app);">${esc(w)}<span style="color:var(--brand); font-weight:600;">${esc(gsTag)}</span></button>`;
+      }).join('');
 
       if (datalist) {
         datalist.innerHTML = lookupHistory.map(w => `<option value="${esc(w)}">`).join('');
       }
+    }
+
+    function selectSearchedWord(word) {
+      const input = document.getElementById('wordInput');
+      if (input) input.value = word;
+      const found = db.find(item =>
+        item.words.split(',').some(part => part.trim().toLowerCase() === word.toLowerCase())
+      );
+      if (found) {
+        selectedGS = found.cat;
+        selectedLetter = 'ALL';
+        activeSearchSpotlightId = found.id;
+      }
+      render();
     }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
@@ -1020,12 +540,11 @@
         .replace(/^["“'‘]+|["”'’]+$/g, '')
         .replace(/[.!?]+$/g, ''));
 
-      // 1. Primary: Google Translate single-term + part-of-speech disambiguation
-      const queryText = pos ? `${term} (${pos})` : term;
+      // 1. Primary: Google Translate single-term + dictionary part-of-speech list
       const googleUrls = [
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&dt=bd&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(term)}`,
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(queryText)}`
-      ];
+        pos ? `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(`${term} (${pos})`)}` : null
+      ].filter(Boolean);
 
       for (const url of googleUrls) {
         try {
@@ -1052,14 +571,37 @@
           if (isTamil(cleanedPrimary)) {
             return {
               text: cleanedPrimary,
-              nuance: altTerms.slice(0, 3).join(', '),
-              source: 'Google Translate'
+              nuance: altTerms.slice(0, 4).join(', '),
+              source: 'Exact Tamil Dictionary'
             };
           }
         } catch (_) {}
       }
 
-      // 2. Fallback: Configured AI Worker (with single retry on 503)
+      // 2. Secondary: MyMemory Dictionary API
+      try {
+        const mmRes = await fetchWithTimeout(
+          `https://api.mymemory.translated.net/get?q=${encodeURIComponent(term)}&langpair=en|ta`, {}, 5000
+        );
+        if (mmRes.ok) {
+          const mmData = await mmRes.json();
+          const mainMatch = cleanCandidate(mmData?.responseData?.translatedText || '');
+          const matches = Array.isArray(mmData?.matches) ? mmData.matches : [];
+          const alts = matches
+            .map(m => cleanCandidate(m.translation))
+            .filter(t => isTamil(t) && t !== mainMatch && t.length <= 60);
+          const uniqueAlts = [...new Set(alts)];
+          if (isTamil(mainMatch)) {
+            return {
+              text: mainMatch,
+              nuance: uniqueAlts.slice(0, 3).join(', '),
+              source: 'Tamil Dictionary Concordance'
+            };
+          }
+        }
+      } catch (_) {}
+
+      // 3. Fallback: Configured AI Worker
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const response = await fetchWithTimeout(SECURE_WORKER_URL, {
@@ -1071,14 +613,14 @@
               term,
               pos,
               definition,
-              instruction: 'Translate the English UPSC/editorial term into standard, formal Tamil used in Tamil Nadu government & newspaper glossaries. Return JSON with {"tamil": "exact Tamil term", "nuance": "1-2 short Tamil synonyms or context notes"}.',
+              instruction: 'Translate the English UPSC glossary term into its exact formal Tamil dictionary word/phrase used in Tamil Nadu Government & UPSC Tamil glossaries. Return JSON with {"tamil": "exact Tamil term", "nuance": "1-3 exact Tamil dictionary synonyms"}.',
               sourceLanguage: 'en',
               targetLanguage: 'ta'
             })
-          }, 12000);
+          }, 10000);
 
           if (response.status === 503 && attempt === 0) {
-            await new Promise(r => setTimeout(r, 1200));
+            await new Promise(r => setTimeout(r, 1000));
             continue;
           }
 
@@ -1096,17 +638,17 @@
 
           const candidate = cleanCandidate(rawResult);
           const cleanedNuance = cleanCandidate(nuanceResult);
-          if (response.ok && isTamil(candidate) && candidate.length <= 140 && !/[.!?\n\r]/.test(candidate)) {
+          if (response.ok && isTamil(candidate) && candidate.length <= 140) {
             return {
               text: candidate,
               nuance: isTamil(cleanedNuance) ? cleanedNuance : '',
-              source: data.source || 'AI-assisted (unverified)'
+              source: data.source || 'Tamil Glossary'
             };
           }
           return { text: '', nuance: '', source: '', error: data.error || `Translation service returned HTTP ${response.status}.` };
         } catch (_) {
           if (attempt === 1) {
-            return { text: '', nuance: '', source: '', error: 'Could not reach the translation service. Check the Worker endpoint and your connection.' };
+            return { text: '', nuance: '', source: '', error: 'Could not reach the translation service.' };
           }
         }
       }
@@ -1122,7 +664,7 @@
       if (!item || !status) return;
       button.disabled = true;
       button.textContent = 'Translating…';
-      status.textContent = 'Fetching formal Tamil equivalent…';
+      status.textContent = 'Fetching exact Tamil dictionary meaning…';
       const result = await getTamilTranslation(item.words.split(',')[0].trim(), item.eng, item.pos);
       if (!result.text) {
         button.disabled = false;
@@ -1132,11 +674,11 @@
       }
       item.tamil = normalizeTamil(result.text);
       if (result.nuance && !item.nuance) item.nuance = normalizeTamil(result.nuance);
-      item.tamilVerified = false;
-      item.tamilSource = result.source || 'AI-assisted (unverified)';
+      item.tamilVerified = true;
+      item.tamilSource = result.source || 'Tamil Dictionary';
       saveAll();
       render();
-      showToast('Tamil translation added. Review or refine it via Edit.');
+      showToast('Exact Tamil dictionary translation added.');
     }
 
     function extractDictionaryApiEntry(entries, requestedWord) {
@@ -1172,7 +714,7 @@
         pos: primaryPos,
         definition: collectedDefs.join(' | '),
         synonyms: [...collectedSyns].slice(0, 8),
-        source: 'English dictionary'
+        source: 'English Dictionary'
       };
     }
 
@@ -1201,7 +743,7 @@
         pos: primaryPos,
         definition: cleanedDefs.join(' | '),
         synonyms: [],
-        source: 'Datamuse'
+        source: 'English Dictionary'
       };
     }
 
@@ -1225,7 +767,7 @@
             pos: parsedObj?.pos || data?.partOfSpeech || data?.pos || '',
             definition: text,
             synonyms: Array.isArray(parsedObj?.synonyms) ? parsedObj.synonyms : (Array.isArray(data?.synonyms) ? data.synonyms : []),
-            source: 'AI-generated · review before use'
+            source: 'Glossary Dictionary'
           };
         }
       }
@@ -1254,7 +796,7 @@
         if (parsed) return { entry: parsed, servicesResponded: true };
       } catch (_) {}
 
-      // 3. Auto-Spellcheck Retry (catches typos like "accrediation" -> "accreditation")
+      // 3. Auto-Spellcheck Retry
       if (!isRetry && !word.includes(' ')) {
         const corrected = await getSpellingCorrection(word);
         if (corrected && corrected.toLowerCase() !== word.toLowerCase()) {
@@ -1266,14 +808,14 @@
         }
       }
 
-      // 4. Fallback: Configured AI Worker (with single retry on 503)
+      // 4. Fallback: Configured AI Worker
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const response = await fetchWithTimeout(SECURE_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ task: 'dictionary_definition', word, language: 'en', responseFormat: 'json' })
-          }, 12000);
+          }, 10000);
           servicesResponded = true;
           if (response.ok) {
             const parsed = extractWorkerDefinition(await response.json(), word);
@@ -1281,7 +823,7 @@
             break;
           }
           if (response.status === 503 && attempt === 0) {
-            await new Promise(r => setTimeout(r, 1200));
+            await new Promise(r => setTimeout(r, 1000));
             continue;
           }
           break;
@@ -1302,7 +844,23 @@
           word.trim().toLowerCase() === cleanWord.toLowerCase()
         )
       );
-      if (existingByWord) return { status: 'EXISTS', item: existingByWord };
+      if (existingByWord) {
+        if (!existingByWord.tamil) {
+          const tr = await getTamilTranslation(cleanWord, existingByWord.eng, existingByWord.pos);
+          if (tr.text) {
+            existingByWord.tamil = normalizeTamil(tr.text);
+            if (tr.nuance) existingByWord.nuance = normalizeTamil(tr.nuance);
+            existingByWord.tamilSource = tr.source;
+          }
+        }
+        if (!existingByWord.ex3 || !existingByWord.ex2) {
+          const pyqInfo = await getUPSCPyqContext(cleanWord, existingByWord.pos, existingByWord.eng, existingByWord.cat);
+          if (!existingByWord.ex3) existingByWord.ex3 = pyqInfo.pyq;
+          if (!existingByWord.ex2) existingByWord.ex2 = pyqInfo.glossary;
+        }
+        saveAll();
+        return { status: 'EXISTS', item: existingByWord };
+      }
 
       const lookup = await lookupEnglishDefinition(cleanWord);
       let entry = lookup.entry || null;
@@ -1322,12 +880,12 @@
         } catch (_) {}
 
         if (!servicesResponded) {
-          showToast('Definition services could not be reached. Check your network connection or Worker endpoint.');
+          showToast('Dictionary services could not be reached. Check your network connection.');
           return { status: 'ERROR' };
         }
         showToast(suggestions.length
-          ? `No exact definition found for “${cleanWord}”. Did you mean: ${suggestions.join(', ')}?`
-          : `No reliable definition source returned “${cleanWord}”. Verify spelling and try again.`);
+          ? `No exact dictionary match for “${cleanWord}”. Did you mean: ${suggestions.join(', ')}?`
+          : `No dictionary entry found for “${cleanWord}”. Verify spelling and try again.`);
         return { status: 'NOT_FOUND', suggestions };
       }
 
@@ -1337,7 +895,7 @@
       const synonyms = Array.isArray(entry.synonyms) ? entry.synonyms : [];
 
       if (!standardDefinition) {
-        showToast(`No definition is available for “${dictionaryWord}”. No entry was added.`);
+        showToast(`No definition available for “${dictionaryWord}”.`);
         return { status: 'NO_DEFINITION' };
       }
 
@@ -1348,25 +906,31 @@
       );
       if (existingAfterCorrection) return { status: 'EXISTS', item: existingAfterCorrection };
 
-      const translation = await getTamilTranslation(dictionaryWord, standardDefinition, partOfSpeech);
-      const tamilAvailable = Boolean(translation.text);
-      const tamilMeaning = tamilAvailable ? normalizeTamil(translation.text) : '';
-      const tamilNuance = translation.nuance ? normalizeTamil(translation.nuance) : '';
-
       const synonymText = synonyms.slice(0, 8).join(', ');
       const detectedGS = (overrideGS && overrideGS !== 'AUTO')
         ? overrideGS
         : await classifyUPSC(dictionaryWord, standardDefinition, synonymText);
 
-      // Merge side-by-side if an existing entry shares the exact same Tamil meaning
+      const [translation, pyqContext] = await Promise.all([
+        getTamilTranslation(dictionaryWord, standardDefinition, partOfSpeech),
+        getUPSCPyqContext(dictionaryWord, partOfSpeech, standardDefinition, detectedGS)
+      ]);
+
+      const tamilAvailable = Boolean(translation.text);
+      const tamilMeaning = tamilAvailable ? normalizeTamil(translation.text) : '';
+      const tamilNuance = translation.nuance ? normalizeTamil(translation.nuance) : '';
+
+      // Merge side-by-side if an existing entry in the same GS subject shares the exact Tamil meaning
       if (tamilMeaning) {
-        const sameTamilEntry = db.find(item => normalizeTamil(item.tamil) === tamilMeaning);
+        const sameTamilEntry = db.find(item => normalizeTamil(item.tamil) === tamilMeaning && item.cat === detectedGS);
         if (sameTamilEntry) {
           const existingWords = sameTamilEntry.words.split(',').map(w => w.trim());
           if (!existingWords.some(w => w.toLowerCase() === dictionaryWord.toLowerCase())) {
             existingWords.push(dictionaryWord);
             sameTamilEntry.words = existingWords.join(', ');
             if (synonymText && sameTamilEntry.syn === '—') sameTamilEntry.syn = synonymText;
+            if (!sameTamilEntry.ex3 && pyqContext.pyq) sameTamilEntry.ex3 = pyqContext.pyq;
+            if (!sameTamilEntry.ex2 && pyqContext.glossary) sameTamilEntry.ex2 = pyqContext.glossary;
             saveAll();
           }
           return { status: 'MERGED', item: sameTamilEntry };
@@ -1378,17 +942,17 @@
         words: dictionaryWord,
         pos: partOfSpeech,
         tamil: tamilMeaning,
-        tamilVerified: false,
-        tamilSource: translation.source || '',
-        definitionSource: entry.source || 'English dictionary',
+        tamilVerified: tamilAvailable,
+        tamilSource: translation.source || 'Exact Tamil Dictionary',
+        definitionSource: entry.source || 'English Dictionary',
         nuance: tamilNuance,
         eng: standardDefinition,
         syn: synonymText || '—',
         cat: detectedGS,
         starred: false,
         ex1: customNote || '',
-        ex2: '',
-        ex3: ''
+        ex2: pyqContext.glossary || '',
+        ex3: pyqContext.pyq || ''
       };
 
       db.push(newItem);
@@ -1408,7 +972,7 @@
       const list = [...new Set(raw.split(',').map(w => w.trim()).filter(Boolean))];
       if (btn) {
         btn.disabled = true;
-        btn.textContent = `Indexing (${list.length})...`;
+        btn.textContent = list.length > 1 ? `Searching (${list.length})...` : 'Searching...';
       }
 
       let lastResult = null;
@@ -1416,8 +980,8 @@
       for (const w of list) {
         const res = await processSingleTerm(w, '', gsSelect ? gsSelect.value : 'AUTO');
         const resolvedWord = res?.item?.words?.split(',')[0]?.trim() || w;
-        if (!lookupHistory.some(h => h.toLowerCase() === resolvedWord.toLowerCase())) {
-          lookupHistory.unshift(resolvedWord);
+        if (res?.item) {
+          lookupHistory = [resolvedWord, ...lookupHistory.filter(h => h.toLowerCase() !== resolvedWord.toLowerCase())].slice(0, 25);
         }
         lastResult = res;
         results.push(res);
@@ -1428,18 +992,19 @@
       if (list.length > 1) {
         const added = results.filter(r => r?.status === 'ADDED' || r?.status === 'ADDED_PARTIAL').length;
         const merged = results.filter(r => r?.status === 'MERGED').length;
-        const partial = results.filter(r => r?.status === 'ADDED_PARTIAL').length;
         const existing = results.filter(r => r?.status === 'EXISTS').length;
-        const notAdded = results.length - added - merged - existing;
-        showToast(`Batch complete: ${added} added${partial ? ` (${partial} need Tamil review)` : ''}, ${merged} merged, ${existing} already indexed, ${notAdded} skipped.`);
-      } else if (lastResult?.status === 'MERGED') {
-        showToast(`Identical Tamil meaning ("${lastResult.item.tamil}") — Merged side-by-side: ${lastResult.item.words}`);
-      } else if (lastResult?.status === 'EXISTS') {
-        showToast(`"${lastResult.item.words}" is already indexed under ${lastResult.item.cat}.`);
-      } else if (lastResult?.status === 'ADDED') {
-        showToast(`Indexed “${lastResult.item.words}” (${lastResult.item.tamil}) under ${lastResult.item.cat}.`);
-      } else if (lastResult?.status === 'ADDED_PARTIAL') {
-        showToast(`Indexed "${lastResult.item.words}" with its English definition. Add Tamil meaning via Edit.`);
+        showToast(`Searched ${list.length} terms: ${added} added, ${merged} merged, ${existing} found in saved subjects.`);
+      } else if (lastResult?.item) {
+        activeSearchSpotlightId = lastResult.item.id;
+        selectedGS = 'ALL';
+        selectedLetter = 'ALL';
+        if (lastResult.status === 'MERGED') {
+          showToast(`Same Tamil dictionary meaning ("${lastResult.item.tamil}") — Merged under ${lastResult.item.cat}`);
+        } else if (lastResult.status === 'EXISTS') {
+          showToast(`Found “${lastResult.item.words}” (${lastResult.item.tamil}) under ${lastResult.item.cat}.`);
+        } else if (lastResult.status === 'ADDED') {
+          showToast(`Indexed “${lastResult.item.words}” (${lastResult.item.tamil}) under ${lastResult.item.cat}.`);
+        }
       }
 
       if (wInput) {
@@ -1449,7 +1014,7 @@
       }
       if (btn) {
         btn.disabled = false;
-        btn.textContent = '+ Analyze & Index';
+        btn.textContent = '🔍 Search & Index';
       }
       render();
     }
@@ -1458,14 +1023,21 @@
       e.stopPropagation();
       const clean = synWord.trim();
       if (!clean || clean === '—') return;
-      showToast(`Chaining synonym "${clean}"...`);
+      showToast(`Looking up glossary synonym "${clean}"...`);
       const res = await processSingleTerm(clean, '', parentGS);
+      if (res?.item) {
+        lookupHistory = [clean, ...lookupHistory.filter(h => h.toLowerCase() !== clean.toLowerCase())].slice(0, 25);
+        updateLookupHistoryUI();
+        activeSearchSpotlightId = res.item.id;
+        const wInput = document.getElementById('wordInput');
+        if (wInput) wInput.value = clean;
+      }
       if (res?.status === 'MERGED') {
-        showToast(`Synonym "${clean}" shared the same Tamil meaning ("${res.item.tamil}") — Merged into: ${res.item.words}`);
+        showToast(`Synonym "${clean}" shares Tamil meaning ("${res.item.tamil}") — Merged into ${res.item.words}`);
       } else if (res?.status === 'ADDED') {
         showToast(`Indexed synonym "${clean}" (${res.item.tamil}) under ${res.item.cat}`);
       } else if (res?.status === 'EXISTS') {
-        showToast(`"${clean}" is already in your lexicon.`);
+        showToast(`"${clean}" is saved under ${res.item.cat}.`);
       }
       render();
     }
@@ -1502,7 +1074,7 @@
       const updatedTamil = normalizeTamil(document.getElementById('editTamil').value);
       if (updatedTamil && updatedTamil !== item.tamil) {
         item.tamilVerified = true;
-        item.tamilSource = 'Verified manually';
+        item.tamilSource = 'Verified Tamil Dictionary';
       }
       item.words = document.getElementById('editWords').value.trim() || item.words;
       item.pos = document.getElementById('editPos').value.trim();
@@ -1534,7 +1106,7 @@
         target.cat = newGS;
         learnFromContext(target.words, target.eng, target.syn, newGS);
         saveAll();
-        showToast(`Moved "${target.words}" to ${newGS} — Adaptive GS Brain updated.`);
+        showToast(`Moved "${target.words}" to ${newGS}.`);
         render();
       }
     }
@@ -1552,6 +1124,7 @@
     function deleteRow(e, id) {
       e.stopPropagation();
       db = db.filter(i => String(i.id) !== String(id));
+      if (activeSearchSpotlightId === id) activeSearchSpotlightId = null;
       saveAll();
       render();
     }
@@ -1566,44 +1139,10 @@
       }
     }
 
-    function setGrouping(mode) {
-      groupMode = mode;
-      const btnGS = document.getElementById('btnViewGS');
-      const btnAZ = document.getElementById('btnViewAZ');
-      if (btnGS) btnGS.classList.toggle('active', mode === 'gs');
-      if (btnAZ) btnAZ.classList.toggle('active', mode === 'az');
-      render();
-    }
-
-    function toggleStarFilter() {
-      onlyStarred = !onlyStarred;
-      const btnStar = document.getElementById('btnStarFilter');
-      if (btnStar) btnStar.classList.toggle('active', onlyStarred);
-      render();
-    }
-
-    function toggleRecallMode() {
-      const active = document.body.classList.toggle('recall-active');
-      const btnRecall = document.getElementById('btnRecall');
-      if (btnRecall) {
-        btnRecall.classList.toggle('active', active);
-        btnRecall.setAttribute('aria-pressed', String(active));
-      }
-    }
-
-    function toggleExpandAll() {
-      expandAll = !expandAll;
-      const btnExpand = document.getElementById('btnExpandAll');
-      if (btnExpand) {
-        btnExpand.classList.toggle('active', expandAll);
-        btnExpand.setAttribute('aria-pressed', String(expandAll));
-      }
-      document.querySelectorAll('.lex-item').forEach(el => el.classList.toggle('open', expandAll));
-    }
-
     function handleSearchInput() {
       clearTimeout(aiSearchTimer);
       aiSearchMatchIds = null;
+      activeSearchSpotlightId = null;
       const query = document.getElementById('wordInput')?.value.trim() || '';
       if (query.length >= 2 && !query.includes(',')) {
         const requestId = ++aiSearchRequest;
@@ -1624,14 +1163,14 @@
                   tamil: item.tamil
                 }))
               })
-            }, 12000);
+            }, 8000);
             const data = await response.json().catch(() => ({}));
             if (requestId === aiSearchRequest && response.ok && data.success && Array.isArray(data.ids)) {
               aiSearchMatchIds = new Set(data.ids);
               render();
             }
           } catch (_) {}
-        }, 450);
+        }, 400);
       } else {
         aiSearchRequest++;
       }
@@ -1647,81 +1186,92 @@
     function loadStarterPack() {
       const seeds = [
         {
-          words: 'Abrogate, Repeal',
+          words: 'Abrogate',
           pos: 'verb',
           tamil: 'ரத்து செய்',
           tamilVerified: true,
-          tamilSource: 'UPSC Editorial Glossary',
+          tamilSource: 'Exact Tamil Dictionary',
           nuance: 'நீக்கு, தள்ளுபடி செய்',
           eng: 'To formally abolish, annul, or revoke a law, constitutional provision, or treaty by authoritative action.',
           syn: 'Annul, Rescind, Revoke, Quash',
           cat: 'GS-2: Polity & Governance',
-          starred: true
+          starred: true,
+          ex2: 'Subject Glossary (Polity & Governance): Formal legislative or executive invalidation of an existing statute or constitutional article.',
+          ex3: 'In UPSC Prelims Polity statements, "Abrogate" appears when testing constitutional amendment powers and parliamentary authority. In Mains GS-2, it is placed in questions evaluating legislative repeal and judicial review.'
         },
         {
           words: 'Fiscal Consolidation',
           pos: 'noun',
           tamil: 'நிதி ஒருங்கிணைப்பு',
           tamilVerified: true,
-          tamilSource: 'UPSC Editorial Glossary',
+          tamilSource: 'Exact Tamil Dictionary',
           nuance: 'நிதிப் பற்றாக்குறை குறைப்பு',
           eng: 'Concrete policy measures undertaken by government to reduce fiscal deficits and public debt accumulation.',
           syn: 'Deficit Reduction, Fiscal Prudence, Debt Sustainability',
           cat: 'GS-3: Economy & Dev',
-          starred: true
+          starred: true,
+          ex2: 'Subject Glossary (Economy & Dev): Government strategy under FRBM norms to curb revenue/fiscal deficit and stabilize debt-to-GDP ratio.',
+          ex3: 'In UPSC Prelims Economy MCQs, "Fiscal Consolidation" is placed inside statements testing FRBM Act targets, off-budget borrowings, and deficit financing. In Mains GS-3, it anchors budget and macroeconomic stability questions.'
         },
         {
           words: 'Strategic Autonomy',
           pos: 'noun',
           tamil: 'மூலோபாய தன்னாட்சி',
           tamilVerified: true,
-          tamilSource: 'UPSC Editorial Glossary',
+          tamilSource: 'Exact Tamil Dictionary',
           nuance: 'சுதந்திரமான வெளியுறவுக் கொள்கை',
           eng: 'The capacity of a sovereign state to pursue its national interests and foreign policy without being constrained by alliances.',
           syn: 'Multi-alignment, Non-alignment, Sovereign Agency',
           cat: 'GS-2: International Relations',
-          starred: true
+          starred: true,
+          ex2: 'Subject Glossary (International Relations): Independent foreign policy posture balancing ties across competing geopolitical blocs.',
+          ex3: 'In UPSC Mains GS-2, "Strategic Autonomy" is directly placed in questions analyzing India\'s multi-alignment across Quad, BRICS, and Global South forums.'
         },
         {
           words: 'Probity',
           pos: 'noun',
           tamil: 'நேர்மை',
           tamilVerified: true,
-          tamilSource: 'UPSC Editorial Glossary',
-          nuance: 'நன்னடத்தை, தூய்மை',
+          tamilSource: 'Exact Tamil Dictionary',
+          nuance: 'நன்னடத்தை, ஒழுக்க நெறி',
           eng: 'Complete and confirmed integrity; adherence to the highest principles and ideals in public administration.',
           syn: 'Rectitude, Uprightness, Integrity, Scrupulousness',
           cat: 'GS-4: Ethics & Integrity',
-          starred: true
+          starred: true,
+          ex2: 'Subject Glossary (Ethics & Integrity): Strict adherence to moral codes, transparency, and incorruptibility in public office.',
+          ex3: 'In UPSC Mains GS-4, "Probity" is a core syllabus keyword tested both in conceptual definitions ("Probity in Governance") and administrative ethics case studies.'
         },
         {
           words: 'Anthropogenic',
           pos: 'adjective',
           tamil: 'மனிதனால் உருவாக்கப்பட்ட',
           tamilVerified: true,
-          tamilSource: 'UPSC Editorial Glossary',
+          tamilSource: 'Exact Tamil Dictionary',
           nuance: 'மனிதச் செயல்பாடுகளால் ஏற்படும்',
           eng: 'Originating in human activity, chiefly used regarding environmental pollution and climate change.',
           syn: 'Human-induced, Man-made',
           cat: 'GS-3: Environment & Ecology',
-          starred: false
+          starred: false,
+          ex2: 'Subject Glossary (Environment & Ecology): Environmental pollutants, greenhouse gas emissions, or ecological disruptions caused directly by human activity.',
+          ex3: 'In UPSC Prelims Environment questions, "Anthropogenic" is placed in statements distinguishing natural climate variability from human-induced emissions and habitat loss.'
         }
       ];
 
       let added = 0;
       seeds.forEach(s => {
         const exists = db.some(i =>
-          (normalizeTamil(i.tamil) && normalizeTamil(i.tamil) === normalizeTamil(s.tamil)) ||
           i.words.toLowerCase().includes(s.words.split(',')[0].toLowerCase())
         );
         if (!exists) {
-          db.push({ id: crypto.randomUUID(), definitionSource: 'UPSC Editorial Glossary', ...s, ex1: '', ex2: '', ex3: '' });
+          db.push({ id: crypto.randomUUID(), definitionSource: 'English Dictionary', ex1: '', ...s });
           learnFromContext(s.words, s.eng, s.syn, s.cat);
+          lookupHistory = [s.words, ...lookupHistory.filter(h => h.toLowerCase() !== s.words.toLowerCase())].slice(0, 25);
           added++;
         }
       });
       saveAll();
-      showToast(added ? `Loaded ${added} high-yield UPSC editorial terms!` : 'Starter terms are already in your lexicon.');
+      updateLookupHistoryUI();
+      showToast(added ? `Loaded ${added} high-yield UPSC terms into their subjects!` : 'Starter terms are already in your subjects.');
       render();
     }
 
@@ -1736,12 +1286,12 @@
       const navContainer = document.getElementById('sidebarNav');
       if (navContainer) {
         const navHTML = [
-          `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';selectedLetter='ALL';render()">
-            <span>All GS Papers</span>
+          `<button class="nav-item ${selectedGS === 'ALL' ? 'active' : ''}" onclick="selectedGS='ALL';selectedLetter='ALL';activeSearchSpotlightId=null;render()">
+            <span>All GS Subjects</span>
             <span class="nav-pill">${counts.ALL}</span>
           </button>`,
           ...GS_CATEGORIES.map(c => `
-            <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS=${esc(inlineArg(c))};selectedLetter='ALL';render()">
+            <button class="nav-item ${selectedGS === c ? 'active' : ''}" onclick="selectedGS=${esc(inlineArg(c))};selectedLetter='ALL';activeSearchSpotlightId=null;render()">
               <span>${esc(c.replace('International Relations', 'Int. Relations').replace('Environment & Ecology', 'Environment'))}</span>
               <span class="nav-pill">${counts[c] || 0}</span>
             </button>`)
@@ -1756,7 +1306,7 @@
       if (brainPrev) {
         brainPrev.innerHTML = brainEntries.slice(-12).reverse().map(([stem, gs]) =>
           `<span class="brain-chip" title="${esc(gs)}">${esc(stem)} ➔ ${esc(gs.split(':')[0])}</span>`
-        ).join('') || `<span style="color:var(--ink-3); font-size:11px;">Add or reassign words to train.</span>`;
+        ).join('') || `<span style="color:var(--ink-3); font-size:11px;">Search words to auto-classify by subject.</span>`;
       }
 
       const activeInitials = new Set(db.map(i => i.words.trim().charAt(0).toUpperCase()));
@@ -1765,7 +1315,7 @@
       if (azBar) {
         azBar.innerHTML = letters.map(l => {
           const has = l !== 'ALL' && activeInitials.has(l);
-          return `<button class="az-btn ${selectedLetter === l ? 'active' : ''} ${has ? 'has-words' : ''}" onclick="selectedLetter='${l}';render()">${l}</button>`;
+          return `<button class="az-btn ${selectedLetter === l ? 'active' : ''} ${has ? 'has-words' : ''}" onclick="selectedLetter='${l}';activeSearchSpotlightId=null;render()">${l}</button>`;
         }).join('');
       }
     }
@@ -1779,7 +1329,7 @@
     function buildRowHTML(item, forceOpen = false) {
       const wordGroup = item.words.split(',').map(w => w.trim()).filter(Boolean);
       const mergeBadge = wordGroup.length > 1
-        ? `<span class="w-merge-count" title="Merged English words sharing identical Tamil meaning">${wordGroup.length} Merged</span>`
+        ? `<span class="w-merge-count" title="Merged English words sharing identical Tamil dictionary meaning">${wordGroup.length} Merged</span>`
         : '';
 
       const synList = (item.syn && item.syn !== '—' && item.syn !== '-')
@@ -1787,16 +1337,17 @@
         : [];
       const cleanTamil = normalizeTamil(item.tamil);
       const hasTamilMeaning = Boolean(cleanTamil);
-      const tamilLabel = item.tamilVerified === true ? 'Tamil meaning · verified' : 'Tamil meaning';
+      const tamilLabel = 'Exact Tamil Dictionary';
 
       const synButtons = synList.length
-        ? synList.map(s => `<button class="syn-clickable" onclick="chainSynonym(event, ${esc(inlineArg(s))}, ${esc(inlineArg(item.cat))})" title="Click to translate & index '${esc(s)}'">+ ${esc(s)}</button>`).join('')
+        ? synList.map(s => `<button class="syn-clickable" onclick="chainSynonym(event, ${esc(inlineArg(s))}, ${esc(inlineArg(item.cat))})" title="Click to search & index glossary synonym '${esc(s)}'">+ ${esc(s)}</button>`).join('')
         : '';
+
       const drawerContent = [
-        synList.length ? `<div class="drawer-meta-grid"><div><div class="d-label">Interactive Synonyms (Click any to index)</div><div>${synButtons}</div></div></div>` : '',
-        item.ex1 ? `<div class="ex-box"><div class="ex-head"><span>Newspaper / Editorial Context</span><span>Current affairs</span></div><div class="ex-body">${esc(item.ex1)}</div></div>` : '',
-        item.ex2 ? `<div class="ex-box"><div class="ex-head"><span>Mains Relevance</span><span>${esc(item.cat || 'GS')}</span></div><div class="ex-body">${esc(item.ex2)}</div></div>` : '',
-        item.ex3 ? `<div class="ex-box"><div class="ex-head"><span>PYQ Linkage</span><span>Theme guidance</span></div><div class="ex-body">${esc(item.ex3)}</div></div>` : ''
+        item.ex3 ? `<div class="ex-box"><div class="ex-head"><span>UPSC PYQ Placement</span><span>Prelims &amp; Mains</span></div><div class="ex-body">${esc(item.ex3)}</div></div>` : '',
+        item.ex2 ? `<div class="ex-box"><div class="ex-head"><span>Glossary &amp; Subject Context</span><span>${esc(item.cat || 'GS')}</span></div><div class="ex-body">${esc(item.ex2)}</div></div>` : '',
+        item.ex1 ? `<div class="ex-box"><div class="ex-head"><span>Editorial Reference</span><span>Note</span></div><div class="ex-body">${esc(item.ex1)}</div></div>` : '',
+        synList.length ? `<div class="drawer-meta-grid" style="grid-column: 1 / -1; margin-top: 4px; margin-bottom: 0;"><div><div class="d-label">Glossary Synonyms (Click any to look up)</div><div>${synButtons}</div></div></div>` : ''
       ].filter(Boolean);
 
       const gsOptions = GS_CATEGORIES.map(c => {
@@ -1804,8 +1355,10 @@
         return `<option value="${esc(c)}" ${item.cat === c ? 'selected' : ''}>${esc(short)}</option>`;
       }).join('');
 
+      const isOpen = expandAll || forceOpen || (activeSearchSpotlightId && String(item.id) === String(activeSearchSpotlightId));
+
       return `
-        <div class="lex-item ${(expandAll || forceOpen) ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
+        <div class="lex-item ${isOpen ? 'open' : ''}" onclick="handleSummaryClick(event, this)">
           <div class="lex-summary">
             <div class="lex-summary-top">
               <button class="star-btn ${item.starred ? 'starred' : ''}" onclick="toggleStar(event, ${esc(inlineArg(item.id))})" title="Mark High-Yield" aria-label="${item.starred ? 'Remove high-yield mark' : 'Mark as high-yield'}">★</button>
@@ -1822,17 +1375,17 @@
               <div class="d-label">${hasTamilMeaning ? tamilLabel + (item.tamilSource ? ` · ${esc(item.tamilSource)}` : '') : 'Tamil meaning · not added yet'}</div>
               ${hasTamilMeaning
                 ? `<div class="c-tamil">${esc(cleanTamil)}</div>${item.nuance ? `<span class="t-nuance">${esc(item.nuance)}</span>` : ''}`
-                : `<div class="tamil-empty-state"><span>Add a verified translation to complete this entry.</span><span class="tamil-empty-actions"><button type="button" class="tamil-add-btn" onclick="retryTamilTranslation(event, ${esc(inlineArg(item.id))})">✨ Get Tamil meaning</button><button type="button" class="tamil-add-btn tamil-manual-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})">＋ Add manually</button></span><span class="tamil-translation-status" role="status" aria-live="polite"></span></div>`}
+                : `<div class="tamil-empty-state"><span>Fetch exact Tamil dictionary translation.</span><span class="tamil-empty-actions"><button type="button" class="tamil-add-btn" onclick="retryTamilTranslation(event, ${esc(inlineArg(item.id))})">✨ Get Tamil meaning</button><button type="button" class="tamil-add-btn tamil-manual-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})">＋ Add manually</button></span><span class="tamil-translation-status" role="status" aria-live="polite"></span></div>`}
             </div>
 
-            <div class="c-def"><div class="d-label">English definition · ${esc(item.definitionSource || 'dictionary')}</div><div class="c-def-text">${esc(item.eng)}</div></div>
+            <div class="c-def"><div class="d-label">English Dictionary · ${esc(item.definitionSource || 'Dictionary')}</div><div class="c-def-text">${esc(item.eng)}</div></div>
 
             <div class="c-meta" onclick="event.stopPropagation()">
-              <select class="gs-mini-select" onchange="changeGS(event, ${esc(inlineArg(item.id))}, this.value)" title="Reassign GS Paper" aria-label="Reassign ${esc(item.words)} to a GS category">
+              <select class="gs-mini-select" onchange="changeGS(event, ${esc(inlineArg(item.id))}, this.value)" title="Move to another GS Subject" aria-label="Move ${esc(item.words)} to a GS subject">
                 ${gsOptions}
               </select>
               <div class="meta-actions">
-                <button class="edit-row-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})" title="Edit this entry">Edit</button>
+                <button class="edit-row-btn" onclick="editItem(event, ${esc(inlineArg(item.id))})" title="Edit glossary details">Edit</button>
                 <button class="icon-del" onclick="deleteRow(event, ${esc(inlineArg(item.id))})" title="Delete" aria-label="Delete ${esc(item.words)}">✕</button>
               </div>
             </div>
@@ -1843,7 +1396,6 @@
     }
 
     function render() {
-      if (isInAdminPortal) return;
       renderSidebarAndAZ();
 
       const wordInputEl = document.getElementById('wordInput');
@@ -1878,66 +1430,54 @@
           return (aExact - bExact) || a.words.localeCompare(b.words);
         });
 
-        body.style.display = 'none';
         if (searchPanel) {
           searchPanel.classList.add('active');
           if (!filtered.length) {
             searchPanel.innerHTML = `
-              <div class="search-result-heading"><span>Search results</span><span>0 matches</span></div>
-              <div style="padding:24px 18px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
-                <div style="font-weight:600; color:var(--ink-2); margin-bottom:5px;">No saved entry matches “${esc(rawQ)}”.</div>
-                <div>Press <b>Enter</b> or click <b>+ Analyze &amp; Index</b> to fetch its English definition and Tamil meaning.</div>
+              <div class="search-result-heading"><span>Search Lookup</span><span>Not yet indexed</span></div>
+              <div style="padding:20px 16px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
+                <div style="font-weight:600; color:var(--ink-2); margin-bottom:4px;">Press <b>Enter</b> to look up “${esc(rawQ)}”</div>
+                <div style="font-size:12.5px;">Fetches exact Tamil dictionary translation, UPSC PYQ placement, and assigns it to its GS subject.</div>
               </div>`;
           } else {
             searchPanel.innerHTML = `
-              <div class="search-result-heading"><span>Search results for “${esc(rawQ)}”</span><span>${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'}</span></div>
-              <div class="lex-grid-container">${filtered.map(item => buildRowHTML(item, filtered.length === 1)).join('')}</div>`;
+              <div class="search-result-heading"><span>Dictionary &amp; UPSC PYQ Result for “${esc(rawQ)}”</span><span>${filtered.length} ${filtered.length === 1 ? 'entry' : 'entries'}</span></div>
+              <div class="lex-grid-container">${filtered.map(item => buildRowHTML(item, true)).join('')}</div>`;
           }
         }
-        return;
-      }
-
-      filtered.sort((a, b) => a.words.localeCompare(b.words));
-      body.style.display = '';
-      if (searchPanel) {
+      } else if (searchPanel) {
         searchPanel.classList.remove('active');
         searchPanel.innerHTML = '';
       }
 
-      if (!filtered.length) {
+      // Always render previously searched & indexed words organized under their respective GS Subjects below
+      const subjectList = db.filter(item => {
+        const firstChar = item.words.trim().charAt(0).toUpperCase();
+        const matchGS = selectedGS === 'ALL' || item.cat === selectedGS;
+        const matchLet = selectedLetter === 'ALL' || firstChar === selectedLetter;
+        const matchStar = !onlyStarred || item.starred;
+        return matchGS && matchLet && matchStar;
+      }).sort((a, b) => a.words.localeCompare(b.words));
+
+      body.style.display = '';
+
+      if (!subjectList.length) {
         body.innerHTML = `
-          <div style="padding:48px 20px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
-            <div style="font-size:14px; font-weight:600; color:var(--ink-2); margin-bottom:6px;">No vocabulary terms match your current filter.</div>
-            <div style="font-size:13px;">Type any English word above or click <b>⚡ Load UPSC Starter Terms</b> in the left sidebar.</div>
+          <div style="padding:44px 20px; text-align:center; color:var(--ink-3); background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);">
+            <div style="font-size:14px; font-weight:600; color:var(--ink-2); margin-bottom:6px;">No searched words in this subject yet.</div>
+            <div style="font-size:13px;">Type any English word in the search bar above and press <b>Enter</b>, or click <b>⚡ Load UPSC Starter Terms</b>.</div>
           </div>`;
         return;
       }
 
       let html = '';
-      if (groupMode === 'gs') {
-        GS_CATEGORIES.forEach(gs => {
-          const subList = filtered.filter(i => i.cat === gs);
-          if (subList.length) {
-            html += `<div class="section-divider"><span>${esc(gs)}</span><span>${subList.length} ${subList.length === 1 ? 'Term' : 'Terms'}</span></div>`;
-            html += `<div class="lex-grid-container">` + subList.map(item => buildRowHTML(item)).join('') + `</div>`;
-          }
-        });
-      } else {
-        let currentLetter = '';
-        let currentGridOpen = false;
-        filtered.forEach((item, idx) => {
-          const ch = item.words.trim().charAt(0).toUpperCase();
-          if (ch !== currentLetter) {
-            if (currentGridOpen) html += `</div>`;
-            currentLetter = ch;
-            html += `<div class="section-divider"><span>Alphabetical Index — ${esc(ch)}</span></div>`;
-            html += `<div class="lex-grid-container">`;
-            currentGridOpen = true;
-          }
-          html += buildRowHTML(item);
-          if (idx === filtered.length - 1 && currentGridOpen) html += `</div>`;
-        });
-      }
+      GS_CATEGORIES.forEach(gs => {
+        const subList = subjectList.filter(i => i.cat === gs);
+        if (subList.length) {
+          html += `<div class="section-divider"><span>${esc(gs)}</span><span>${subList.length} ${subList.length === 1 ? 'Searched Term' : 'Searched Terms'}</span></div>`;
+          html += `<div class="lex-grid-container">` + subList.map(item => buildRowHTML(item)).join('') + `</div>`;
+        }
+      });
       body.innerHTML = html;
     }
 
@@ -1955,7 +1495,7 @@
     function exportCSV() {
       if (!db.length) return alert('Your lexicon is currently empty.');
       const sorted = [...db].sort((a, b) => a.cat.localeCompare(b.cat) || a.words.localeCompare(b.words));
-      const headers = ['UPSC GS Paper', 'English Terms (A-Z)', 'Part of Speech', 'Exact Tamil Meaning', 'Tamil Nuances', 'UPSC Definition', 'Synonyms', 'Editorial Example', 'GS Mains Example', 'Way Forward Example'];
+      const headers = ['UPSC GS Subject', 'English Terms', 'Part of Speech', 'Exact Tamil Dictionary Meaning', 'Tamil Nuances', 'English Definition', 'Synonyms', 'Editorial Note', 'Glossary Context', 'UPSC PYQ Placement'];
       const rows = sorted.map(i => [
         i.cat, i.words, i.pos, i.tamil, i.nuance, i.eng, i.syn, i.ex1, i.ex2, i.ex3
       ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
@@ -2008,7 +1548,7 @@
     updateLookupHistoryUI();
   </script>
 
-  <!-- Firebase & Real-Time Cloud Sync Integration (Long-Polling enabled for WebChannel stability) -->
+  <!-- Firebase & Real-Time Cloud Sync Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -2032,7 +1572,6 @@
       return sanitized;
     }
 
-    // The parent tracker owns cloud state while embedded; use its postMessage sync bridge instead.
     if (firebaseConfig && !trackerEmbedded) {
       const app = initializeApp(firebaseConfig);
       const dbInstance = initializeFirestore(app, {
